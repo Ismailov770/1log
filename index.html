@@ -9,6 +9,7 @@
     <meta name="theme-color" content="#05238B" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       rel="stylesheet"
@@ -124,6 +125,16 @@
           d="M19.4 13a7.5 7.5 0 000-2l2-1.5-2-3.5-2.3.8a7.7 7.7 0 00-1.7-1L15 3h-6l-.4 2.8a7.7 7.7 0 00-1.7 1L4.6 6l-2 3.5L4.6 11a7.5 7.5 0 000 2l-2 1.5 2 3.5 2.3-.8a7.7 7.7 0 001.7 1L9 21h6l.4-2.8a7.7 7.7 0 001.7-1l2.3.8 2-3.5L19.4 13zM12 15a3 3 0 110-6 3 3 0 010 6z"
         />
       </symbol>
+      <symbol id="i-support-agent" viewBox="0 0 24 24">
+        <path
+          d="M21 12.22C21 6.73 16.74 3 12 3c-4.69 0-9 3.65-9 9.28-.6.34-1 .98-1 1.72v2c0 1.1.9 2 2 2h1v-6.1c0-3.87 3.13-7 7-7s7 3.13 7 7V19h-8v2h8c1.1 0 2-.9 2-2v-1.22c.59-.31 1-.92 1-1.64v-2.3c0-.7-.41-1.31-1-1.62"
+        />
+        <circle cx="9" cy="13" r="1" />
+        <circle cx="15" cy="13" r="1" />
+        <path
+          d="M18 11.03C17.52 8.18 15.04 6 12.05 6c-3.03 0-6.29 2.51-6.03 6.45 2.47-1.01 4.33-3.21 4.86-5.89 1.31 2.63 4 4.44 7.12 4.47"
+        />
+      </symbol>
     </svg>
 
     <div class="app" id="app">
@@ -132,17 +143,20 @@
           <div class="topbar__brand" role="img" aria-label="1LOG">
             <span class="topbar__logo">1LOG</span>
           </div>
-          <div class="topbar__actions">
-            <button class="icon-btn" type="button" data-action="support" aria-label="Поддержка">
-              <svg class="icon icon--sm"><use href="#i-headset"></use></svg>
-            </button>
-            <button class="icon-btn topbar__lang" type="button" data-action="lang" aria-label="Язык">
-              <svg class="icon icon--sm"><use href="#i-globe"></use></svg>
-              <span>RU</span>
-            </button>
-            <button class="icon-btn" type="button" data-action="menu" aria-label="Меню">
-              <svg class="icon icon--sm"><use href="#i-menu"></use></svg>
-            </button>
+          <div>
+
+            <div class="topbar__actions">
+              <button class="icon-btn" type="button" data-action="support" aria-label="Поддержка">
+                <svg class="icon icon--sm"><use href="#i-support-agent"></use></svg>
+              </button>
+              <button class="icon-btn topbar__lang" type="button" data-action="lang" aria-label="Язык">
+                <svg class="icon icon--sm"><use href="#i-globe"></use></svg>
+                <span>RU</span>
+              </button>
+              <button class="icon-btn" type="button" data-action="menu" aria-label="Меню">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-text-align-start-icon lucide-text-align-start"><path d="M21 5H3"/><path d="M15 12H3"/><path d="M17 19H3"/></svg>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -190,15 +204,15 @@
               <div class="stat-card__label">Интервал</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card__icon stat-card__icon--purple">
-                <svg class="icon"><use href="#i-calendar"></use></svg>
+              <div class="stat-card__icon stat-card__icon--blue">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-days-icon lucide-calendar-days"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
               </div>
               <div class="stat-card__value" id="stat-start">Не начато</div>
               <div class="stat-card__label">Начало рассылки</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card__icon stat-card__icon--purple">
-                <svg class="icon"><use href="#i-calendar"></use></svg>
+              <div class="stat-card__icon stat-card__icon--blue">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-days-icon lucide-calendar-days"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
               </div>
               <div class="stat-card__value" id="stat-end">Не начато</div>
               <div class="stat-card__label">Конец рассылки</div>
@@ -210,7 +224,7 @@
             Создать авто-рассылку
           </button>
 
-          <div class="actions-stack" id="dashboard-actions">
+          <div class="actions-stack" id="dashboard-actions" hidden>
             <button class="btn btn-danger btn-full" type="button" data-action="stop" id="btn-stop">
               <svg class="icon icon--sm"><use href="#i-stop"></use></svg>
               СТОП
@@ -220,7 +234,7 @@
               СТАРТ
             </button>
             <button class="btn btn-secondary btn-full" type="button" data-action="refresh-stats">
-              <svg class="icon icon--sm"><use href="#i-refresh"></use></svg>
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-ccw-icon lucide-refresh-ccw"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
               Обновить статистику
             </button>
           </div>
@@ -240,8 +254,10 @@
 
           <div class="empty" id="accounts-empty">
             <div class="empty__icon">
-              <svg class="icon"><use href="#i-user-add"></use></svg>
-              <span class="empty__plus">+</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
+  <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+  <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+</svg>
             </div>
             <p class="empty__text">Добавляйте аккаунты чтобы бот мог отправлять сообщения от вашего имени.</p>
             <button class="btn btn-primary btn-full" type="button" data-action="add-account">
@@ -253,7 +269,7 @@
           <div class="list" id="accounts-list" hidden></div>
 
           <div class="actions-stack" id="accounts-actions" hidden>
-            <button class="btn btn-primary btn-full" type="button" data-action="add-account">
+            <button class="btn btn-primary btn-full" type="button" data-action="add-account" id="accounts-add">
               <span class="btn__icon">+</span>
               Добавить аккаунт
             </button>
@@ -275,11 +291,8 @@
             <div class="status-pill status-pill--muted" id="message-status">× Не добавлен</div>
           </div>
 
-          <div class="editor" id="message-editor">
-            <div class="editor__toolbar">
-              <button class="icon-btn icon-btn--muted" type="button" data-action="insert-emoji" aria-label="Эмодзи">
-                <svg class="icon icon--sm"><use href="#i-smile"></use></svg>
-              </button>
+           <div class="editor" id="message-editor">
+             <div class="editor__toolbar">
               <button class="icon-btn icon-btn--muted" type="button" data-action="insert-image" aria-label="Изображение">
                 <svg class="icon icon--sm"><use href="#i-image"></use></svg>
               </button>
@@ -303,19 +316,28 @@
               <button class="icon-btn bubble__copy" type="button" data-action="copy-message" aria-label="Копировать">
                 <svg class="icon icon--sm"><use href="#i-copy"></use></svg>
               </button>
-              <div class="bubble__chev" aria-hidden="true">⌄</div>
+              <button
+                class="bubble__chev"
+                type="button"
+                data-action="toggle-preview"
+                id="message-preview-toggle"
+                aria-label="Toggle preview"
+                aria-expanded="false"
+              >
+                ⌄
+              </button>
             </div>
             <button class="btn btn-warn btn-full" type="button" data-action="edit-message">
               <svg class="icon icon--sm"><use href="#i-pencil"></use></svg>
               Редактировать сообщение
             </button>
-            <button class="btn btn-primary btn-full" type="button" data-action="message-next" id="message-next">
+           
+            <button class="btn btn-primary btn-full" type="button" data-action="message-next" id="message-next-preview" hidden>
               Дальше →
             </button>
           </div>
 
-          <button class="btn btn-primary btn-full" type="button" data-action="save-message" id="message-save">
-            <span class="btn__icon">+</span>
+          <button class="btn btn-primary btn-full" type="button" data-action="message-next" id="message-next">
             Сохранить
           </button>
         </section>
@@ -335,7 +357,7 @@
           <div class="list" id="groups-list"></div>
 
           <button class="btn btn-secondary btn-full" type="button" data-action="refresh-groups">
-            <svg class="icon icon--sm"><use href="#i-refresh"></use></svg>
+           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-cw-icon lucide-refresh-cw"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
             Обновить
           </button>
 

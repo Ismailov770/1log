@@ -443,7 +443,6 @@
     const textarea = qs("#message-text");
     if (textarea) textarea.placeholder = tr("messagePlaceholder");
     setText("#message-editor .editor__hint", tr("messageMarkdown"));
-    setBtn("#message-save", tr("messageSave"));
     setText("#message-preview .preview__title", tr("messagePreviewTitle"));
     setBtn('#screen-message [data-action="edit-message"]', tr("messageEdit"));
     setBtn("#message-next", tr("messageNext"));
@@ -713,6 +712,23 @@
 
     const btnStart = qs("#btn-start");
     const btnStop = qs("#btn-stop");
+    const btnRefresh = qs('#screen-dashboard [data-action="refresh-stats"]');
+    const btnCreate = qs('#screen-dashboard [data-nav="interval"]');
+    const actionsStack = qs("#dashboard-actions");
+
+    const hasLaunched = Boolean(state.schedule.startAt) || state.dispatchStatus !== "idle";
+
+    if (btnCreate) btnCreate.hidden = hasLaunched;
+    if (actionsStack) actionsStack.hidden = !hasLaunched;
+
+    if (!hasLaunched) {
+      btnStart.hidden = true;
+      btnStop.hidden = true;
+      if (btnRefresh) btnRefresh.hidden = true;
+      return;
+    }
+
+    if (btnRefresh) btnRefresh.hidden = false;
     btnStart.hidden = state.dispatchStatus === "running";
     btnStop.hidden = state.dispatchStatus !== "running";
   };
@@ -759,7 +775,7 @@
     list.replaceChildren(
       ...state.accounts.map((acc) => {
         const el = document.createElement("div");
-        el.className = "item-card";
+        el.className = "item-card item-card--account";
         el.dataset.accountId = acc.id;
 
         const tag = statusTag(acc.status);
@@ -767,21 +783,25 @@
         el.innerHTML = `
           <div class="item-card__left">
             <div class="avatar">${accountInitials(acc.name)}</div>
-            <div class="item-card__main">
-              <div class="item-card__title">${escapeHtml(acc.name)}</div>
-              <div class="item-card__meta">
-                <span>+${escapeHtml(acc.phone)}</span>
-                <span class="${tag.cls}">${tag.text}</span>
+            <div class="account-card__main">
+              <div class="account-card__top">
+                <div class="account-card__name">${escapeHtml(acc.name)}</div>
                 <span class="badge">${acc.groupsCount} ${escapeHtml(tr("unitGroups"))}</span>
               </div>
+              <div class="account-card__meta">+${escapeHtml(acc.phone)}</div>
+              <div class="account-card__status"><span class="${tag.cls}">${tag.text}</span></div>
             </div>
           </div>
           <div class="item-card__actions">
             <button class="action action--primary" type="button" data-action="toggle-account" data-account-id="${acc.id}" aria-label="Пауза/Старт">
-              <svg class="icon icon--sm"><use href="#${acc.status === "active" ? "i-pause" : "i-play"}"></use></svg>
+              ${
+                acc.status === "active"
+                  ? `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>`
+                  : `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>`
+              }
             </button>
             <button class="action action--danger" type="button" data-action="delete-account" data-account-id="${acc.id}" aria-label="Удалить">
-              <svg class="icon icon--sm"><use href="#i-trash"></use></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
             </button>
           </div>
         `;
@@ -794,21 +814,38 @@
     const editor = qs("#message-editor");
     const preview = qs("#message-preview");
     const status = qs("#message-status");
-    const saveBtn = qs("#message-save");
+    const bubble = qs("#message-preview .bubble");
+    const toggle = qs("#message-preview-toggle");
 
     const has = Boolean(state.message && state.message.trim().length);
     if (has && messageMode !== "edit") {
       editor.hidden = true;
       preview.hidden = false;
-      saveBtn.hidden = true;
       status.textContent = tr("statusAdded");
       status.classList.remove("status-pill--muted");
       status.classList.add("status-pill--ok");
       qs("#message-preview-text").textContent = state.message;
+
+      const text = String(state.message || "");
+      const lines = text.split(/\r?\n/).length;
+      const isLong = text.length > 260 || lines > 10;
+      if (bubble) {
+        bubble.classList.toggle("is-collapsible", isLong);
+        bubble.classList.toggle("is-expanded", isLong && messagePreviewExpanded);
+      }
+      if (toggle) {
+        toggle.hidden = !isLong;
+        toggle.setAttribute("aria-expanded", isLong && messagePreviewExpanded ? "true" : "false");
+      }
     } else {
       editor.hidden = false;
       preview.hidden = true;
-      saveBtn.hidden = false;
+      messagePreviewExpanded = false;
+      if (bubble) bubble.classList.remove("is-collapsible", "is-expanded");
+      if (toggle) {
+        toggle.hidden = true;
+        toggle.setAttribute("aria-expanded", "false");
+      }
       if (has) {
         status.textContent = tr("statusAdded");
         status.classList.remove("status-pill--muted");
@@ -838,7 +875,7 @@
     list.replaceChildren(
       ...state.groups.map((g) => {
         const el = document.createElement("div");
-        el.className = "item-card";
+        el.className = "item-card item-card--group";
         el.dataset.groupId = g.id;
         el.innerHTML = `
           <div class="item-card__left">
@@ -1359,6 +1396,7 @@
   };
 
   let messageMode = "auto"; // auto | edit
+  let messagePreviewExpanded = false;
   let state = loadState();
 
   const initTelegram = () => {
@@ -1403,31 +1441,36 @@
         if (action === "lang") return openLanguagePicker();
         if (action === "menu") return openMenu();
         if (action === "modal-close") return modal.close();
+        if (action === "toggle-preview") {
+          const bubble = act.closest(".bubble");
+          if (!bubble || !bubble.classList.contains("is-collapsible")) return;
+          messagePreviewExpanded = !messagePreviewExpanded;
+          bubble.classList.toggle("is-expanded", messagePreviewExpanded);
+          act.setAttribute("aria-expanded", messagePreviewExpanded ? "true" : "false");
+          return;
+        }
 
         if (action === "add-account") return openAddAccount();
         if (action === "accounts-next") return setRoute("message");
-        if (action === "message-next") return setRoute("groups");
-        if (action === "groups-next") return setRoute("interval");
-
-        if (action === "save-message") {
-          const text = qs("#message-text").value || "";
-          if (!text.trim()) {
+        if (action === "message-next") {
+          const text = (qs("#message-text") && !qs("#message-editor").hidden ? qs("#message-text").value : state.message) || "";
+          if (!String(text).trim()) {
             toast(tr("toastNeedText"));
             haptic("notification", "error");
             return;
           }
-          state.message = text;
+          state.message = String(text);
           messageMode = "auto";
+          messagePreviewExpanded = false;
           saveState();
-          toast(tr("toastSaved"));
-          haptic("notification", "success");
-          renderMessage();
-          return;
+          return setRoute("groups");
         }
+        if (action === "groups-next") return setRoute("interval");
 
         if (action === "edit-message") {
           haptic("selection");
           messageMode = "edit";
+          messagePreviewExpanded = false;
           qs("#message-text").value = state.message || "";
           renderMessage();
           return;
