@@ -427,7 +427,7 @@
     if (statLabels[3]) statLabels[3].textContent = tr("dashLabelInterval");
     if (statLabels[4]) statLabels[4].textContent = tr("dashLabelStart");
     if (statLabels[5]) statLabels[5].textContent = tr("dashLabelEnd");
-    setBtn('#screen-dashboard [data-nav="interval"]', tr("dashCreate"));
+    setBtn('#screen-dashboard [data-action="create-flow"]', tr("dashCreate"));
     setBtn("#btn-stop", tr("dashStop"));
     setBtn("#btn-start", tr("dashStart"));
     setBtn('#screen-dashboard [data-action="refresh-stats"]', tr("dashRefresh"));
@@ -649,6 +649,13 @@
     render();
   };
 
+  const continueSetupFlow = () => {
+    if (!state.accounts.length) return setRoute("accounts");
+    if (!state.message || !state.message.trim()) return setRoute("message");
+    if (!state.groups.some((g) => g.selected)) return setRoute("groups");
+    return setRoute("interval");
+  };
+
   const setActiveNav = () => {
     qsa("[data-nav]").forEach((btn) => {
       const target = btn.getAttribute("data-nav");
@@ -713,7 +720,7 @@
     const btnStart = qs("#btn-start");
     const btnStop = qs("#btn-stop");
     const btnRefresh = qs('#screen-dashboard [data-action="refresh-stats"]');
-    const btnCreate = qs('#screen-dashboard [data-nav="interval"]');
+    const btnCreate = qs('#screen-dashboard [data-action="create-flow"]');
     const actionsStack = qs("#dashboard-actions");
 
     const hasLaunched = Boolean(state.schedule.startAt) || state.dispatchStatus !== "idle";
@@ -1441,6 +1448,10 @@
         if (action === "lang") return openLanguagePicker();
         if (action === "menu") return openMenu();
         if (action === "modal-close") return modal.close();
+        if (action === "create-flow") {
+          haptic("selection");
+          return continueSetupFlow();
+        }
         if (action === "toggle-preview") {
           const bubble = act.closest(".bubble");
           if (!bubble || !bubble.classList.contains("is-collapsible")) return;

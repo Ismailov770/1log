@@ -449,6 +449,8 @@ body{
 }
 .chip.is-active{background:var(--blue);color:#fff}
 .chip--wide{width:100%;margin-top:6px}
+#screen-interval .chip--wide{margin-top:10px;margin-bottom:12px}
+#screen-interval #btn-launch{margin-top:12px}
 
 .bottom-nav{
   position:fixed;
