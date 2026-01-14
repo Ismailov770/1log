@@ -18,7 +18,7 @@ const json = (res, statusCode, body) => {
   res.end(payload);
 };
 
-const readBody = async (req, maxBytes = 1_000_000) => {
+const readBody = async (req, maxBytes = 10_000_000) => {
   const chunks = [];
   let size = 0;
   for await (const chunk of req) {
@@ -50,6 +50,77 @@ const ensureDataDir = async () => {
 
 const statePath = (key) => path.join(DATA_DIR, `state-${key}.json`);
 
+const readRecord = async (file) => {
+  try {
+    const raw = await fs.readFile(file, "utf8");
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object" && parsed.state && typeof parsed.state === "object") return parsed;
+    return { state: {} };
+  } catch {
+    return { state: {} };
+  }
+};
+
+const writeRecord = async (file, state, reason = "") => {
+  const payload = { state: state && typeof state === "object" ? state : {}, reason: reason || "", updatedAt: new Date().toISOString() };
+  await fs.writeFile(file, JSON.stringify(payload, null, 2), "utf8");
+  return payload;
+};
+
+const getBodyState = (rawBody) => {
+  try {
+    const parsed = rawBody ? JSON.parse(rawBody) : {};
+    const state = parsed && typeof parsed === "object" && parsed.state && typeof parsed.state === "object" ? parsed.state : null;
+    const reason = parsed && typeof parsed === "object" ? String(parsed.reason || "") : "";
+    return { state, reason };
+  } catch {
+    return { state: null, reason: "" };
+  }
+};
+
+const ensureShape = (s) => {
+  const state = s && typeof s === "object" ? { ...s } : {};
+  if (!state.stats || typeof state.stats !== "object") state.stats = { sentOk: 0, sentFail: 0 };
+  if (!Array.isArray(state.accounts)) state.accounts = [];
+  if (!Array.isArray(state.groups)) state.groups = [];
+  if (!Array.isArray(state.messageImages)) state.messageImages = [];
+  if (!state.interval || typeof state.interval !== "object") state.interval = { freqHours: null, durationDays: null };
+  if (!state.schedule || typeof state.schedule !== "object") state.schedule = { startAt: null, endAt: null };
+  if (typeof state.dispatchStatus !== "string") state.dispatchStatus = "idle";
+  if (typeof state.message !== "string") state.message = "";
+  if (typeof state.lang !== "string") state.lang = "ru";
+  if (typeof state.version !== "number") state.version = 2;
+  return state;
+};
+
+const bumpStats = (state) => {
+  if (state.dispatchStatus !== "running") return state;
+  const bumpOk = Math.floor(Math.random() * 30) + 1;
+  const bumpFail = Math.random() < 0.2 ? 1 : 0;
+  return { ...state, stats: { sentOk: (state.stats?.sentOk || 0) + bumpOk, sentFail: (state.stats?.sentFail || 0) + bumpFail } };
+};
+
+const refreshGroups = (state) => {
+  const groups = Array.isArray(state.groups) ? state.groups : [];
+  const nextGroups = groups.map((g) => {
+    const ok = Math.random() > 0.18;
+    const groupsCount = Number(g.groupsCount || 0) + (Math.random() > 0.7 ? Math.floor(Math.random() * 6) : 0);
+    return { ...g, ok, groupsCount };
+  });
+  if (!nextGroups.some((g) => g.selected) && nextGroups[0]) {
+    nextGroups[0] = { ...nextGroups[0], selected: true, ok: true };
+  }
+  return { ...state, groups: nextGroups };
+};
+
+const launchDispatch = (state) => {
+  const durationDays = Number(state.interval?.durationDays || 0);
+  const startAt = new Date().toISOString();
+  const end = new Date();
+  end.setDate(end.getDate() + (durationDays > 0 ? durationDays : 1));
+  return { ...state, dispatchStatus: "running", schedule: { startAt, endAt: end.toISOString() } };
+};
+
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
@@ -63,27 +134,70 @@ const server = http.createServer(async (req, res) => {
       const file = statePath(key);
 
       if (req.method === "GET") {
-        try {
-          const raw = await fs.readFile(file, "utf8");
-          return json(res, 200, JSON.parse(raw));
-        } catch {
-          return json(res, 200, { state: {} });
-        }
+        return json(res, 200, await readRecord(file));
       }
 
       if (req.method === "POST") {
         const raw = await readBody(req);
-        const parsed = raw ? JSON.parse(raw) : {};
-        const payload = {
-          state: parsed && typeof parsed === "object" && parsed.state ? parsed.state : {},
-          reason: parsed && typeof parsed === "object" ? parsed.reason || "" : "",
-          updatedAt: new Date().toISOString(),
-        };
-        await fs.writeFile(file, JSON.stringify(payload, null, 2), "utf8");
-        return json(res, 200, { ok: true });
+        const { state, reason } = getBodyState(raw);
+        const nextState = ensureShape(state);
+        const payload = await writeRecord(file, nextState, reason);
+        return json(res, 200, payload);
       }
 
       return json(res, 405, { error: "Method not allowed" });
+    }
+
+    if (url.pathname === "/miniapp/stats/refresh") {
+      if (req.method !== "POST") return json(res, 405, { error: "Method not allowed" });
+      await ensureDataDir();
+      const key = getUserKey(req, url);
+      const file = statePath(key);
+      const raw = await readBody(req);
+      const { state: incomingState, reason } = getBodyState(raw);
+      const base = ensureShape(incomingState || (await readRecord(file)).state);
+      const next = bumpStats(base);
+      const payload = await writeRecord(file, next, reason || "refresh-stats");
+      return json(res, 200, payload);
+    }
+
+    if (url.pathname === "/miniapp/groups/refresh") {
+      if (req.method !== "POST") return json(res, 405, { error: "Method not allowed" });
+      await ensureDataDir();
+      const key = getUserKey(req, url);
+      const file = statePath(key);
+      const raw = await readBody(req);
+      const { state: incomingState, reason } = getBodyState(raw);
+      const base = ensureShape(incomingState || (await readRecord(file)).state);
+      const next = refreshGroups(base);
+      const payload = await writeRecord(file, next, reason || "refresh-groups");
+      return json(res, 200, payload);
+    }
+
+    if (url.pathname === "/miniapp/dispatch/launch") {
+      if (req.method !== "POST") return json(res, 405, { error: "Method not allowed" });
+      await ensureDataDir();
+      const key = getUserKey(req, url);
+      const file = statePath(key);
+      const raw = await readBody(req);
+      const { state: incomingState, reason } = getBodyState(raw);
+      const base = ensureShape(incomingState || (await readRecord(file)).state);
+      const next = launchDispatch(base);
+      const payload = await writeRecord(file, next, reason || "dispatch-launch");
+      return json(res, 200, payload);
+    }
+
+    if (url.pathname === "/miniapp/dispatch/stop") {
+      if (req.method !== "POST") return json(res, 405, { error: "Method not allowed" });
+      await ensureDataDir();
+      const key = getUserKey(req, url);
+      const file = statePath(key);
+      const raw = await readBody(req);
+      const { state: incomingState, reason } = getBodyState(raw);
+      const base = ensureShape(incomingState || (await readRecord(file)).state);
+      const next = { ...base, dispatchStatus: "stopped" };
+      const payload = await writeRecord(file, next, reason || "dispatch-stop");
+      return json(res, 200, payload);
     }
 
     return json(res, 404, { error: "Not found" });

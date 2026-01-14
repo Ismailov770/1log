@@ -1,6 +1,6 @@
 (() => {
-  // Lokal holat (state) shu kalit orqali localStorage'da turadi.
-  // Bekend yo'q bo'lsa ham ilova ishlashi uchun hamma narsa shu yerda saqlanadi.
+  // State localStorage'da turadi.
+  // Backend bo'lmasa ham shu bilan ishlaydi.
   const STORAGE_KEY = "oneLogState:v1";
   const STATE_VERSION = 2;
 
@@ -47,7 +47,7 @@
       toastNeedMessage: "Добавьте сообщение",
       toastNeedGroups: "Выберите группы",
       addAccountTitle: "Добавить аккаунт",
-      addAccountPhoneHint: "Введите номер Узбекистана: 999065281 или 998999065281 (код +998 добавится автоматически).",
+      addAccountPhoneHint: "Введите номер в международном формате: +998999065281, +7..., +1... (с кодом страны).",
       addAccountPhoneLabel: "Телефон",
       addAccountGetCode: "Получить код",
       addAccountCodeTitle: "Подтверждение",
@@ -57,7 +57,7 @@
       addAccount2faTitle: "2FA пароль",
       addAccount2faLabel: "2FA пароль",
       addAccount2faHint: "Укажите пароль двухэтапной аутентификации (2FA), если он включён.",
-      toastPhoneInvalid: "Введите корректный телефон",
+      toastPhoneInvalid: "Введите корректный телефон (международный формат, с кодом страны)",
       toastCodeSent: (phone) => `Код отправлен на ${phone}`,
       toastEnterCode: "Введите код",
       toastEnter2fa: "Введите 2FA пароль",
@@ -168,7 +168,7 @@
       toastNeedMessage: "Avval xabar qo‘shing",
       toastNeedGroups: "Guruhlarni tanlang",
       addAccountTitle: "Akkaunt qo‘shish",
-      addAccountPhoneHint: "Oʻzbekiston raqamini kiriting: 999065281 yoki 998999065281 (+998 avtomatik qoʻshiladi).",
+      addAccountPhoneHint: "Telefon raqamini xalqaro formatda kiriting: +998999065281, +7..., +1... (davlat kodi bilan).",
       addAccountPhoneLabel: "Telefon",
       addAccountGetCode: "Kod olish",
       addAccountCodeTitle: "Tasdiqlash",
@@ -178,7 +178,7 @@
       addAccount2faTitle: "2FA parol",
       addAccount2faLabel: "2FA parol",
       addAccount2faHint: "Agar 2FA yoqilgan bo‘lsa, parolni kiriting.",
-      toastPhoneInvalid: "Telefon raqamini to‘g‘ri kiriting",
+      toastPhoneInvalid: "Telefon raqamini to‘g‘ri kiriting (xalqaro format, davlat kodi bilan)",
       toastCodeSent: (phone) => `Kod yuborildi: ${phone}`,
       toastEnterCode: "Kod kiriting",
       toastEnter2fa: "2FA parolni kiriting",
@@ -289,7 +289,7 @@
       toastNeedMessage: "Аввал хабар қўшинг",
       toastNeedGroups: "Гуруҳларни танланг",
       addAccountTitle: "Аккаунт қўшиш",
-      addAccountPhoneHint: "Ўзбекистон рақамини киритинг: 999065281 ёки 998999065281 (+998 автоматик қўшилади).",
+      addAccountPhoneHint: "Телефон рақамини халқаро форматда киритинг: +998999065281, +7..., +1... (давлат коди билан).",
       addAccountPhoneLabel: "Телефон",
       addAccountGetCode: "Код олиш",
       addAccountCodeTitle: "Тасдиқлаш",
@@ -299,7 +299,7 @@
       addAccount2faTitle: "2FA парол",
       addAccount2faLabel: "2FA парол",
       addAccount2faHint: "Агар 2FA ёқилган бўлса, паролни киритинг.",
-      toastPhoneInvalid: "Телефон рақамини тўғри киритинг",
+      toastPhoneInvalid: "Телефон рақамини тўғри киритинг (халқаро формат, давлат коди билан)",
       toastCodeSent: (phone) => `Код юборилди: ${phone}`,
       toastEnterCode: "Код киритинг",
       toastEnter2fa: "2FA паролни киритинг",
@@ -445,7 +445,8 @@
     setText("#message-editor .editor__hint", tr("messageMarkdown"));
     setText("#message-preview .preview__title", tr("messagePreviewTitle"));
     setBtn('#screen-message [data-action="edit-message"]', tr("messageEdit"));
-    setBtn("#message-next", tr("messageNext"));
+    setBtn("#message-next", tr("messageSave"));
+    setBtn("#message-next-preview", tr("messageSave"));
 
     setText("#screen-groups .title h1", tr("groupsTitle"));
     setText("#screen-groups .title__sub", tr("groupsSub"));
@@ -490,25 +491,25 @@
 
   const nowIso = () => new Date().toISOString();
 
-  // Ilovaning asosiy holati (bitta joyda saqlaymiz).
+  // Asosiy state.
   const defaultState = () => ({
     version: STATE_VERSION,
     route: "dashboard",
     lang: "ru",
-    dispatchStatus: "idle", // idle | running | stopped
+    dispatchStatus: "idle", // idle/running/stopped
     stats: {
       sentOk: 0,
       sentFail: 0,
     },
     accounts: [],
     message: "",
+    messageImages: [],
     groups: [
       { id: "1log_1", title: "1LOG_1", folderLabel: "Папка с чатами", groupsCount: 67, selected: false, ok: true },
       { id: "1log_2", title: "1LOG_2", folderLabel: "Папка с чатами", groupsCount: 93, selected: false, ok: true },
       { id: "1log_3", title: "1LOG_3", folderLabel: "Папка с чатами", groupsCount: 96, selected: false, ok: true },
       { id: "1log_4", title: "1LOG_4", folderLabel: "Папка с чатами", groupsCount: 100, selected: false, ok: true },
     ],
-    groupsImported: false,
     interval: {
       freqHours: null,
       durationDays: null,
@@ -519,13 +520,15 @@
     },
   });
 
-  // Eski state formatlari bo'lsa, shu yerda "migratsiya" qilamiz.
+  // Eski state bo'lsa shu yerda moslaymiz.
   const migrateState = (raw) => {
     const base = defaultState();
     const merged = { ...base, ...(raw && typeof raw === "object" ? raw : {}) };
     if (!merged.version || merged.version !== STATE_VERSION) {
       merged.version = STATE_VERSION;
     }
+    if (!Array.isArray(merged.messageImages)) merged.messageImages = [];
+    if ("groupsImported" in merged) delete merged.groupsImported;
     return merged;
   };
 
@@ -540,8 +543,8 @@
     }
   };
 
-  // Har safar state o'zgarsa shu funksiya orqali saqlab qo'yamiz.
-  // Bekend ulanganida shu joydan sync (push) qilish ham qulay.
+  // State o'zgarsa shu saqlaydi.
+  // Backend ulangan bo'lsa push ham shu yerda.
   const saveState = (_reason = "") => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -551,13 +554,14 @@
     scheduleSync(_reason);
   };
 
-  // --- Bekendga ulash uchun "skeleton" ---
+  // Backend ulash joyi.
   // Sozlash:
-  // - `index.html` ichida `window.__APP_CONFIG__ = { backendEnabled: true, backendBaseUrl: "https://api.example.com" }`
+  // - `index.html`: `window.__APP_CONFIG__ = { backendEnabled: true, backendBaseUrl: "https://api.example.com" }`
   // - yoki localStorage: `localStorage.setItem("1log_backend", JSON.stringify({ backendEnabled: true, backendBaseUrl: "..." }))`
   const BACKEND = {
     enabled: false,
     baseUrl: "",
+    userKey: "",
   };
   const BACKEND_STORAGE_KEY = "1log_backend";
   const loadBackendConfig = () => {
@@ -579,30 +583,34 @@
         ? new URLSearchParams(window.location.search)
         : null;
     const fromQuery = params && params.get("backend") ? { backendEnabled: true, backendBaseUrl: params.get("backend") } : {};
+    if (params && params.get("userKey")) fromQuery.backendUserKey = params.get("userKey");
 
     const cfg = { ...fromStorage, ...fromWindow, ...fromQuery };
     const baseUrl = String(cfg.backendBaseUrl || cfg.baseUrl || "").trim().replace(/\/+$/, "");
     const enabled = Boolean(cfg.backendEnabled ?? cfg.enabled);
+    const userKey = String(cfg.backendUserKey || cfg.userKey || "").trim();
     BACKEND.baseUrl = baseUrl;
     BACKEND.enabled = Boolean(enabled && baseUrl);
+    BACKEND.userKey = userKey;
   };
   loadBackendConfig();
 
   let syncTimer = null;
   const scheduleSync = (reason = "") => {
     if (!BACKEND.enabled || !BACKEND.baseUrl) return;
-    if (reason === "pull") return; // serverdan olgandan keyin qayta push qilmaymiz
+    if (reason === "pull") return; // pull bo'lsa push yo'q
     clearTimeout(syncTimer);
     syncTimer = setTimeout(() => {
       backendPushState(reason).catch(() => {});
     }, 500);
   };
 
-  // Bekend so'rovlarida Telegram Mini App `initData`ni yuborish odatda yetarli bo'ladi.
-  // Backend tomonda initData verifikatsiya qilinadi va user bilan bog'lanadi.
+  // Telegram bo'lsa initData yuboramiz.
+  // Backend o'zi tekshiradi.
   const backendRequest = async (path, options = {}) => {
     const headers = new Headers(options.headers || {});
     headers.set("Content-Type", "application/json");
+    if (BACKEND.userKey) headers.set("X-User-Key", BACKEND.userKey);
     if (tg && typeof tg.initData === "string" && tg.initData) {
       headers.set("X-Telegram-Init-Data", tg.initData);
     }
@@ -611,20 +619,56 @@
     return res.json();
   };
 
-  // Bekenddan state olish (ixtiyoriy).
-  const backendPullState = async () => {
-    if (!BACKEND.enabled || !BACKEND.baseUrl) return;
-    const remote = await backendRequest("/miniapp/state", { method: "GET" });
-    const remoteState = remote && typeof remote === "object" && "state" in remote ? remote.state : remote;
-    state = migrateState(remoteState);
+  // Backendga faqat kerakli state ketadi (masalan `route` ketmaydi).
+  const getPersistedState = () => ({
+    version: state.version,
+    lang: state.lang,
+    dispatchStatus: state.dispatchStatus,
+    stats: state.stats,
+    accounts: state.accounts,
+    message: state.message,
+    messageImages: state.messageImages,
+    groups: state.groups,
+    interval: state.interval,
+    schedule: state.schedule,
+  });
+
+  const applyRemoteState = (remoteState) => {
+    const keepRoute = state.route;
+    state = migrateState({ ...remoteState, route: keepRoute });
     saveState("pull");
     render();
   };
 
-  // Bekendga state yuborish (ixtiyoriy).
+  const backendMutate = async (path, reason = "") => {
+    if (!BACKEND.enabled || !BACKEND.baseUrl) return;
+    const remote = await backendRequest(path, {
+      method: "POST",
+      body: JSON.stringify({ state: getPersistedState(), reason }),
+    });
+    const remoteState = remote && typeof remote === "object" && "state" in remote ? remote.state : remote;
+    applyRemoteState(remoteState);
+  };
+
+  // Backenddan state olish.
+  const backendPullState = async () => {
+    if (!BACKEND.enabled || !BACKEND.baseUrl) return;
+    const remote = await backendRequest("/miniapp/state", { method: "GET" });
+    const remoteState = remote && typeof remote === "object" && "state" in remote ? remote.state : remote;
+
+    // Server bo'sh bo'lsa, lokalni yozib qo'yamiz.
+    if (remoteState && typeof remoteState === "object" && Object.keys(remoteState).length === 0) {
+      await backendPushState("bootstrap");
+      return;
+    }
+
+    applyRemoteState(remoteState);
+  };
+
+  // Backendga state yuborish.
   const backendPushState = async (_reason = "") => {
     if (!BACKEND.enabled || !BACKEND.baseUrl) return;
-    await backendRequest("/miniapp/state", { method: "POST", body: JSON.stringify({ state, reason: _reason }) });
+    await backendRequest("/miniapp/state", { method: "POST", body: JSON.stringify({ state: getPersistedState(), reason: _reason }) });
   };
 
   const toastEl = () => qs("#toast");
@@ -683,7 +727,7 @@
 
   const continueSetupFlow = () => {
     if (!state.accounts.length) return setRoute("accounts");
-    if (!state.message || !state.message.trim()) return setRoute("message");
+    if (!(state.message && state.message.trim()) && !(Array.isArray(state.messageImages) && state.messageImages.length)) return setRoute("message");
     if (!state.groups.some((g) => g.selected)) return setRoute("groups");
     return setRoute("interval");
   };
@@ -856,14 +900,53 @@
     const bubble = qs("#message-preview .bubble");
     const toggle = qs("#message-preview-toggle");
 
-    const has = Boolean(state.message && state.message.trim().length);
+    const images = Array.isArray(state.messageImages) ? state.messageImages : [];
+    const hasText = Boolean(state.message && state.message.trim().length);
+    const hasImages = images.length > 0;
+    const has = hasText || hasImages;
+
+    const renderMedia = (container, editable) => {
+      if (!container) return;
+      if (!images.length) {
+        container.hidden = true;
+        container.replaceChildren();
+        return;
+      }
+      container.hidden = false;
+      container.replaceChildren(
+        ...images.map((img) => {
+          const item = document.createElement("div");
+          item.className = "media-item";
+
+          const imageEl = document.createElement("img");
+          imageEl.src = img.dataUrl;
+          imageEl.alt = img.name || "image";
+          item.append(imageEl);
+
+          if (editable) {
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "media-item__remove";
+            remove.textContent = "×";
+            remove.setAttribute("data-action", "remove-message-image");
+            remove.setAttribute("data-image-id", String(img.id || ""));
+            remove.setAttribute("aria-label", "Remove");
+            item.append(remove);
+          }
+
+          return item;
+        }),
+      );
+    };
+
     if (has && messageMode !== "edit") {
       editor.hidden = true;
       preview.hidden = false;
       status.textContent = tr("statusAdded");
       status.classList.remove("status-pill--muted");
       status.classList.add("status-pill--ok");
-      qs("#message-preview-text").textContent = state.message;
+      qs("#message-preview-text").textContent = state.message || "";
+      renderMedia(qs("#message-preview-media"), false);
 
       const text = String(state.message || "");
       const lines = text.split(/\r?\n/).length;
@@ -885,6 +968,7 @@
         toggle.hidden = true;
         toggle.setAttribute("aria-expanded", "false");
       }
+      renderMedia(qs("#message-media"), true);
       if (has) {
         status.textContent = tr("statusAdded");
         status.classList.remove("status-pill--muted");
@@ -909,21 +993,8 @@
     const list = qs("#groups-list");
     const next = qs("#groups-next");
     const status = qs("#groups-status");
-    const importBox = qs("#groups-import");
     const refreshBtn = qs('#screen-groups [data-action="refresh-groups"]');
     const selected = state.groups.filter((g) => g.selected);
-
-    const shouldShowImport = Boolean(state.message && state.message.trim()) && !state.groupsImported;
-    if (importBox) importBox.hidden = !shouldShowImport;
-    if (shouldShowImport) {
-      if (list) list.hidden = true;
-      if (refreshBtn) refreshBtn.hidden = true;
-      if (next) next.hidden = true;
-      status.textContent = tr("statusNotAdded");
-      status.classList.add("status-pill--muted");
-      status.classList.remove("status-pill--ok");
-      return;
-    }
 
     if (list) list.hidden = false;
     if (refreshBtn) refreshBtn.hidden = false;
@@ -1024,27 +1095,30 @@
   };
 
   const openAddAccount = () => {
-    // Real backend bo'lsa: bu flow (telefon -> kod -> 2FA) serverga ketadi va server akkauntni ulab beradi.
-    // Hozircha demo: tekshiruvlardan o'tsa, akkauntni localStorage'ga qo'shib qo'yamiz.
+    // Real backendda bu flow serverda bo'ladi.
+    // Hozir demo: tekshiruv ok bo'lsa lokalga yozamiz.
     const normalizePhone = (raw) => {
-      const digits = String(raw || "").replace(/\D+/g, "");
+      const input = String(raw || "").trim();
+      const digits = input.replace(/\D+/g, "");
       if (!digits) return null;
+
+      const hasPlus = input.startsWith("+");
+      if (hasPlus) {
+        if (digits.length < 7 || digits.length > 15) return null;
+        return digits;
+      }
+
+      // Eski UZ format ham yuradi.
       if (digits.length === 9) return `998${digits}`;
-      if (digits.length === 12 && digits.startsWith("998")) return digits;
+
+      if (digits.length >= 10 && digits.length <= 15) return digits;
       return null;
     };
 
-    const formatUzLocal = (nineDigits) => {
-      const d = String(nineDigits || "").replace(/\D+/g, "").slice(0, 9);
-      const p1 = d.slice(0, 2);
-      const p2 = d.slice(2, 5);
-      const p3 = d.slice(5, 7);
-      const p4 = d.slice(7, 9);
-      return [p1, p2, p3, p4].filter(Boolean).join(" ");
-    };
-
-    const formatPhone = (digits) => {
-      const d = String(digits || "");
+    const formatPhone = (value) => {
+      const normalized = normalizePhone(value);
+      const d = normalized || String(value || "").replace(/\D+/g, "");
+      if (!d) return "";
       if (d.startsWith("998") && d.length === 12) {
         const cc = d.slice(0, 3);
         const a = d.slice(3, 5);
@@ -1058,6 +1132,7 @@
 
     const session = {
       phone: "",
+      phoneRaw: "",
       code: "",
       password: "",
       need2fa: false,
@@ -1090,28 +1165,27 @@
       if (step === "phone") {
         const phone = document.createElement("input");
         phone.type = "tel";
-        phone.placeholder = "99 906 52 81";
-        phone.inputMode = "numeric";
-        phone.autocomplete = "tel-national";
-
-        const phonePrefix = document.createElement("span");
-        phonePrefix.className = "phone-prefix";
-        phonePrefix.textContent = "+998";
+        phone.placeholder = "+998999065281";
+        phone.inputMode = "tel";
+        phone.autocomplete = "tel";
 
         const phoneBox = document.createElement("div");
         phoneBox.className = "phone-input";
-        phoneBox.append(phonePrefix, phone);
+        phoneBox.append(phone);
 
-        const setPhoneDigits = (rawValue) => {
-          let digits = String(rawValue || "").replace(/\D+/g, "");
-          if (digits.startsWith("998")) digits = digits.slice(3);
-          digits = digits.slice(0, 9);
-          session.phone = digits;
-          phone.value = formatUzLocal(digits);
+        const setPhoneRaw = (rawValue) => {
+          const v = String(rawValue || "");
+          const hasPlus = v.trimStart().startsWith("+");
+          let digits = v.replace(/\D+/g, "");
+          digits = digits.slice(0, 15);
+          const sanitized = hasPlus ? `+${digits}` : digits;
+          session.phoneRaw = sanitized;
+          session.phone = sanitized;
+          phone.value = sanitized;
         };
 
-        setPhoneDigits(session.phone);
-        phone.addEventListener("input", () => setPhoneDigits(phone.value));
+        setPhoneRaw(session.phoneRaw || session.phone);
+        phone.addEventListener("input", () => setPhoneRaw(phone.value));
 
         const hint = document.createElement("p");
         hint.className = "hint";
@@ -1121,13 +1195,14 @@
 
         const cancel = button(tr("cancel"), "btn btn-secondary", () => modal.close());
         const next = button(tr("addAccountGetCode"), "btn btn-primary", () => {
-          const digits = normalizePhone(session.phone);
+          const digits = normalizePhone(session.phoneRaw || session.phone);
           if (!digits) {
             toast(tr("toastPhoneInvalid"));
             haptic("notification", "error");
             return;
           }
           session.phone = digits;
+          session.phoneRaw = `+${digits}`;
           session.code = "";
           session.password = "";
           session.need2fa = false;
@@ -1280,8 +1355,58 @@
     }
   };
 
+  const MESSAGE_IMAGE_MAX_COUNT = 5;
+  const MESSAGE_IMAGE_MAX_BYTES = 1_000_000;
+
+  const readFileAsDataUrl = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(reader.error || new Error("read_error"));
+      reader.readAsDataURL(file);
+    });
+
+  const addMessageImages = async (files) => {
+    const inputFiles = Array.from(files || []);
+    if (!inputFiles.length) return;
+
+    if (!Array.isArray(state.messageImages)) state.messageImages = [];
+
+    const maxMb = Math.round((MESSAGE_IMAGE_MAX_BYTES / 1024 / 1024) * 10) / 10;
+
+    for (const f of inputFiles) {
+      if (state.messageImages.length >= MESSAGE_IMAGE_MAX_COUNT) {
+        toast(`Ko‘pi bilan ${MESSAGE_IMAGE_MAX_COUNT} ta rasm qo‘shish mumkin`);
+        haptic("notification", "error");
+        break;
+      }
+
+      if (!String(f.type || "").startsWith("image/")) {
+        toast("Rasm faylini tanlang");
+        haptic("notification", "error");
+        continue;
+      }
+      if (typeof f.size === "number" && f.size > MESSAGE_IMAGE_MAX_BYTES) {
+        toast(`Fayl juda katta (maks. ${maxMb} MB)`);
+        haptic("notification", "error");
+        continue;
+      }
+
+      try {
+        const dataUrl = await readFileAsDataUrl(f);
+        state.messageImages.push({ id: cryptoId(), name: f.name, type: f.type, size: f.size, dataUrl });
+      } catch {
+        toast("Rasmni o‘qib bo‘lmadi");
+        haptic("notification", "error");
+      }
+    }
+
+    saveState();
+    renderMessage();
+  };
+
   const launchDispatch = () => {
-    // Real backend bo'lsa: shu joyda /dispatch/start kabi endpoint chaqiriladi.
+    // Real backendda dispatch endpoint bor.
     if (!state.interval.freqHours || !state.interval.durationDays) {
       toast(tr("toastNeedInterval"));
       haptic("notification", "error");
@@ -1293,7 +1418,7 @@
       setRoute("accounts");
       return;
     }
-    if (!state.message || !state.message.trim()) {
+    if (!(state.message && state.message.trim()) && !(Array.isArray(state.messageImages) && state.messageImages.length)) {
       toast(tr("toastNeedMessage"));
       haptic("notification", "error");
       setRoute("message");
@@ -1303,6 +1428,17 @@
       toast(tr("toastNeedGroups"));
       haptic("notification", "error");
       setRoute("groups");
+      return;
+    }
+
+    if (BACKEND.enabled) {
+      backendMutate("/miniapp/dispatch/launch", "dispatch-launch")
+        .then(() => {
+          toast(tr("toastDispatchStarted"));
+          haptic("notification", "success");
+          setRoute("dashboard");
+        })
+        .catch(() => {});
       return;
     }
     state.dispatchStatus = "running";
@@ -1317,6 +1453,16 @@
   };
 
   const stopDispatch = () => {
+    if (BACKEND.enabled) {
+      backendMutate("/miniapp/dispatch/stop", "dispatch-stop")
+        .then(() => {
+          toast(tr("toastStopped"));
+          haptic("notification", "warning");
+          render();
+        })
+        .catch(() => {});
+      return;
+    }
     state.dispatchStatus = "stopped";
     saveState();
     toast(tr("toastStopped"));
@@ -1334,7 +1480,22 @@
   };
 
   const refreshStats = () => {
-    // Real backend bo'lsa: statistika serverdan olinadi (/stats).
+    // Real backendda stats serverdan keladi.
+    if (BACKEND.enabled) {
+      if (state.dispatchStatus !== "running") {
+        toast(tr("toastNoActiveDispatch"));
+        haptic("impact", "light");
+        return;
+      }
+      backendMutate("/miniapp/stats/refresh", "refresh-stats")
+        .then(() => {
+          toast(tr("toastStatsUpdated"));
+          haptic("impact", "light");
+          renderDashboard();
+        })
+        .catch(() => {});
+      return;
+    }
     if (state.dispatchStatus === "running") {
       const bumpOk = Math.floor(Math.random() * 30) + 1;
       const bumpFail = Math.random() < 0.2 ? 1 : 0;
@@ -1380,8 +1541,18 @@
   };
 
   const refreshGroups = () => {
-    // Real backend bo'lsa: guruhlar ro'yxati serverdan keladi (/groups) va shu yerda state'ga yoziladi.
-    if (!state.groupsImported && state.message && state.message.trim()) state.groupsImported = true;
+    // Real backendda groups serverdan keladi.
+    if (BACKEND.enabled) {
+      backendMutate("/miniapp/groups/refresh", "refresh-groups")
+        .then(() => {
+          toast(tr("toastUpdated"));
+          haptic("impact", "light");
+          renderGroups();
+          renderDashboard();
+        })
+        .catch(() => {});
+      return;
+    }
     state.groups = state.groups.map((g) => {
       const ok = Math.random() > 0.18;
       const groupsCount = g.groupsCount + (Math.random() > 0.7 ? Math.floor(Math.random() * 6) : 0);
@@ -1454,7 +1625,7 @@
   };
 
   const logoutReset = () => {
-    // "Akkauntdan chiqish" — lokal state'ni tozalab, hammasini noldan boshlaymiz.
+    // Logout: lokal state tozalanadi.
     const keepLang = state.lang && I18N[state.lang] ? state.lang : "ru";
     try {
       localStorage.removeItem(STORAGE_KEY);
@@ -1485,7 +1656,7 @@
     modal.open({ title: tr("menuTitle"), body, footer: [close] });
   };
 
-  let messageMode = "auto"; // auto | edit
+  let messageMode = "auto"; // auto/edit
   let messagePreviewExpanded = false;
   let state = loadState();
 
@@ -1544,11 +1715,31 @@
           return;
         }
 
+        if (action === "insert-image") {
+          const input = qs("#message-images-input");
+          if (!input) return;
+          input.value = "";
+          input.click();
+          return;
+        }
+
+        if (action === "remove-message-image") {
+          const id = act.getAttribute("data-image-id");
+          if (!id) return;
+          state.messageImages = (Array.isArray(state.messageImages) ? state.messageImages : []).filter((x) => String(x.id) !== String(id));
+          saveState();
+          haptic("selection");
+          renderMessage();
+          return;
+        }
+
         if (action === "add-account") return openAddAccount();
         if (action === "accounts-next") return setRoute("message");
         if (action === "message-next") {
           const text = (qs("#message-text") && !qs("#message-editor").hidden ? qs("#message-text").value : state.message) || "";
-          if (!String(text).trim()) {
+          const hasText = Boolean(String(text).trim());
+          const hasImages = Boolean(Array.isArray(state.messageImages) && state.messageImages.length);
+          if (!hasText && !hasImages) {
             toast(tr("toastNeedText"));
             haptic("notification", "error");
             return;
@@ -1584,22 +1775,6 @@
               renderDashboard();
             }
           }
-          return;
-        }
-        if (action === "groups-import-link") {
-          const url = act.getAttribute("data-link");
-          if (!url) return;
-
-          copyText(url);
-
-          state.groupsImported = true;
-          if (!state.groups.some((g) => g.selected) && state.groups[0]) {
-            state.groups[0].selected = true;
-            state.groups[0].ok = true;
-          }
-          saveState();
-          renderGroups();
-          renderDashboard();
           return;
         }
         if (action === "toggle-account") return toggleAccount(act.getAttribute("data-account-id"));
@@ -1653,6 +1828,16 @@
       }
     });
 
+    document.addEventListener("change", (e) => {
+      const target = e.target instanceof Element ? e.target : null;
+      if (!target) return;
+      if (target.id !== "message-images-input") return;
+      const input = target;
+      const files = input.files;
+      input.value = "";
+      addMessageImages(files).catch(() => {});
+    });
+
     document.addEventListener("click", (e) => {
       const t = e.target instanceof Element ? e.target : null;
       if (!t) return;
@@ -1687,7 +1872,6 @@
   initEvents();
   render();
 
-  // Backend yoqilgan bo'lsa, shu yerda serverdan state'ni olib kelib "local"ga yozib qo'ysak bo'ladi.
-  // Hozircha BACKEND.enabled = false, shuning uchun bu chaqiriq hech narsa qilmaydi.
+  // Backend yoqilsa startda state'ni tortamiz.
   backendPullState().catch(() => {});
 })();

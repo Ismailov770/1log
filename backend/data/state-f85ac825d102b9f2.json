@@ -1,0 +1,33 @@
+{
+  "state": {
+    "message": "salom",
+    "stats": {
+      "sentOk": 12,
+      "sentFail": 0
+    },
+    "groups": [
+      {
+        "ok": true,
+        "title": "G1",
+        "groupsCount": 1,
+        "selected": true,
+        "id": "g1"
+      }
+    ],
+    "version": 2,
+    "interval": {
+      "freqHours": 1,
+      "durationDays": 1
+    },
+    "schedule": {
+      "startAt": "2026-01-14T19:31:55.924Z",
+      "endAt": "2026-01-15T19:31:55.924Z"
+    },
+    "messageImages": [],
+    "lang": "uz",
+    "accounts": [],
+    "dispatchStatus": "running"
+  },
+  "reason": "groups",
+  "updatedAt": "2026-01-14T19:31:55.927Z"
+}

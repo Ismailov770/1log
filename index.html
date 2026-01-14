@@ -149,6 +149,7 @@
                 <path d="M17 19H3" />
               </svg>
             </button>
+            <input id="message-images-input" type="file" accept="image/*" multiple hidden />
           </div>
         </div>
       </div>
@@ -348,6 +349,7 @@
           </div>
           <textarea class="editor__textarea" id="message-text" maxlength="4096"
             placeholder="Введите текст вашего сообщения..."></textarea>
+          <div class="media-grid" id="message-media" hidden></div>
           <div class="editor__footer">
             <span class="editor__hint">Поддержка Markdown</span>
             <span class="editor__count"><span id="message-count">0</span> / 4096</span>
@@ -358,6 +360,7 @@
           <h2 class="preview__title">Рассылаемое сообщение</h2>
           <div class="bubble">
             <pre class="bubble__text" id="message-preview-text"></pre>
+            <div class="bubble__media media-grid" id="message-preview-media" hidden></div>
             <button class="icon-btn bubble__copy" type="button" data-action="copy-message" aria-label="Копировать">
               <svg class="icon icon--sm">
                 <use href="#i-copy"></use>
