@@ -40,14 +40,14 @@
       toastStatsUpdated: "Статистика обновлена",
       toastNoActiveDispatch: "Нет активной рассылки",
       toastStopped: "Остановлено",
-      toastDispatchStarted: "Рассылка запущена",
+      toastDispatchStarted: "Настройка завершена. Рассылка запущена.",
       toastNeedText: "Введите текст",
       toastNeedInterval: "Сначала настройте интервал",
       toastNeedAccount: "Добавьте аккаунт",
       toastNeedMessage: "Добавьте сообщение",
       toastNeedGroups: "Выберите группы",
       addAccountTitle: "Добавить аккаунт",
-      addAccountPhoneHint: "Введите номер телефона. После этого мы попросим код подтверждения.",
+      addAccountPhoneHint: "Введите номер Узбекистана: 999065281 или 998999065281 (код +998 добавится автоматически).",
       addAccountPhoneLabel: "Телефон",
       addAccountGetCode: "Получить код",
       addAccountCodeTitle: "Подтверждение",
@@ -161,14 +161,14 @@
       toastStatsUpdated: "Statistika yangilandi",
       toastNoActiveDispatch: "Faol jo'natma yo‘q",
       toastStopped: "To‘xtatildi",
-      toastDispatchStarted: "Jo'natma boshlandi",
+      toastDispatchStarted: "Sozlamalar yakunlandi. Jo'natma boshlandi.",
       toastNeedText: "Matn kiriting",
       toastNeedInterval: "Avval intervalni sozlang",
       toastNeedAccount: "Avval akkaunt qo‘shing",
       toastNeedMessage: "Avval xabar qo‘shing",
       toastNeedGroups: "Guruhlarni tanlang",
       addAccountTitle: "Akkaunt qo‘shish",
-      addAccountPhoneHint: "Telefon raqamini kiriting. Keyin tasdiqlash kodi so‘raladi.",
+      addAccountPhoneHint: "Oʻzbekiston raqamini kiriting: 999065281 yoki 998999065281 (+998 avtomatik qoʻshiladi).",
       addAccountPhoneLabel: "Telefon",
       addAccountGetCode: "Kod olish",
       addAccountCodeTitle: "Tasdiqlash",
@@ -282,14 +282,14 @@
       toastStatsUpdated: "Статистика янгиланди",
       toastNoActiveDispatch: "Фаол жўнатма йўқ",
       toastStopped: "Тўхтатилди",
-      toastDispatchStarted: "Жўнатма бошланди",
+      toastDispatchStarted: "Созламалар якунланди. Жўнатма бошланди.",
       toastNeedText: "Матн киритинг",
       toastNeedInterval: "Аввал интервални созланг",
       toastNeedAccount: "Аввал аккаунт қўшинг",
       toastNeedMessage: "Аввал хабар қўшинг",
       toastNeedGroups: "Гуруҳларни танланг",
       addAccountTitle: "Аккаунт қўшиш",
-      addAccountPhoneHint: "Телефон рақамини киритинг. Кейин тасдиқлаш коди сўралади.",
+      addAccountPhoneHint: "Ўзбекистон рақамини киритинг: 999065281 ёки 998999065281 (+998 автоматик қўшилади).",
       addAccountPhoneLabel: "Телефон",
       addAccountGetCode: "Код олиш",
       addAccountCodeTitle: "Тасдиқлаш",
@@ -508,6 +508,7 @@
       { id: "1log_3", title: "1LOG_3", folderLabel: "Папка с чатами", groupsCount: 96, selected: false, ok: true },
       { id: "1log_4", title: "1LOG_4", folderLabel: "Папка с чатами", groupsCount: 100, selected: false, ok: true },
     ],
+    groupsImported: false,
     interval: {
       freqHours: null,
       durationDays: null,
@@ -551,11 +552,41 @@
   };
 
   // --- Bekendga ulash uchun "skeleton" ---
-  // Hozircha o'chirilgan (enabled: false). Bekend tayyor bo'lsa true qiling va baseUrl yozing.
+  // Sozlash:
+  // - `index.html` ichida `window.__APP_CONFIG__ = { backendEnabled: true, backendBaseUrl: "https://api.example.com" }`
+  // - yoki localStorage: `localStorage.setItem("1log_backend", JSON.stringify({ backendEnabled: true, backendBaseUrl: "..." }))`
   const BACKEND = {
     enabled: false,
     baseUrl: "",
   };
+  const BACKEND_STORAGE_KEY = "1log_backend";
+  const loadBackendConfig = () => {
+    const fromWindow =
+      typeof window !== "undefined" && window && typeof window.__APP_CONFIG__ === "object" && window.__APP_CONFIG__
+        ? window.__APP_CONFIG__
+        : {};
+
+    let fromStorage = {};
+    try {
+      const raw = localStorage.getItem(BACKEND_STORAGE_KEY);
+      if (raw) fromStorage = JSON.parse(raw);
+    } catch {
+      // ignore
+    }
+
+    const params =
+      typeof window !== "undefined" && window && typeof window.location?.search === "string"
+        ? new URLSearchParams(window.location.search)
+        : null;
+    const fromQuery = params && params.get("backend") ? { backendEnabled: true, backendBaseUrl: params.get("backend") } : {};
+
+    const cfg = { ...fromStorage, ...fromWindow, ...fromQuery };
+    const baseUrl = String(cfg.backendBaseUrl || cfg.baseUrl || "").trim().replace(/\/+$/, "");
+    const enabled = Boolean(cfg.backendEnabled ?? cfg.enabled);
+    BACKEND.baseUrl = baseUrl;
+    BACKEND.enabled = Boolean(enabled && baseUrl);
+  };
+  loadBackendConfig();
 
   let syncTimer = null;
   const scheduleSync = (reason = "") => {
@@ -584,7 +615,8 @@
   const backendPullState = async () => {
     if (!BACKEND.enabled || !BACKEND.baseUrl) return;
     const remote = await backendRequest("/miniapp/state", { method: "GET" });
-    state = migrateState(remote);
+    const remoteState = remote && typeof remote === "object" && "state" in remote ? remote.state : remote;
+    state = migrateState(remoteState);
     saveState("pull");
     render();
   };
@@ -877,7 +909,24 @@
     const list = qs("#groups-list");
     const next = qs("#groups-next");
     const status = qs("#groups-status");
+    const importBox = qs("#groups-import");
+    const refreshBtn = qs('#screen-groups [data-action="refresh-groups"]');
     const selected = state.groups.filter((g) => g.selected);
+
+    const shouldShowImport = Boolean(state.message && state.message.trim()) && !state.groupsImported;
+    if (importBox) importBox.hidden = !shouldShowImport;
+    if (shouldShowImport) {
+      if (list) list.hidden = true;
+      if (refreshBtn) refreshBtn.hidden = true;
+      if (next) next.hidden = true;
+      status.textContent = tr("statusNotAdded");
+      status.classList.add("status-pill--muted");
+      status.classList.remove("status-pill--ok");
+      return;
+    }
+
+    if (list) list.hidden = false;
+    if (refreshBtn) refreshBtn.hidden = false;
 
     list.replaceChildren(
       ...state.groups.map((g) => {
@@ -939,6 +988,7 @@
     durationValue.textContent = state.interval.durationDays ? tr("intervalDurValue", state.interval.durationDays) : tr("intervalDurNone");
 
     const configured = Boolean(state.interval.freqHours && state.interval.durationDays);
+    launch.hidden = !configured;
     launch.disabled = !configured;
     if (configured) {
       status.textContent = tr("intervalStatusOk");
@@ -980,8 +1030,17 @@
       const digits = String(raw || "").replace(/\D+/g, "");
       if (!digits) return null;
       if (digits.length === 9) return `998${digits}`;
-      if (digits.length < 9 || digits.length > 15) return null;
-      return digits;
+      if (digits.length === 12 && digits.startsWith("998")) return digits;
+      return null;
+    };
+
+    const formatUzLocal = (nineDigits) => {
+      const d = String(nineDigits || "").replace(/\D+/g, "").slice(0, 9);
+      const p1 = d.slice(0, 2);
+      const p2 = d.slice(2, 5);
+      const p3 = d.slice(5, 7);
+      const p4 = d.slice(7, 9);
+      return [p1, p2, p3, p4].filter(Boolean).join(" ");
     };
 
     const formatPhone = (digits) => {
@@ -1031,19 +1090,38 @@
       if (step === "phone") {
         const phone = document.createElement("input");
         phone.type = "tel";
-        phone.placeholder = "998991234567";
+        phone.placeholder = "99 906 52 81";
         phone.inputMode = "numeric";
-        phone.value = session.phone;
+        phone.autocomplete = "tel-national";
+
+        const phonePrefix = document.createElement("span");
+        phonePrefix.className = "phone-prefix";
+        phonePrefix.textContent = "+998";
+
+        const phoneBox = document.createElement("div");
+        phoneBox.className = "phone-input";
+        phoneBox.append(phonePrefix, phone);
+
+        const setPhoneDigits = (rawValue) => {
+          let digits = String(rawValue || "").replace(/\D+/g, "");
+          if (digits.startsWith("998")) digits = digits.slice(3);
+          digits = digits.slice(0, 9);
+          session.phone = digits;
+          phone.value = formatUzLocal(digits);
+        };
+
+        setPhoneDigits(session.phone);
+        phone.addEventListener("input", () => setPhoneDigits(phone.value));
 
         const hint = document.createElement("p");
         hint.className = "hint";
         hint.textContent = tr("addAccountPhoneHint");
 
-        body.append(hint, field(tr("addAccountPhoneLabel"), phone));
+        body.append(hint, field(tr("addAccountPhoneLabel"), phoneBox));
 
         const cancel = button(tr("cancel"), "btn btn-secondary", () => modal.close());
         const next = button(tr("addAccountGetCode"), "btn btn-primary", () => {
-          const digits = normalizePhone(phone.value);
+          const digits = normalizePhone(session.phone);
           if (!digits) {
             toast(tr("toastPhoneInvalid"));
             haptic("notification", "error");
@@ -1303,11 +1381,16 @@
 
   const refreshGroups = () => {
     // Real backend bo'lsa: guruhlar ro'yxati serverdan keladi (/groups) va shu yerda state'ga yoziladi.
+    if (!state.groupsImported && state.message && state.message.trim()) state.groupsImported = true;
     state.groups = state.groups.map((g) => {
       const ok = Math.random() > 0.18;
       const groupsCount = g.groupsCount + (Math.random() > 0.7 ? Math.floor(Math.random() * 6) : 0);
       return { ...g, ok, groupsCount };
     });
+    if (!state.groups.some((g) => g.selected) && state.groups[0]) {
+      state.groups[0].selected = true;
+      state.groups[0].ok = true;
+    }
     saveState();
     toast(tr("toastUpdated"));
     haptic("impact", "light");
@@ -1491,7 +1574,32 @@
         if (action === "copy-group") {
           const id = act.getAttribute("data-group-id");
           const g = state.groups.find((x) => x.id === id);
-          if (g) copyText(`${g.title}`);
+          if (g) {
+            copyText(`${g.title}`);
+            if (!g.selected) {
+              g.selected = true;
+              g.ok = true;
+              saveState();
+              renderGroups();
+              renderDashboard();
+            }
+          }
+          return;
+        }
+        if (action === "groups-import-link") {
+          const url = act.getAttribute("data-link");
+          if (!url) return;
+
+          copyText(url);
+
+          state.groupsImported = true;
+          if (!state.groups.some((g) => g.selected) && state.groups[0]) {
+            state.groups[0].selected = true;
+            state.groups[0].ok = true;
+          }
+          saveState();
+          renderGroups();
+          renderDashboard();
           return;
         }
         if (action === "toggle-account") return toggleAccount(act.getAttribute("data-account-id"));

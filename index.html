@@ -1,483 +1,580 @@
 <!doctype html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
-    <meta name="theme-color" content="#05238B" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-      rel="stylesheet"
-    />
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+  <meta name="theme-color" content="#05238B" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    rel="stylesheet" />
     <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
     <title>1LOG</title>
     <link rel="stylesheet" href="./app.css" />
+    <script>
+      window.__APP_CONFIG__ = {
+        backendEnabled: false,
+        backendBaseUrl: "",
+      };
+    </script>
     <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
     <script src="./app.js" defer></script>
   </head>
-  <body>
-    <svg
-      aria-hidden="true"
-      class="sr-only"
-      width="0"
-      height="0"
-      style="position: absolute; left: -9999px; top: -9999px"
-    >
-      <symbol id="i-grid" viewBox="0 0 24 24">
-        <path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM13 10h8v11h-8V10zM3 13h8v8H3v-8z" />
-      </symbol>
-      <symbol id="i-users" viewBox="0 0 24 24">
-        <path
-          d="M16 11c1.7 0 3-1.3 3-3S17.7 5 16 5s-3 1.3-3 3 1.3 3 3 3zM8 11c1.7 0 3-1.3 3-3S9.7 5 8 5 5 6.3 5 8s1.3 3 3 3zm0 2c-2.7 0-5 1.3-5 4v2h10v-2c0-2.7-2.3-4-5-4zm8 0c-.4 0-.9.1-1.3.2 1.4 1 2.3 2.4 2.3 4.3v2h6v-2c0-2.7-2.3-4-5-4z"
-        />
-      </symbol>
-      <symbol id="i-chat" viewBox="0 0 24 24">
-        <path d="M4 4h16v12H7l-3 3V4zm4 5h8v2H8V9zm0 4h5v2H8v-2z" />
-      </symbol>
-      <symbol id="i-folders" viewBox="0 0 24 24">
-        <path
-          d="M10 4l2 2h8c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2h6z"
-        />
-      </symbol>
-      <symbol id="i-timer" viewBox="0 0 24 24">
-        <path
-          d="M9 2h6v2H9V2zm3 4c4.4 0 8 3.6 8 8s-3.6 8-8 8-8-3.6-8-8 3.6-8 8-8zm0 2c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm-1 2h2v5l4 2-.9 1.8L11 15V10z"
-        />
-      </symbol>
-      <symbol id="i-plus" viewBox="0 0 24 24">
-        <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5z" />
-      </symbol>
-      <symbol id="i-user-add" viewBox="0 0 24 24">
-        <path
-          d="M15 11c1.7 0 3-1.3 3-3S16.7 5 15 5s-3 1.3-3 3 1.3 3 3 3zM6 11c1.7 0 3-1.3 3-3S7.7 5 6 5 3 6.3 3 8s1.3 3 3 3zm0 2c-2.2 0-4 1.8-4 4v3h8v-3c0-2.2-1.8-4-4-4zm9 0c-.7 0-1.4.2-2 .5 1.2 1 2 2.4 2 4.1v3h7v-3c0-2.2-1.8-4-4-4h-3z"
-        />
-        <path d="M19 3h2v3h3v2h-3v3h-2V8h-3V6h3V3z" />
-      </symbol>
-      <symbol id="i-trash" viewBox="0 0 24 24">
-        <path d="M7 6h10l-1 16H8L7 6zm3-3h4l1 2H9l1-2zM5 6h14v2H5V6z" />
-      </symbol>
-      <symbol id="i-pause" viewBox="0 0 24 24">
-        <path d="M6 5h5v14H6V5zm7 0h5v14h-5V5z" />
-      </symbol>
-      <symbol id="i-play" viewBox="0 0 24 24">
-        <path d="M8 5l12 7-12 7V5z" />
-      </symbol>
-      <symbol id="i-copy" viewBox="0 0 24 24">
-        <path d="M8 8h12v14H8V8zM4 2h12v4H6v12H4V2z" />
-      </symbol>
-      <symbol id="i-refresh" viewBox="0 0 24 24">
-        <path
-          d="M17.7 6.3A8 8 0 104 12h2a6 6 0 116-6V3l4 4-4 4V8a4 4 0 10-4 4v2a6 6 0 006-6c0-1.6-.6-3.1-1.9-4.4z"
-        />
-      </symbol>
-      <symbol id="i-check" viewBox="0 0 24 24">
-        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z" />
-      </symbol>
-      <symbol id="i-x" viewBox="0 0 24 24">
-        <path
-          d="M18.3 5.7L12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3 1.4 1.4z"
-        />
-      </symbol>
-      <symbol id="i-globe" viewBox="0 0 24 24">
-        <path
-          d="M12 2a10 10 0 100 20 10 10 0 000-20zm7.9 9H16c-.1-2.3-.6-4.3-1.4-5.9A8 8 0 0119.9 11zM12 4c1.1 1.6 1.8 3.9 2 7H10c.2-3.1.9-5.4 2-7zM4.1 13H8c.1 2.3.6 4.3 1.4 5.9A8 8 0 014.1 13zM8 11H4.1a8 8 0 015.3-5.9C8.6 6.7 8.1 8.7 8 11zm2 2h4c-.2 3.1-.9 5.4-2 7-1.1-1.6-1.8-3.9-2-7zm6 0h3.9a8 8 0 01-5.3 5.9c.8-1.6 1.3-3.6 1.4-5.9z"
-        />
-      </symbol>
-      <symbol id="i-menu" viewBox="0 0 24 24">
-        <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z" />
-      </symbol>
-      <symbol id="i-headset" viewBox="0 0 24 24">
-        <path
-          d="M12 3a9 9 0 00-9 9v6a3 3 0 003 3h2v-8H5v-1a7 7 0 0114 0v1h-3v8h2a3 3 0 003-3v-6a9 9 0 00-9-9z"
-        />
-      </symbol>
-      <symbol id="i-calendar" viewBox="0 0 24 24">
-        <path d="M7 2h2v2h6V2h2v2h3v18H4V4h3V2zm13 6H4v12h16V8z" />
-      </symbol>
-      <symbol id="i-paper-plane" viewBox="0 0 24 24">
-        <path d="M2 12l20-9-6 18-6-6-8-3zm8.9 3.1l4 4 2.4-7.1-6.4 3.1z" />
-      </symbol>
-      <symbol id="i-stop" viewBox="0 0 24 24">
-        <path d="M7 7h10v10H7V7z" />
-      </symbol>
-      <symbol id="i-pencil" viewBox="0 0 24 24">
-        <path
-          d="M3 17.2V21h3.8L18.9 8.9l-3.8-3.8L3 17.2zm18-10.4a1 1 0 000-1.4l-1.4-1.4a1 1 0 00-1.4 0l-1.4 1.4 3.8 3.8L21 6.8z"
-        />
-      </symbol>
-      <symbol id="i-smile" viewBox="0 0 24 24">
-        <path
-          d="M12 2a10 10 0 100 20 10 10 0 000-20zm-4 8a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm8 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm-8.2 4h8.4a4.5 4.5 0 01-8.4 0z"
-        />
-      </symbol>
-      <symbol id="i-image" viewBox="0 0 24 24">
-        <path
-          d="M21 5v14H3V5h18zm-2 2H5v10l4-4 3 3 4-5 3 4V7zm-9 3a2 2 0 100-4 2 2 0 000 4z"
-        />
-      </symbol>
-      <symbol id="i-gear" viewBox="0 0 24 24">
-        <path
-          d="M19.4 13a7.5 7.5 0 000-2l2-1.5-2-3.5-2.3.8a7.7 7.7 0 00-1.7-1L15 3h-6l-.4 2.8a7.7 7.7 0 00-1.7 1L4.6 6l-2 3.5L4.6 11a7.5 7.5 0 000 2l-2 1.5 2 3.5 2.3-.8a7.7 7.7 0 001.7 1L9 21h6l.4-2.8a7.7 7.7 0 001.7-1l2.3.8 2-3.5L19.4 13zM12 15a3 3 0 110-6 3 3 0 010 6z"
-        />
-      </symbol>
-      <symbol id="i-support-agent" viewBox="0 0 24 24">
-        <path
-          d="M21 12.22C21 6.73 16.74 3 12 3c-4.69 0-9 3.65-9 9.28-.6.34-1 .98-1 1.72v2c0 1.1.9 2 2 2h1v-6.1c0-3.87 3.13-7 7-7s7 3.13 7 7V19h-8v2h8c1.1 0 2-.9 2-2v-1.22c.59-.31 1-.92 1-1.64v-2.3c0-.7-.41-1.31-1-1.62"
-        />
-        <circle cx="9" cy="13" r="1" />
-        <circle cx="15" cy="13" r="1" />
-        <path
-          d="M18 11.03C17.52 8.18 15.04 6 12.05 6c-3.03 0-6.29 2.51-6.03 6.45 2.47-1.01 4.33-3.21 4.86-5.89 1.31 2.63 4 4.44 7.12 4.47"
-        />
-      </symbol>
-    </svg>
 
-    <div class="app" id="app">
-      <header class="topbar" aria-label="1LOG">
-        <div class="topbar__pill">
-          <div class="topbar__brand" role="img" aria-label="1LOG">
-            <span class="topbar__logo">1LOG</span>
-          </div>
-          <div>
+<body>
+  <svg aria-hidden="true" class="sr-only" width="0" height="0" style="position: absolute; left: -9999px; top: -9999px">
+    <symbol id="i-grid" viewBox="0 0 24 24">
+      <path d="M3 3h8v8H3V3zm10 0h8v5h-8V3zM13 10h8v11h-8V10zM3 13h8v8H3v-8z" />
+    </symbol>
+    <symbol id="i-users" viewBox="0 0 24 24">
+      <path
+        d="M16 11c1.7 0 3-1.3 3-3S17.7 5 16 5s-3 1.3-3 3 1.3 3 3 3zM8 11c1.7 0 3-1.3 3-3S9.7 5 8 5 5 6.3 5 8s1.3 3 3 3zm0 2c-2.7 0-5 1.3-5 4v2h10v-2c0-2.7-2.3-4-5-4zm8 0c-.4 0-.9.1-1.3.2 1.4 1 2.3 2.4 2.3 4.3v2h6v-2c0-2.7-2.3-4-5-4z" />
+    </symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24">
+      <path d="M4 4h16v12H7l-3 3V4zm4 5h8v2H8V9zm0 4h5v2H8v-2z" />
+    </symbol>
+    <symbol id="i-folders" viewBox="0 0 24 24">
+      <path d="M10 4l2 2h8c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2h6z" />
+    </symbol>
+    <symbol id="i-timer" viewBox="0 0 24 24">
+      <path
+        d="M9 2h6v2H9V2zm3 4c4.4 0 8 3.6 8 8s-3.6 8-8 8-8-3.6-8-8 3.6-8 8-8zm0 2c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm-1 2h2v5l4 2-.9 1.8L11 15V10z" />
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24">
+      <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5z" />
+    </symbol>
+    <symbol id="i-user-add" viewBox="0 0 24 24">
+      <path
+        d="M15 11c1.7 0 3-1.3 3-3S16.7 5 15 5s-3 1.3-3 3 1.3 3 3 3zM6 11c1.7 0 3-1.3 3-3S7.7 5 6 5 3 6.3 3 8s1.3 3 3 3zm0 2c-2.2 0-4 1.8-4 4v3h8v-3c0-2.2-1.8-4-4-4zm9 0c-.7 0-1.4.2-2 .5 1.2 1 2 2.4 2 4.1v3h7v-3c0-2.2-1.8-4-4-4h-3z" />
+      <path d="M19 3h2v3h3v2h-3v3h-2V8h-3V6h3V3z" />
+    </symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24">
+      <path d="M7 6h10l-1 16H8L7 6zm3-3h4l1 2H9l1-2zM5 6h14v2H5V6z" />
+    </symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24">
+      <path d="M6 5h5v14H6V5zm7 0h5v14h-5V5z" />
+    </symbol>
+    <symbol id="i-play" viewBox="0 0 24 24">
+      <path d="M8 5l12 7-12 7V5z" />
+    </symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24">
+      <path d="M8 8h12v14H8V8zM4 2h12v4H6v12H4V2z" />
+    </symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24">
+      <path d="M17.7 6.3A8 8 0 104 12h2a6 6 0 116-6V3l4 4-4 4V8a4 4 0 10-4 4v2a6 6 0 006-6c0-1.6-.6-3.1-1.9-4.4z" />
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z" />
+    </symbol>
+    <symbol id="i-x" viewBox="0 0 24 24">
+      <path
+        d="M18.3 5.7L12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3 1.4 1.4z" />
+    </symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24">
+      <path
+        d="M12 2a10 10 0 100 20 10 10 0 000-20zm7.9 9H16c-.1-2.3-.6-4.3-1.4-5.9A8 8 0 0119.9 11zM12 4c1.1 1.6 1.8 3.9 2 7H10c.2-3.1.9-5.4 2-7zM4.1 13H8c.1 2.3.6 4.3 1.4 5.9A8 8 0 014.1 13zM8 11H4.1a8 8 0 015.3-5.9C8.6 6.7 8.1 8.7 8 11zm2 2h4c-.2 3.1-.9 5.4-2 7-1.1-1.6-1.8-3.9-2-7zm6 0h3.9a8 8 0 01-5.3 5.9c.8-1.6 1.3-3.6 1.4-5.9z" />
+    </symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24">
+      <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z" />
+    </symbol>
+    <symbol id="i-headset" viewBox="0 0 24 24">
+      <path d="M12 3a9 9 0 00-9 9v6a3 3 0 003 3h2v-8H5v-1a7 7 0 0114 0v1h-3v8h2a3 3 0 003-3v-6a9 9 0 00-9-9z" />
+    </symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24">
+      <path d="M7 2h2v2h6V2h2v2h3v18H4V4h3V2zm13 6H4v12h16V8z" />
+    </symbol>
+    <symbol id="i-paper-plane" viewBox="0 0 24 24">
+      <path d="M2 12l20-9-6 18-6-6-8-3zm8.9 3.1l4 4 2.4-7.1-6.4 3.1z" />
+    </symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24">
+      <path d="M7 7h10v10H7V7z" />
+    </symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24">
+      <path
+        d="M3 17.2V21h3.8L18.9 8.9l-3.8-3.8L3 17.2zm18-10.4a1 1 0 000-1.4l-1.4-1.4a1 1 0 00-1.4 0l-1.4 1.4 3.8 3.8L21 6.8z" />
+    </symbol>
+    <symbol id="i-smile" viewBox="0 0 24 24">
+      <path
+        d="M12 2a10 10 0 100 20 10 10 0 000-20zm-4 8a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm8 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm-8.2 4h8.4a4.5 4.5 0 01-8.4 0z" />
+    </symbol>
+    <symbol id="i-image" viewBox="0 0 24 24">
+      <path d="M21 5v14H3V5h18zm-2 2H5v10l4-4 3 3 4-5 3 4V7zm-9 3a2 2 0 100-4 2 2 0 000 4z" />
+    </symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24">
+      <path
+        d="M19.4 13a7.5 7.5 0 000-2l2-1.5-2-3.5-2.3.8a7.7 7.7 0 00-1.7-1L15 3h-6l-.4 2.8a7.7 7.7 0 00-1.7 1L4.6 6l-2 3.5L4.6 11a7.5 7.5 0 000 2l-2 1.5 2 3.5 2.3-.8a7.7 7.7 0 001.7 1L9 21h6l.4-2.8a7.7 7.7 0 001.7-1l2.3.8 2-3.5L19.4 13zM12 15a3 3 0 110-6 3 3 0 010 6z" />
+    </symbol>
+    <symbol id="i-support-agent" viewBox="0 0 24 24">
+      <path
+        d="M21 12.22C21 6.73 16.74 3 12 3c-4.69 0-9 3.65-9 9.28-.6.34-1 .98-1 1.72v2c0 1.1.9 2 2 2h1v-6.1c0-3.87 3.13-7 7-7s7 3.13 7 7V19h-8v2h8c1.1 0 2-.9 2-2v-1.22c.59-.31 1-.92 1-1.64v-2.3c0-.7-.41-1.31-1-1.62" />
+      <circle cx="9" cy="13" r="1" />
+      <circle cx="15" cy="13" r="1" />
+      <path
+        d="M18 11.03C17.52 8.18 15.04 6 12.05 6c-3.03 0-6.29 2.51-6.03 6.45 2.47-1.01 4.33-3.21 4.86-5.89 1.31 2.63 4 4.44 7.12 4.47" />
+    </symbol>
+  </svg>
 
-            <div class="topbar__actions">
-              <button class="icon-btn" type="button" data-action="support" aria-label="Поддержка">
-                <svg class="icon icon--sm"><use href="#i-support-agent"></use></svg>
-              </button>
-              <button class="icon-btn topbar__lang" type="button" data-action="lang" aria-label="Язык">
-                <svg class="icon icon--sm"><use href="#i-globe"></use></svg>
-                <span>RU</span>
-              </button>
-              <button class="icon-btn" type="button" data-action="menu" aria-label="Меню">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-text-align-start-icon lucide-text-align-start"><path d="M21 5H3"/><path d="M15 12H3"/><path d="M17 19H3"/></svg>
-              </button>
-            </div>
-          </div>
+  <div class="app" id="app">
+    <header class="topbar" aria-label="1LOG">
+      <div class="topbar__pill">
+        <div class="topbar__brand" role="img" aria-label="1LOG">
+          <span class="topbar__logo">1LOG</span>
         </div>
-      </header>
+        <div>
 
-      <main class="content" id="content">
-        <section class="screen" id="screen-dashboard" data-screen>
-          <div class="title-row">
-            <div class="title">
-              <div class="title__h">
-                <svg class="icon title__icon"><use href="#i-grid"></use></svg>
-                <h1>Дашборд</h1>
-              </div>
-              <p class="title__sub">Обзор активности рассылок</p>
-            </div>
-            <div class="status-pill" id="dashboard-status">● Не запущена</div>
-          </div>
-
-          <div class="card-grid" id="dashboard-cards">
-            <div class="stat-card">
-              <div class="stat-card__icon stat-card__icon--green">
-                <svg class="icon"><use href="#i-paper-plane"></use></svg>
-              </div>
-              <div class="stat-card__value"><span id="stat-sent-ok">0</span> / <span id="stat-sent-fail">0</span></div>
-              <div class="stat-card__label">Отправлено сообщений</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card__icon stat-card__icon--blue">
-                <svg class="icon"><use href="#i-users"></use></svg>
-              </div>
-              <div class="stat-card__value" id="stat-accounts">0</div>
-              <div class="stat-card__label">Активные аккаунты</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card__icon stat-card__icon--orange">
-                <svg class="icon"><use href="#i-folders"></use></svg>
-              </div>
-              <div class="stat-card__value" id="stat-groups">0</div>
-              <div class="stat-card__label">Группы</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card__icon stat-card__icon--red">
-                <svg class="icon"><use href="#i-timer"></use></svg>
-              </div>
-              <div class="stat-card__value" id="stat-interval">0 час / 0 день</div>
-              <div class="stat-card__label">Интервал</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card__icon stat-card__icon--blue">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-days-icon lucide-calendar-days"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
-              </div>
-              <div class="stat-card__value" id="stat-start">Не начато</div>
-              <div class="stat-card__label">Начало рассылки</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card__icon stat-card__icon--blue">
-               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-days-icon lucide-calendar-days"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
-              </div>
-              <div class="stat-card__value" id="stat-end">Не начато</div>
-              <div class="stat-card__label">Конец рассылки</div>
-            </div>
-          </div>
-
-          <button class="btn btn-primary btn-full" type="button" data-action="create-flow">
-            <span class="btn__icon">+</span>
-            Создать авто-рассылку
-          </button>
-
-          <div class="actions-stack" id="dashboard-actions" hidden>
-            <button class="btn btn-danger btn-full" type="button" data-action="stop" id="btn-stop">
-              <svg class="icon icon--sm"><use href="#i-stop"></use></svg>
-              СТОП
+          <div class="topbar__actions">
+            <button class="icon-btn" type="button" data-action="support" aria-label="Поддержка">
+              <svg class="icon icon--sm">
+                <use href="#i-support-agent"></use>
+              </svg>
             </button>
-            <button class="btn btn-success btn-full" type="button" data-action="start" id="btn-start">
-              <svg class="icon icon--sm"><use href="#i-play"></use></svg>
-              СТАРТ
+            <button class="icon-btn topbar__lang" type="button" data-action="lang" aria-label="Язык">
+              <svg class="icon icon--sm">
+                <use href="#i-globe"></use>
+              </svg>
+              <span>RU</span>
             </button>
-            <button class="btn btn-secondary btn-full" type="button" data-action="refresh-stats">
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-ccw-icon lucide-refresh-ccw"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-              Обновить статистику
+            <button class="icon-btn" type="button" data-action="menu" aria-label="Меню">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-text-align-start-icon lucide-text-align-start">
+                <path d="M21 5H3" />
+                <path d="M15 12H3" />
+                <path d="M17 19H3" />
+              </svg>
             </button>
           </div>
-        </section>
-
-        <section class="screen" id="screen-accounts" data-screen hidden>
-          <div class="title-row">
-            <div class="title">
-              <div class="title__h">
-                <svg class="icon title__icon"><use href="#i-users"></use></svg>
-                <h1>Аккаунты</h1>
-              </div>
-              <p class="title__sub">Управление аккаунтами</p>
-            </div>
-            <div class="status-pill status-pill--muted" id="accounts-status">× Не добавлен</div>
-          </div>
-
-          <div class="empty" id="accounts-empty">
-            <div class="empty__icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
-  <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
-  <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
-</svg>
-            </div>
-            <p class="empty__text">Добавляйте аккаунты чтобы бот мог отправлять сообщения от вашего имени.</p>
-            <button class="btn btn-primary btn-full" type="button" data-action="add-account">
-              <span class="btn__icon">+</span>
-              Добавить аккаунт
-            </button>
-          </div>
-
-          <div class="list" id="accounts-list" hidden></div>
-
-          <div class="actions-stack" id="accounts-actions" hidden>
-            <button class="btn btn-primary btn-full" type="button" data-action="add-account" id="accounts-add">
-              <span class="btn__icon">+</span>
-              Добавить аккаунт
-            </button>
-            <button class="btn btn-primary btn-full" type="button" data-action="accounts-next" id="accounts-next">
-              Дальше →
-            </button>
-          </div>
-        </section>
-
-        <section class="screen" id="screen-message" data-screen hidden>
-          <div class="title-row">
-            <div class="title">
-              <div class="title__h">
-                <svg class="icon title__icon"><use href="#i-chat"></use></svg>
-                <h1>Сообщение</h1>
-              </div>
-              <p class="title__sub">Создание шаблона сообщение</p>
-            </div>
-            <div class="status-pill status-pill--muted" id="message-status">× Не добавлен</div>
-          </div>
-
-           <div class="editor" id="message-editor">
-             <div class="editor__toolbar">
-              <button class="icon-btn icon-btn--muted" type="button" data-action="insert-image" aria-label="Изображение">
-                <svg class="icon icon--sm"><use href="#i-image"></use></svg>
-              </button>
-            </div>
-            <textarea
-              class="editor__textarea"
-              id="message-text"
-              maxlength="4096"
-              placeholder="Введите текст вашего сообщения..."
-            ></textarea>
-            <div class="editor__footer">
-              <span class="editor__hint">Поддержка Markdown</span>
-              <span class="editor__count"><span id="message-count">0</span> / 4096</span>
-            </div>
-          </div>
-
-          <div class="preview" id="message-preview" hidden>
-            <h2 class="preview__title">Рассылаемое сообщение</h2>
-            <div class="bubble">
-              <pre class="bubble__text" id="message-preview-text"></pre>
-              <button class="icon-btn bubble__copy" type="button" data-action="copy-message" aria-label="Копировать">
-                <svg class="icon icon--sm"><use href="#i-copy"></use></svg>
-              </button>
-              <button
-                class="bubble__chev"
-                type="button"
-                data-action="toggle-preview"
-                id="message-preview-toggle"
-                aria-label="Toggle preview"
-                aria-expanded="false"
-              >
-                ⌄
-              </button>
-            </div>
-            <button class="btn btn-warn btn-full" type="button" data-action="edit-message">
-              <svg class="icon icon--sm"><use href="#i-pencil"></use></svg>
-              Редактировать сообщение
-            </button>
-           
-            <button class="btn btn-primary btn-full" type="button" data-action="message-next" id="message-next-preview" hidden>
-              Дальше →
-            </button>
-          </div>
-
-          <button class="btn btn-primary btn-full" type="button" data-action="message-next" id="message-next">
-            Сохранить
-          </button>
-        </section>
-
-        <section class="screen" id="screen-groups" data-screen hidden>
-          <div class="title-row">
-            <div class="title">
-              <div class="title__h">
-                <svg class="icon title__icon"><use href="#i-folders"></use></svg>
-                <h1>Группы</h1>
-              </div>
-              <p class="title__sub">Добавьте чаты для рассылки</p>
-            </div>
-            <div class="status-pill status-pill--muted" id="groups-status">× Не добавлен</div>
-          </div>
-
-          <div class="list" id="groups-list"></div>
-
-          <button class="btn btn-secondary btn-full" type="button" data-action="refresh-groups">
-           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-cw-icon lucide-refresh-cw"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
-            Обновить
-          </button>
-
-          <button class="btn btn-primary btn-full" type="button" data-action="groups-next" id="groups-next" hidden>
-            Дальше →
-          </button>
-        </section>
-
-        <section class="screen" id="screen-interval" data-screen hidden>
-          <div class="title-row">
-            <div class="title">
-              <div class="title__h">
-                <svg class="icon title__icon"><use href="#i-timer"></use></svg>
-                <h1>Интервал</h1>
-              </div>
-              <p class="title__sub">Настройте периодичности</p>
-            </div>
-            <div class="status-pill status-pill--muted" id="interval-status">× Не настроен</div>
-          </div>
-
-          <div class="setting-card">
-            <div class="setting-card__row">
-              <div class="setting-card__left">
-                <div class="setting-card__icon setting-card__icon--blue">
-                  <svg class="icon"><use href="#i-timer"></use></svg>
-                </div>
-                <div>
-                  <div class="setting-card__title">Частота отправки сообщений:</div>
-                  <div class="setting-card__sub">• как часто отправлять сообщения.</div>
-                  <div class="setting-card__value" id="freq-value"># Не выбран</div>
-                </div>
-              </div>
-              <button class="icon-btn icon-btn--muted" type="button" data-action="freq-custom" aria-label="Настроить">
-                <svg class="icon icon--sm"><use href="#i-gear"></use></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="chips">
-            <button class="chip" type="button" data-freq="1h">Каждый 1 час</button>
-            <button class="chip" type="button" data-freq="3h">Каждые 3 часа</button>
-          </div>
-          <button class="chip chip--wide" type="button" data-action="freq-custom">Свой вариант (в часах)</button>
-
-          <div class="setting-card">
-            <div class="setting-card__row">
-              <div class="setting-card__left">
-                <div class="setting-card__icon setting-card__icon--blue">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendars-icon lucide-calendars"><path d="M12 2v2"/><path d="M15.726 21.01A2 2 0 0 1 14 22H4a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2"/><path d="M18 2v2"/><path d="M2 13h2"/><path d="M8 8h14"/><rect x="8" y="3" width="14" height="14" rx="2"/></svg>
-                </div>
-                <div>
-                  <div class="setting-card__title">Продолжительность рассылки:</div>
-                  <div class="setting-card__sub">• в течение какого времени отправлять сообщения.</div>
-                  <div class="setting-card__value" id="duration-value"># Не указан</div>
-                </div>
-              </div>
-              <button
-                class="icon-btn icon-btn--muted"
-                type="button"
-                data-action="duration-custom"
-                aria-label="Настроить"
-              >
-                <svg class="icon icon--sm"><use href="#i-gear"></use></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="chips">
-            <button class="chip" type="button" data-duration="1d">1 день</button>
-            <button class="chip" type="button" data-duration="3d">3 дня</button>
-          </div>
-          <button class="chip chip--wide" type="button" data-action="duration-custom">Свой вариант (в днях)</button>
-
-          <button class="btn btn-success btn-full" type="button" data-action="launch" id="btn-launch" disabled>
-            <svg class="icon icon--sm"><use href="#i-check"></use></svg>
-            Запустить рассылку
-          </button>
-        </section>
-      </main>
-
-      <nav class="bottom-nav" aria-label="Навигация">
-        <div class="bottom-nav__pill">
-          <button class="nav-item is-active" type="button" data-nav="dashboard" aria-label="Главная">
-            <span class="nav-item__icon"><svg class="icon icon--sm"><use href="#i-grid"></use></svg></span>
-            <span class="nav-item__label">Главная</span>
-          </button>
-          <button class="nav-item" type="button" data-nav="accounts" aria-label="Аккаунты">
-            <span class="nav-item__icon"><svg class="icon icon--sm"><use href="#i-users"></use></svg></span>
-            <span class="nav-item__label">Аккаунты</span>
-          </button>
-          <button class="nav-item" type="button" data-nav="message" aria-label="Сообщение">
-            <span class="nav-item__icon"><svg class="icon icon--sm"><use href="#i-chat"></use></svg></span>
-            <span class="nav-item__label">Сообщение</span>
-          </button>
-          <button class="nav-item" type="button" data-nav="groups" aria-label="Группы">
-            <span class="nav-item__icon"><svg class="icon icon--sm"><use href="#i-folders"></use></svg></span>
-            <span class="nav-item__label">Группы</span>
-          </button>
-          <button class="nav-item" type="button" data-nav="interval" aria-label="Интервал">
-            <span class="nav-item__icon"><svg class="icon icon--sm"><use href="#i-timer"></use></svg></span>
-            <span class="nav-item__label">Интервал</span>
-          </button>
-        </div>
-      </nav>
-
-      <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-
-      <div class="modal" id="modal" hidden>
-        <div class="modal__backdrop" data-action="modal-close"></div>
-        <div class="modal__sheet" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-          <div class="modal__header">
-            <h2 class="modal__title" id="modal-title">Настройка</h2>
-            <button class="icon-btn icon-btn--muted" type="button" data-action="modal-close" aria-label="Закрыть">
-              <svg class="icon icon--sm"><use href="#i-x"></use></svg>
-            </button>
-          </div>
-          <div class="modal__body" id="modal-body"></div>
-          <div class="modal__footer" id="modal-footer"></div>
         </div>
       </div>
+    </header>
+
+    <main class="content" id="content">
+      <section class="screen" id="screen-dashboard" data-screen>
+        <div class="title-row">
+          <div class="title">
+            <div class="title__h">
+              <svg class="icon title__icon">
+                <use href="#i-grid"></use>
+              </svg>
+              <h1>Дашборд</h1>
+            </div>
+            <p class="title__sub">Обзор активности рассылок</p>
+          </div>
+          <div class="status-pill" id="dashboard-status">● Не запущена</div>
+        </div>
+
+        <div class="card-grid" id="dashboard-cards">
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--green">
+              <svg class="icon">
+                <use href="#i-paper-plane"></use>
+              </svg>
+            </div>
+            <div class="stat-card__value"><span id="stat-sent-ok">0</span> / <span id="stat-sent-fail">0</span></div>
+            <div class="stat-card__label">Отправлено сообщений</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--blue">
+              <svg class="icon">
+                <use href="#i-users"></use>
+              </svg>
+            </div>
+            <div class="stat-card__value" id="stat-accounts">0</div>
+            <div class="stat-card__label">Активные аккаунты</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--orange">
+              <svg class="icon">
+                <use href="#i-folders"></use>
+              </svg>
+            </div>
+            <div class="stat-card__value" id="stat-groups">0</div>
+            <div class="stat-card__label">Группы</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--red">
+              <svg class="icon">
+                <use href="#i-timer"></use>
+              </svg>
+            </div>
+            <div class="stat-card__value" id="stat-interval">0 час / 0 день</div>
+            <div class="stat-card__label">Интервал</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--blue">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-calendar-days-icon lucide-calendar-days">
+                <path d="M8 2v4" />
+                <path d="M16 2v4" />
+                <rect width="18" height="18" x="3" y="4" rx="2" />
+                <path d="M3 10h18" />
+                <path d="M8 14h.01" />
+                <path d="M12 14h.01" />
+                <path d="M16 14h.01" />
+                <path d="M8 18h.01" />
+                <path d="M12 18h.01" />
+                <path d="M16 18h.01" />
+              </svg>
+            </div>
+            <div class="stat-card__value" id="stat-start">Не начато</div>
+            <div class="stat-card__label">Начало рассылки</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--blue">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-calendar-days-icon lucide-calendar-days">
+                <path d="M8 2v4" />
+                <path d="M16 2v4" />
+                <rect width="18" height="18" x="3" y="4" rx="2" />
+                <path d="M3 10h18" />
+                <path d="M8 14h.01" />
+                <path d="M12 14h.01" />
+                <path d="M16 14h.01" />
+                <path d="M8 18h.01" />
+                <path d="M12 18h.01" />
+                <path d="M16 18h.01" />
+              </svg>
+            </div>
+            <div class="stat-card__value" id="stat-end">Не начато</div>
+            <div class="stat-card__label">Конец рассылки</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-full" type="button" data-action="create-flow">
+          <span class="btn__icon">+</span>
+          Создать авто-рассылку
+        </button>
+
+        <div class="actions-stack" id="dashboard-actions" hidden>
+          <button class="btn btn-danger btn-full" type="button" data-action="stop" id="btn-stop">
+            <svg class="icon icon--sm">
+              <use href="#i-stop"></use>
+            </svg>
+            СТОП
+          </button>
+          <button class="btn btn-success btn-full" type="button" data-action="start" id="btn-start">
+            <svg class="icon icon--sm">
+              <use href="#i-play"></use>
+            </svg>
+            СТАРТ
+          </button>
+          <button class="btn btn-secondary btn-full" type="button" data-action="refresh-stats">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-refresh-ccw-icon lucide-refresh-ccw">
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+              <path d="M16 16h5v5" />
+            </svg>
+            Обновить статистику
+          </button>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-accounts" data-screen hidden>
+        <div class="title-row">
+          <div class="title">
+            <div class="title__h">
+              <svg class="icon title__icon">
+                <use href="#i-users"></use>
+              </svg>
+              <h1>Аккаунты</h1>
+            </div>
+            <p class="title__sub">Управление аккаунтами</p>
+          </div>
+          <div class="status-pill status-pill--muted" id="accounts-status">× Не добавлен</div>
+        </div>
+
+        <div class="empty" id="accounts-empty">
+          <div class="empty__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-add"
+              viewBox="0 0 16 16">
+              <path
+                d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+              <path
+                d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
+            </svg>
+          </div>
+          <p class="empty__text">Добавляйте аккаунты чтобы бот мог отправлять сообщения от вашего имени.</p>
+          <button class="btn btn-primary btn-full" type="button" data-action="add-account">
+            <span class="btn__icon">+</span>
+            Добавить аккаунт
+          </button>
+        </div>
+
+        <div class="list" id="accounts-list" hidden></div>
+
+        <div class="actions-stack" id="accounts-actions" hidden>
+          <button class="btn btn-primary btn-full" type="button" data-action="add-account" id="accounts-add">
+            <span class="btn__icon">+</span>
+            Добавить аккаунт
+          </button>
+          <button class="btn btn-primary btn-full" type="button" data-action="accounts-next" id="accounts-next">
+            Дальше →
+          </button>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-message" data-screen hidden>
+        <div class="title-row">
+          <div class="title">
+            <div class="title__h">
+              <svg class="icon title__icon">
+                <use href="#i-chat"></use>
+              </svg>
+              <h1>Сообщение</h1>
+            </div>
+            <p class="title__sub">Создание шаблона сообщение</p>
+          </div>
+          <div class="status-pill status-pill--muted" id="message-status">× Не добавлен</div>
+        </div>
+
+        <div class="editor" id="message-editor">
+          <div class="editor__toolbar">
+            <button class="icon-btn icon-btn--muted" type="button" data-action="insert-image" aria-label="Изображение">
+              <svg class="icon icon--sm">
+                <use href="#i-image"></use>
+              </svg>
+            </button>
+          </div>
+          <textarea class="editor__textarea" id="message-text" maxlength="4096"
+            placeholder="Введите текст вашего сообщения..."></textarea>
+          <div class="editor__footer">
+            <span class="editor__hint">Поддержка Markdown</span>
+            <span class="editor__count"><span id="message-count">0</span> / 4096</span>
+          </div>
+        </div>
+
+        <div class="preview" id="message-preview" hidden>
+          <h2 class="preview__title">Рассылаемое сообщение</h2>
+          <div class="bubble">
+            <pre class="bubble__text" id="message-preview-text"></pre>
+            <button class="icon-btn bubble__copy" type="button" data-action="copy-message" aria-label="Копировать">
+              <svg class="icon icon--sm">
+                <use href="#i-copy"></use>
+              </svg>
+            </button>
+            <button class="bubble__chev" type="button" data-action="toggle-preview" id="message-preview-toggle"
+              aria-label="Toggle preview" aria-expanded="false">
+              ⌄
+            </button>
+          </div>
+          <button class="btn btn-warn btn-full" type="button" data-action="edit-message">
+            <svg class="icon icon--sm">
+              <use href="#i-pencil"></use>
+            </svg>
+            Редактировать сообщение
+          </button>
+
+          <button class="btn btn-primary btn-full" type="button" data-action="message-next" id="message-next-preview"
+            hidden>
+            Дальше →
+          </button>
+        </div>
+
+        <button class="btn btn-primary btn-full" type="button" data-action="message-next" id="message-next">
+          Сохранить
+        </button>
+      </section>
+
+      <section class="screen" id="screen-groups" data-screen hidden>
+        <div class="title-row">
+          <div class="title">
+            <div class="title__h">
+              <svg class="icon title__icon">
+                <use href="#i-folders"></use>
+              </svg>
+              <h1>Группы</h1>
+            </div>
+            <p class="title__sub">Добавьте чаты для рассылки</p>
+          </div>
+          <div class="status-pill status-pill--muted" id="groups-status">× Не добавлен</div>
+        </div>
+
+        <div class="list" id="groups-list"></div>
+
+        <div class="import" id="groups-import" hidden>
+          <div class="import__title">Импорт групп из Telegram</div>
+          <div class="import__sub">Выберите любую ссылку — она копируется и открывается в Telegram.</div>
+          <div class="import__links" role="list">
+            <button class="import__link" type="button" data-action="groups-import-link" data-link="https://t.me/your_bot?start=import_1">
+              Telegram ссылка 1
+            </button>
+            <button class="import__link" type="button" data-action="groups-import-link" data-link="https://t.me/your_bot?start=import_2">
+              Telegram ссылка 2
+            </button>
+            <button class="import__link" type="button" data-action="groups-import-link" data-link="https://t.me/your_bot?start=import_3">
+              Telegram ссылка 3
+            </button>
+            <button class="import__link" type="button" data-action="groups-import-link" data-link="https://t.me/your_bot?start=import_4">
+              Telegram ссылка 4
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-secondary btn-full" type="button" data-action="refresh-groups">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-refresh-cw-icon lucide-refresh-cw">
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+            <path d="M21 3v5h-5" />
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+            <path d="M8 16H3v5" />
+          </svg>
+          Обновить
+        </button>
+
+        <button class="btn btn-primary btn-full" type="button" data-action="groups-next" id="groups-next" hidden>
+          Дальше →
+        </button>
+      </section>
+
+      <section class="screen" id="screen-interval" data-screen hidden>
+        <div class="title-row">
+          <div class="title">
+            <div class="title__h">
+              <svg class="icon title__icon">
+                <use href="#i-timer"></use>
+              </svg>
+              <h1>Интервал</h1>
+            </div>
+            <p class="title__sub">Настройте периодичности</p>
+          </div>
+          <div class="status-pill status-pill--muted" id="interval-status">× Не настроен</div>
+        </div>
+
+        <div class="setting-card">
+          <div class="setting-card__row">
+            <div class="setting-card__left">
+              <div class="setting-card__icon setting-card__icon--blue">
+                <svg class="icon">
+                  <use href="#i-timer"></use>
+                </svg>
+              </div>
+              <div>
+                <div class="setting-card__title">Частота отправки сообщений:</div>
+                <div class="setting-card__sub">• как часто отправлять сообщения.</div>
+                <div class="setting-card__value" id="freq-value"># Не выбран</div>
+              </div>
+            </div>
+            <button class="icon-btn icon-btn--muted" type="button" data-action="freq-custom" aria-label="Настроить">
+              <svg class="icon icon--sm">
+                <use href="#i-gear"></use>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="chips">
+          <button class="chip" type="button" data-freq="1h">Каждый 1 час</button>
+          <button class="chip" type="button" data-freq="3h">Каждые 3 часа</button>
+        </div>
+        <button class="chip chip--wide" type="button" data-action="freq-custom">Свой вариант (в часах)</button>
+
+        <div style="margin-top: 24px;" class="setting-card ">
+          <div class="setting-card__row">
+            <div class="setting-card__left">
+              <div class="setting-card__icon setting-card__icon--blue">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-hourglass-icon lucide-hourglass">
+                  <path d="M5 22h14" />
+                  <path d="M5 2h14" />
+                  <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22" />
+                  <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
+                </svg>
+              </div>
+              <div>
+                <div class="setting-card__title">Продолжительность рассылки:</div>
+                <div class="setting-card__sub">• в течение какого времени отправлять сообщения.</div>
+                <div class="setting-card__value" id="duration-value"># Не указан</div>
+              </div>
+            </div>
+            <button class="icon-btn icon-btn--muted" type="button" data-action="duration-custom" aria-label="Настроить">
+              <svg class="icon icon--sm">
+                <use href="#i-gear"></use>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="chips">
+          <button class="chip" type="button" data-duration="1d">1 день</button>
+          <button class="chip" type="button" data-duration="3d">3 дня</button>
+        </div>
+        <button class="chip chip--wide" type="button" data-action="duration-custom">Свой вариант (в днях)</button>
+
+        <button class="btn btn-success btn-full" type="button" data-action="launch" id="btn-launch" disabled>
+          <svg class="icon icon--sm">
+            <use href="#i-check"></use>
+          </svg>
+          Запустить рассылку
+        </button>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Навигация">
+      <div class="bottom-nav__pill">
+        <button class="nav-item is-active" type="button" data-nav="dashboard" aria-label="Главная">
+          <span class="nav-item__icon"><svg class="icon icon--sm">
+              <use href="#i-grid"></use>
+            </svg></span>
+          <span class="nav-item__label">Главная</span>
+        </button>
+        <button class="nav-item" type="button" data-nav="accounts" aria-label="Аккаунты">
+          <span class="nav-item__icon"><svg class="icon icon--sm">
+              <use href="#i-users"></use>
+            </svg></span>
+          <span class="nav-item__label">Аккаунты</span>
+        </button>
+        <button class="nav-item" type="button" data-nav="message" aria-label="Сообщение">
+          <span class="nav-item__icon"><svg class="icon icon--sm">
+              <use href="#i-chat"></use>
+            </svg></span>
+          <span class="nav-item__label">Сообщение</span>
+        </button>
+        <button class="nav-item" type="button" data-nav="groups" aria-label="Группы">
+          <span class="nav-item__icon"><svg class="icon icon--sm">
+              <use href="#i-folders"></use>
+            </svg></span>
+          <span class="nav-item__label">Группы</span>
+        </button>
+        <button class="nav-item" type="button" data-nav="interval" aria-label="Интервал">
+          <span class="nav-item__icon"><svg class="icon icon--sm">
+              <use href="#i-timer"></use>
+            </svg></span>
+          <span class="nav-item__label">Интервал</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+    <div class="modal" id="modal" hidden>
+      <div class="modal__backdrop" data-action="modal-close"></div>
+      <div class="modal__sheet" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal__header">
+          <h2 class="modal__title" id="modal-title">Настройка</h2>
+          <button class="icon-btn icon-btn--muted" type="button" data-action="modal-close" aria-label="Закрыть">
+            <svg class="icon icon--sm">
+              <use href="#i-x"></use>
+            </svg>
+          </button>
+        </div>
+        <div class="modal__body" id="modal-body"></div>
+        <div class="modal__footer" id="modal-footer"></div>
+      </div>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>

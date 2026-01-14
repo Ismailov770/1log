@@ -247,6 +247,27 @@ body{
 
 .list{display:flex;flex-direction:column;gap:12px;margin:12px 0 14px}
 
+.import{
+  background:var(--card);
+  border:2px solid var(--border);
+  border-radius:30px;
+  padding:14px 14px;
+  margin:12px 0 14px;
+}
+.import__title{font-weight:900;font-size:15px}
+.import__sub{margin-top:4px;color:#6B7280;font-size:12px;line-height:1.35}
+.import__links{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+.import__link{
+  height:44px;
+  border-radius:999px;
+  border:2px solid var(--border);
+  background:#fff;
+  color:var(--blue);
+  font-weight:900;
+  cursor:pointer;
+}
+.import__link:active{transform:scale(.99)}
+
 .item-card{
   background:var(--card);
   border:2px solid var(--border);
@@ -423,7 +444,7 @@ body{
   border:2px solid var(--border);
   border-radius:30px;
   padding:12px 12px;
-  margin:14px 0 10px;
+  margin:14px 0 14px;
 }
 .setting-card__row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .setting-card__left{display:flex;gap:12px;align-items:flex-start;flex:1;min-width:0}
@@ -448,9 +469,10 @@ body{
   cursor:pointer;
 }
 .chip.is-active{background:var(--blue);color:#fff}
-.chip--wide{width:100%;margin-top:6px}
-#screen-interval .chip--wide{margin-top:10px;margin-bottom:12px}
-#screen-interval #btn-launch{margin-top:12px}
+.chip--wide{width:100%;margin-top:0px}
+#screen-interval .chip--wide{margin-top:4px;margin-bottom:0}
+#screen-interval .chip--wide + .setting-card{margin-top:10px}
+#screen-interval .chip--wide + #btn-launch{margin-top:10px}
 
 .bottom-nav{
   position:fixed;
@@ -562,6 +584,29 @@ body{
   outline:none;
 }
 .field input:focus{border-color:var(--border)}
+
+.phone-input{
+  height:46px;
+  border-radius:14px;
+  border:2px solid #E5E7EB;
+  padding:0 12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.phone-input:focus-within{border-color:var(--border)}
+.phone-prefix{font-weight:900;color:#111827}
+.phone-input input{
+  border:0;
+  height:100%;
+  padding:0;
+  outline:none;
+  font-size:15px;
+  font-family:inherit;
+  background:transparent;
+  flex:1;
+  min-width:0;
+}
 
 @media (max-width:380px){
   .title h1{font-size:26px}
