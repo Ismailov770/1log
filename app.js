@@ -1368,6 +1368,7 @@
 
   const MESSAGE_IMAGE_MAX_COUNT = 5;
   const MESSAGE_IMAGE_MAX_BYTES = 1_000_000;
+  const MESSAGE_IMAGE_MAX_SOURCE_BYTES = 15_000_000;
 
   const readFileAsDataUrl = (file) =>
     new Promise((resolve, reject) => {
@@ -1377,13 +1378,107 @@
       reader.readAsDataURL(file);
     });
 
+  const blobToDataUrl = (blob) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(reader.error || new Error("read_error"));
+      reader.readAsDataURL(blob);
+    });
+
+  const canvasToBlob = (canvas, type, quality) =>
+    new Promise((resolve) => {
+      if (canvas.toBlob) return canvas.toBlob((b) => resolve(b), type, quality);
+      try {
+        const dataUrl = canvas.toDataURL(type, quality);
+        const parts = dataUrl.split(",");
+        const meta = parts[0] || "";
+        const base64 = parts[1] || "";
+        const mime = (meta.match(/data:([^;]+);base64/i) || [])[1] || type || "image/jpeg";
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        resolve(new Blob([bytes], { type: mime }));
+      } catch {
+        resolve(null);
+      }
+    });
+
+  const loadImage = (src) =>
+    new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error("img_load_error"));
+      img.src = src;
+    });
+
+  const imageFileToJpegDataUrl = async (file, { maxBytes, maxW = 1280, maxH = 1280 } = {}) => {
+    const outMaxBytes = typeof maxBytes === "number" ? maxBytes : MESSAGE_IMAGE_MAX_BYTES;
+
+    let bitmap = null;
+    let img = null;
+    try {
+      if (typeof createImageBitmap === "function") bitmap = await createImageBitmap(file);
+    } catch {
+      bitmap = null;
+    }
+
+    if (!bitmap) {
+      const src = await readFileAsDataUrl(file);
+      img = await loadImage(src);
+    }
+
+    const srcW = bitmap ? bitmap.width : img.naturalWidth || img.width;
+    const srcH = bitmap ? bitmap.height : img.naturalHeight || img.height;
+
+    const scale = Math.min(1, maxW / srcW, maxH / srcH);
+    let targetW = Math.max(1, Math.round(srcW * scale));
+    let targetH = Math.max(1, Math.round(srcH * scale));
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx) throw new Error("canvas_ctx_error");
+
+    let quality = 0.9;
+    let tries = 0;
+    let blob = null;
+
+    while (tries < 10) {
+      canvas.width = targetW;
+      canvas.height = targetH;
+      ctx.clearRect(0, 0, targetW, targetH);
+      if (bitmap) ctx.drawImage(bitmap, 0, 0, targetW, targetH);
+      else ctx.drawImage(img, 0, 0, targetW, targetH);
+
+      blob = await canvasToBlob(canvas, "image/jpeg", quality);
+      if (blob && blob.size <= outMaxBytes) break;
+
+      if (quality > 0.5) quality = Math.max(0.5, quality - 0.12);
+      else {
+        targetW = Math.max(1, Math.round(targetW * 0.85));
+        targetH = Math.max(1, Math.round(targetH * 0.85));
+      }
+      tries++;
+    }
+
+    try {
+      if (bitmap && typeof bitmap.close === "function") bitmap.close();
+    } catch {
+      // ignore
+    }
+
+    if (!blob) throw new Error("encode_error");
+
+    return { dataUrl: await blobToDataUrl(blob), type: blob.type || "image/jpeg", size: blob.size };
+  };
+
   const addMessageImages = async (files) => {
     const inputFiles = Array.from(files || []);
     if (!inputFiles.length) return;
 
     if (!Array.isArray(state.messageImages)) state.messageImages = [];
 
-    const maxMb = Math.round((MESSAGE_IMAGE_MAX_BYTES / 1024 / 1024) * 10) / 10;
+    const maxMb = Math.round((MESSAGE_IMAGE_MAX_SOURCE_BYTES / 1024 / 1024) * 10) / 10;
 
     for (const f of inputFiles) {
       if (state.messageImages.length >= MESSAGE_IMAGE_MAX_COUNT) {
@@ -1397,15 +1492,16 @@
         haptic("notification", "error");
         continue;
       }
-      if (typeof f.size === "number" && f.size > MESSAGE_IMAGE_MAX_BYTES) {
+      if (typeof f.size === "number" && f.size > MESSAGE_IMAGE_MAX_SOURCE_BYTES) {
         toast(`Fayl juda katta (maks. ${maxMb} MB)`);
         haptic("notification", "error");
         continue;
       }
 
       try {
-        const dataUrl = await readFileAsDataUrl(f);
-        state.messageImages.push({ id: cryptoId(), name: f.name, type: f.type, size: f.size, dataUrl });
+        const normalized = await imageFileToJpegDataUrl(f, { maxBytes: MESSAGE_IMAGE_MAX_BYTES });
+        const name = String(f.name || "image").replace(/\.[^.]+$/i, "") + ".jpg";
+        state.messageImages.push({ id: cryptoId(), name, type: normalized.type, size: normalized.size, dataUrl: normalized.dataUrl });
       } catch {
         toast("Rasmni o‘qib bo‘lmadi");
         haptic("notification", "error");
