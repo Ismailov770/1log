@@ -899,11 +899,20 @@
     const status = qs("#message-status");
     const bubble = qs("#message-preview .bubble");
     const toggle = qs("#message-preview-toggle");
+    const btnMain = qs("#message-next");
+    const btnPreview = qs("#message-next-preview");
 
     const images = Array.isArray(state.messageImages) ? state.messageImages : [];
     const hasText = Boolean(state.message && state.message.trim().length);
     const hasImages = images.length > 0;
     const has = hasText || hasImages;
+
+    const setMessageNextLabel = () => {
+      const showNext = Boolean(editor && editor.hidden && has);
+      const label = showNext ? tr("messageNext") : tr("messageSave");
+      if (btnMain) btnMain.textContent = label;
+      if (btnPreview) btnPreview.textContent = label;
+    };
 
     const renderMedia = (container, editable) => {
       if (!container) return;
@@ -947,6 +956,7 @@
       status.classList.add("status-pill--ok");
       qs("#message-preview-text").textContent = state.message || "";
       renderMedia(qs("#message-preview-media"), false);
+      setMessageNextLabel();
 
       const text = String(state.message || "");
       const lines = text.split(/\r?\n/).length;
@@ -969,6 +979,7 @@
         toggle.setAttribute("aria-expanded", "false");
       }
       renderMedia(qs("#message-media"), true);
+      setMessageNextLabel();
       if (has) {
         status.textContent = tr("statusAdded");
         status.classList.remove("status-pill--muted");
@@ -1736,18 +1747,28 @@
         if (action === "add-account") return openAddAccount();
         if (action === "accounts-next") return setRoute("message");
         if (action === "message-next") {
-          const text = (qs("#message-text") && !qs("#message-editor").hidden ? qs("#message-text").value : state.message) || "";
-          const hasText = Boolean(String(text).trim());
-          const hasImages = Boolean(Array.isArray(state.messageImages) && state.messageImages.length);
-          if (!hasText && !hasImages) {
-            toast(tr("toastNeedText"));
-            haptic("notification", "error");
+          const editorVisible = Boolean(qs("#message-editor") && !qs("#message-editor").hidden);
+
+          if (editorVisible) {
+            const text = (qs("#message-text") ? qs("#message-text").value : "") || "";
+            const hasText = Boolean(String(text).trim());
+            const hasImages = Boolean(Array.isArray(state.messageImages) && state.messageImages.length);
+            if (!hasText && !hasImages) {
+              toast(tr("toastNeedText"));
+              haptic("notification", "error");
+              return;
+            }
+            state.message = String(text);
+            messageMode = "auto";
+            messagePreviewExpanded = false;
+            saveState();
+            toast(tr("toastSaved"));
+            haptic("notification", "success");
+            renderMessage();
+            renderDashboard();
             return;
           }
-          state.message = String(text);
-          messageMode = "auto";
-          messagePreviewExpanded = false;
-          saveState();
+
           return setRoute("groups");
         }
         if (action === "groups-next") return setRoute("interval");
