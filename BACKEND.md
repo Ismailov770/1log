@@ -58,6 +58,29 @@ node backend/server.mjs
 Keyin frontendni shunday oching:
 
 - `index.html?backend=http://localhost:8787`
+- test uchun Telegram ID: `index.html?backend=http://localhost:8787&telegramId=123456789`
+
+## 1log.uz Swagger ulash (adapter)
+`backend/server.mjs` ni 1log.uz API’ga adapter qilib ishlatsa bo‘ladi (frontend o‘zgarmaydi, baribir `/miniapp/*` ga uradi).
+
+PowerShell misol:
+
+```powershell
+$env:UPSTREAM_BASE_URL="https://1log.uz"
+$env:UPSTREAM_API_ROOT="/ru/api/v1"
+$env:UPSTREAM_GROUP_TYPE="1"
+$env:UPSTREAM_BASIC="LOGIN:PASSWORD"  # kerak bo‘lsa
+node backend/server.mjs
+```
+
+Adapter ishlatadigan swagger endpointlar:
+- `GET /ru/api/v1/user/finder/{telegram_id}/`
+- `GET /ru/api/v1/user/accounts/{user_id}/`
+- `GET/PATCH /ru/api/v1/user/mailing/{user_id}/`
+- `GET /ru/api/v1/bot-groups/{type}/`
+- `GET /ru/api/v1/user/start-mailing/{user_id}/`
+- `GET /ru/api/v1/user/stop-mailing/{user_id}/`
+- `GET /ru/api/v1/user/statistics/`
 
 ## Backend eslatma
 Prod’da `initData`ni tekshirib, userga bog‘lab qo‘ying.

@@ -562,6 +562,7 @@
     enabled: false,
     baseUrl: "",
     userKey: "",
+    telegramId: "",
   };
   const BACKEND_STORAGE_KEY = "1log_backend";
   const loadBackendConfig = () => {
@@ -584,14 +585,17 @@
         : null;
     const fromQuery = params && params.get("backend") ? { backendEnabled: true, backendBaseUrl: params.get("backend") } : {};
     if (params && params.get("userKey")) fromQuery.backendUserKey = params.get("userKey");
+    if (params && params.get("telegramId")) fromQuery.backendTelegramId = params.get("telegramId");
 
     const cfg = { ...fromStorage, ...fromWindow, ...fromQuery };
     const baseUrl = String(cfg.backendBaseUrl || cfg.baseUrl || "").trim().replace(/\/+$/, "");
     const enabled = Boolean(cfg.backendEnabled ?? cfg.enabled);
     const userKey = String(cfg.backendUserKey || cfg.userKey || "").trim();
+    const telegramId = String(cfg.backendTelegramId || cfg.telegramId || "").trim();
     BACKEND.baseUrl = baseUrl;
     BACKEND.enabled = Boolean(enabled && baseUrl);
     BACKEND.userKey = userKey;
+    BACKEND.telegramId = telegramId;
   };
   loadBackendConfig();
 
@@ -611,6 +615,7 @@
     const headers = new Headers(options.headers || {});
     headers.set("Content-Type", "application/json");
     if (BACKEND.userKey) headers.set("X-User-Key", BACKEND.userKey);
+    if (BACKEND.telegramId) headers.set("X-Telegram-Id", BACKEND.telegramId);
     if (tg && typeof tg.initData === "string" && tg.initData) {
       headers.set("X-Telegram-Init-Data", tg.initData);
     }
