@@ -1068,7 +1068,9 @@ body {
 }
 
 .modal__body {
-  margin-top: 12px
+  margin-top: 12px;
+  gap: 10px;
+
 }
 
 .modal__body .btn + .btn {
@@ -1078,7 +1080,8 @@ body {
 .menu-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .modal__footer {
