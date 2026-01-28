@@ -19,15 +19,15 @@
       navGroups: "Группы",
       navInterval: "Интервал",
       menuTitle: "Меню",
-      menuLogout: "Выйти из аккаунта",
+      menuLogout: "Сбросить настройки",
       menuInstall: "Установить приложение",
       installTitle: "Установка приложения",
       installTelegramHint: "В Telegram установка может не появиться. Откройте в браузере.",
       installIosHint: "iPhone/iPad: Поделиться → «На экран Домой».",
       installAndroidHint: "Android: Chrome меню ⋮ → «Установить приложение».",
       installOpenBrowser: "Открыть в браузере",
-      logoutTitle: "Выйти?",
-      logoutText: "Все локальные настройки будут сброшены на устройстве.",
+      logoutTitle: "Сбросить настройки?",
+      logoutText: "Все локальные настройки на устройстве будут удалены.",
       cancel: "Отмена",
       save: "Сохранить",
       confirm: "Подтвердить",
@@ -147,15 +147,15 @@
       navGroups: "Guruhlar",
       navInterval: "Interval",
       menuTitle: "Menyu",
-      menuLogout: "Akkauntdan chiqish",
+      menuLogout: "Sozlamani tozalash",
       menuInstall: "Ilovani o‘rnatish",
       installTitle: "Ilovani o‘rnatish",
       installTelegramHint: "Telegram ichida install chiqmasligi mumkin. Brauzerda ochib o‘rnat.",
       installIosHint: "iPhone/iPad: Share (ulashish) → Add to Home Screen.",
       installAndroidHint: "Android: Chrome menyu ⋮ → Install app.",
       installOpenBrowser: "Brauzerda ochish",
-      logoutTitle: "Chiqasizmi?",
-      logoutText: "Qurilmadagi barcha lokal sozlamalar o‘chiriladi.",
+      logoutTitle: "Sozlamani tozalaysizmi?",
+      logoutText: "Qurilmadagi barcha lokal sozlamalar o‘chadi.",
       cancel: "Bekor qilish",
       save: "Saqlash",
       confirm: "Tasdiqlash",
@@ -275,15 +275,15 @@
       navGroups: "Гуруҳлар",
       navInterval: "Интервал",
       menuTitle: "Меню",
-      menuLogout: "Аккаунтдан чиқиш",
+      menuLogout: "Созламани тозалаш",
       menuInstall: "Иловани ўрнатиш",
       installTitle: "Иловани ўрнатиш",
       installTelegramHint: "Telegram ичида install чиқмаслиги мумкин. Браузерда очиб ўрнат.",
       installIosHint: "iPhone/iPad: Share (улашиш) → Add to Home Screen.",
       installAndroidHint: "Android: Chrome меню ⋮ → Install app.",
       installOpenBrowser: "Браузерда очиш",
-      logoutTitle: "Чиқасизми?",
-      logoutText: "Қурилмадаги барча локал созламалар ўчирилади.",
+      logoutTitle: "Созламани тозалайсизми?",
+      logoutText: "Қурилмадаги барча локал созламалар ўчади.",
       cancel: "Бекор қилиш",
       save: "Сақлаш",
       confirm: "Тасдиқлаш",
@@ -1855,8 +1855,7 @@
       modal.open({ title: tr("logoutTitle"), body: text, footer: [cancel, ok] });
     });
     body.append(installBtn, logoutBtn);
-    const close = button(tr("cancel"), "btn btn-secondary btn-full", () => modal.close());
-    modal.open({ title: tr("menuTitle"), body, footer: [close] });
+    modal.open({ title: tr("menuTitle"), body, footer: [] });
   };
 
   let messageMode = "auto"; // auto/edit
