@@ -69,11 +69,13 @@ PowerShell misol:
 $env:UPSTREAM_BASE_URL="https://1log.uz"
 $env:UPSTREAM_API_ROOT="/ru/api/v1"
 $env:UPSTREAM_GROUP_TYPE="1"
+$env:UPSTREAM_USE_AUTO_MAILING="1"    # 0 qilsangiz eski /user/* ishlaydi
 $env:UPSTREAM_BASIC="LOGIN:PASSWORD"  # kerak bo‘lsa
 node backend/server.mjs
 ```
 
 Adapter ishlatadigan swagger endpointlar:
+- Asosiy (yangi): `/ru/api/v1/auto-mailing/*` (telegram_id bilan)
 - `GET /ru/api/v1/user/finder/{telegram_id}/`
 - `GET /ru/api/v1/user/accounts/{user_id}/`
 - `GET/PATCH /ru/api/v1/user/mailing/{user_id}/`

@@ -9,6 +9,7 @@ const DATA_DIR = path.resolve(process.cwd(), "backend", "data");
 const UPSTREAM_BASE_URL = String(process.env.UPSTREAM_BASE_URL || "").trim().replace(/\/+$/, "");
 const UPSTREAM_API_ROOT = String(process.env.UPSTREAM_API_ROOT || "/ru/api/v1").trim().replace(/\/+$/, "");
 const UPSTREAM_GROUP_TYPE = String(process.env.UPSTREAM_GROUP_TYPE || "1").trim();
+const UPSTREAM_USE_AUTO_MAILING = process.env.UPSTREAM_USE_AUTO_MAILING !== "0";
 const UPSTREAM_BASIC = String(process.env.UPSTREAM_BASIC || "").trim(); // "user:pass"
 const UPSTREAM_BASIC_B64 = String(process.env.UPSTREAM_BASIC_B64 || "").trim(); // "dXNlcjpwYXNz"
 const UPSTREAM_ENABLED = Boolean(UPSTREAM_BASE_URL);
@@ -170,12 +171,20 @@ const ensureShape = (s) => {
 };
 
 const toMiniappAccounts = (data) => {
-  const list = Array.isArray(data) ? data : Array.isArray(data?.results) ? data.results : Array.isArray(data?.accounts) ? data.accounts : [];
+  const list = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.results)
+      ? data.results
+      : Array.isArray(data?.accounts)
+        ? data.accounts
+        : data && typeof data === "object" && "phone" in data
+          ? [data]
+          : [];
   return list.map((acc) => {
     const phoneDigits = String(acc?.phone ?? "").replace(/\D+/g, "");
     const id = String(acc?.id ?? phoneDigits ?? crypto.randomUUID());
     const isActive = Boolean(acc?.is_active ?? acc?.isActive ?? false);
-    const groupsCount = Array.isArray(acc?.groups) ? acc.groups.length : Number(acc?.groupsCount || 0);
+    const groupsCount = Number(acc?.groups_count ?? acc?.groupsCount ?? (Array.isArray(acc?.groups) ? acc.groups.length : 0));
     return {
       id,
       name: `Akkaunt +${phoneDigits || id}`,
@@ -257,6 +266,14 @@ const toMailingPatch = (state) => {
   };
 };
 
+const tryUpstream = async (fn) => {
+  try {
+    return await fn();
+  } catch {
+    return null;
+  }
+};
+
 const bumpStats = (state) => {
   if (state.dispatchStatus !== "running") return state;
   const bumpOk = Math.floor(Math.random() * 30) + 1;
@@ -307,19 +324,36 @@ const server = http.createServer(async (req, res) => {
         if (!telegramId) return json(res, 200, local);
 
         try {
-          const userId = await resolveUserId(telegramId);
-          if (!userId) return json(res, 200, local);
-
-          const [accountsRaw, mailingRaw, groupsRaw] = await Promise.all([
-            upstreamRequest(`${UPSTREAM_API_ROOT}/user/accounts/${encodeURIComponent(userId)}/?page=1`, { method: "GET" }),
-            upstreamRequest(`${UPSTREAM_API_ROOT}/user/mailing/${encodeURIComponent(userId)}/`, { method: "GET" }),
-            upstreamRequest(`${UPSTREAM_API_ROOT}/bot-groups/${encodeURIComponent(UPSTREAM_GROUP_TYPE)}/`, { method: "GET" }),
-          ]);
-
           let nextState = { ...baseState };
-          nextState.accounts = toMiniappAccounts(accountsRaw);
-          nextState = applyMailingToState(nextState, mailingRaw);
-          nextState.groups = toMiniappGroups(groupsRaw, baseState.groups);
+
+          if (UPSTREAM_USE_AUTO_MAILING) {
+            const [accountsRaw, mailingRaw, statusRaw, groupsRaw] = await Promise.all([
+              upstreamRequest(`${UPSTREAM_API_ROOT}/auto-mailing/accounts/${encodeURIComponent(telegramId)}/`, { method: "GET" }),
+              upstreamRequest(`${UPSTREAM_API_ROOT}/auto-mailing/mailing/${encodeURIComponent(telegramId)}/`, { method: "GET" }),
+              upstreamRequest(`${UPSTREAM_API_ROOT}/auto-mailing/status/${encodeURIComponent(telegramId)}/`, { method: "GET" }),
+              upstreamRequest(`${UPSTREAM_API_ROOT}/bot-groups/${encodeURIComponent(UPSTREAM_GROUP_TYPE)}/`, { method: "GET" }),
+            ]);
+
+            nextState.accounts = toMiniappAccounts(accountsRaw);
+            nextState = applyMailingToState(nextState, statusRaw?.mailing || mailingRaw);
+            nextState.groups = toMiniappGroups(groupsRaw, baseState.groups);
+
+            const sentCount = Number(statusRaw?.mailing?.sent_count ?? mailingRaw?.sent_count ?? 0);
+            if (Number.isFinite(sentCount)) nextState.stats = { sentOk: sentCount, sentFail: 0 };
+          } else {
+            const userId = await resolveUserId(telegramId);
+            if (!userId) return json(res, 200, local);
+
+            const [accountsRaw, mailingRaw, groupsRaw] = await Promise.all([
+              upstreamRequest(`${UPSTREAM_API_ROOT}/user/accounts/${encodeURIComponent(userId)}/?page=1`, { method: "GET" }),
+              upstreamRequest(`${UPSTREAM_API_ROOT}/user/mailing/${encodeURIComponent(userId)}/`, { method: "GET" }),
+              upstreamRequest(`${UPSTREAM_API_ROOT}/bot-groups/${encodeURIComponent(UPSTREAM_GROUP_TYPE)}/`, { method: "GET" }),
+            ]);
+
+            nextState.accounts = toMiniappAccounts(accountsRaw);
+            nextState = applyMailingToState(nextState, mailingRaw);
+            nextState.groups = toMiniappGroups(groupsRaw, baseState.groups);
+          }
 
           const payload = await writeRecord(file, nextState, "pull-swagger");
           return json(res, 200, payload);
@@ -336,17 +370,28 @@ const server = http.createServer(async (req, res) => {
         if (UPSTREAM_ENABLED) {
           const telegramId = getTelegramId(req, url);
           if (telegramId) {
-            resolveUserId(telegramId)
-              .then((userId) => {
-                if (!userId) return;
-                const mailingPatch = toMailingPatch(nextState);
-                return upstreamRequest(`${UPSTREAM_API_ROOT}/user/mailing/${encodeURIComponent(userId)}/`, {
+            const mailingPatch = toMailingPatch(nextState);
+
+            if (UPSTREAM_USE_AUTO_MAILING) {
+              tryUpstream(() =>
+                upstreamRequest(`${UPSTREAM_API_ROOT}/auto-mailing/mailing/${encodeURIComponent(telegramId)}/`, {
                   method: "PATCH",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ data: mailingPatch }),
-                });
-              })
-              .catch(() => {});
+                }),
+              ).catch(() => {});
+            } else {
+              resolveUserId(telegramId)
+                .then((userId) => {
+                  if (!userId) return;
+                  return upstreamRequest(`${UPSTREAM_API_ROOT}/user/mailing/${encodeURIComponent(userId)}/`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ data: mailingPatch }),
+                  });
+                })
+                .catch(() => {});
+            }
           }
         }
 
@@ -370,15 +415,30 @@ const server = http.createServer(async (req, res) => {
         const telegramId = getTelegramId(req, url);
         if (telegramId) {
           try {
-            const userId = await resolveUserId(telegramId);
-            if (userId) {
-              const statsRaw = await upstreamRequest(`${UPSTREAM_API_ROOT}/user/statistics/`, { method: "GET" });
-              const stats = Array.isArray(statsRaw) ? statsRaw.find((x) => String(x?.user || x?.user_id || x?.id) === String(userId)) : statsRaw;
-              const sentOk = Number(stats?.sent_ok ?? stats?.sentOk ?? stats?.sent_count ?? stats?.sentCount ?? base.stats.sentOk ?? 0);
-              const sentFail = Number(stats?.sent_fail ?? stats?.sentFail ?? stats?.failed_count ?? stats?.fail ?? base.stats.sentFail ?? 0);
-              const next = { ...base, stats: { sentOk: Number.isFinite(sentOk) ? sentOk : 0, sentFail: Number.isFinite(sentFail) ? sentFail : 0 } };
+            if (UPSTREAM_USE_AUTO_MAILING) {
+              const statusRaw = await upstreamRequest(`${UPSTREAM_API_ROOT}/auto-mailing/status/${encodeURIComponent(telegramId)}/`, {
+                method: "GET",
+              });
+              const sentOk = Number(statusRaw?.mailing?.sent_count ?? base.stats.sentOk ?? 0);
+              const next = { ...base, stats: { sentOk: Number.isFinite(sentOk) ? sentOk : 0, sentFail: base.stats.sentFail ?? 0 } };
               const payload = await writeRecord(file, next, reason || "refresh-stats-swagger");
               return json(res, 200, payload);
+            } else {
+              const userId = await resolveUserId(telegramId);
+              if (userId) {
+                const statsRaw = await upstreamRequest(`${UPSTREAM_API_ROOT}/user/statistics/`, { method: "GET" });
+                const stats = Array.isArray(statsRaw)
+                  ? statsRaw.find((x) => String(x?.user || x?.user_id || x?.id) === String(userId))
+                  : statsRaw;
+                const sentOk = Number(stats?.sent_ok ?? stats?.sentOk ?? stats?.sent_count ?? stats?.sentCount ?? base.stats.sentOk ?? 0);
+                const sentFail = Number(stats?.sent_fail ?? stats?.sentFail ?? stats?.failed_count ?? stats?.fail ?? base.stats.sentFail ?? 0);
+                const next = {
+                  ...base,
+                  stats: { sentOk: Number.isFinite(sentOk) ? sentOk : 0, sentFail: Number.isFinite(sentFail) ? sentFail : 0 },
+                };
+                const payload = await writeRecord(file, next, reason || "refresh-stats-swagger");
+                return json(res, 200, payload);
+              }
             }
           } catch {
             // fallback below
@@ -430,13 +490,29 @@ const server = http.createServer(async (req, res) => {
         const telegramId = getTelegramId(req, url);
         if (telegramId) {
           try {
-            const userId = await resolveUserId(telegramId);
-            if (userId) {
-              await upstreamRequest(`${UPSTREAM_API_ROOT}/user/start-mailing/${encodeURIComponent(userId)}/`, { method: "GET" });
-              const mailingRaw = await upstreamRequest(`${UPSTREAM_API_ROOT}/user/mailing/${encodeURIComponent(userId)}/`, { method: "GET" });
-              const next = applyMailingToState(launchDispatch(base), mailingRaw);
+            if (UPSTREAM_USE_AUTO_MAILING) {
+              const nextState = launchDispatch(base);
+              const mailingPatch = toMailingPatch({ ...nextState, dispatchStatus: "running" });
+              await upstreamRequest(`${UPSTREAM_API_ROOT}/auto-mailing/mailing/${encodeURIComponent(telegramId)}/start/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ data: mailingPatch }),
+              });
+              const mailingRaw = await upstreamRequest(`${UPSTREAM_API_ROOT}/auto-mailing/mailing/${encodeURIComponent(telegramId)}/`, {
+                method: "GET",
+              });
+              const next = applyMailingToState(nextState, mailingRaw);
               const payload = await writeRecord(file, next, reason || "dispatch-launch-swagger");
               return json(res, 200, payload);
+            } else {
+              const userId = await resolveUserId(telegramId);
+              if (userId) {
+                await upstreamRequest(`${UPSTREAM_API_ROOT}/user/start-mailing/${encodeURIComponent(userId)}/`, { method: "GET" });
+                const mailingRaw = await upstreamRequest(`${UPSTREAM_API_ROOT}/user/mailing/${encodeURIComponent(userId)}/`, { method: "GET" });
+                const next = applyMailingToState(launchDispatch(base), mailingRaw);
+                const payload = await writeRecord(file, next, reason || "dispatch-launch-swagger");
+                return json(res, 200, payload);
+              }
             }
           } catch {
             // fallback below
@@ -462,13 +538,29 @@ const server = http.createServer(async (req, res) => {
         const telegramId = getTelegramId(req, url);
         if (telegramId) {
           try {
-            const userId = await resolveUserId(telegramId);
-            if (userId) {
-              await upstreamRequest(`${UPSTREAM_API_ROOT}/user/stop-mailing/${encodeURIComponent(userId)}/`, { method: "GET" });
-              const mailingRaw = await upstreamRequest(`${UPSTREAM_API_ROOT}/user/mailing/${encodeURIComponent(userId)}/`, { method: "GET" });
-              const next = applyMailingToState({ ...base, dispatchStatus: "stopped" }, mailingRaw);
+            if (UPSTREAM_USE_AUTO_MAILING) {
+              const stopped = { ...base, dispatchStatus: "stopped" };
+              const mailingPatch = toMailingPatch(stopped);
+              await upstreamRequest(`${UPSTREAM_API_ROOT}/auto-mailing/mailing/${encodeURIComponent(telegramId)}/stop/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ data: mailingPatch }),
+              });
+              const mailingRaw = await upstreamRequest(`${UPSTREAM_API_ROOT}/auto-mailing/mailing/${encodeURIComponent(telegramId)}/`, {
+                method: "GET",
+              });
+              const next = applyMailingToState(stopped, mailingRaw);
               const payload = await writeRecord(file, next, reason || "dispatch-stop-swagger");
               return json(res, 200, payload);
+            } else {
+              const userId = await resolveUserId(telegramId);
+              if (userId) {
+                await upstreamRequest(`${UPSTREAM_API_ROOT}/user/stop-mailing/${encodeURIComponent(userId)}/`, { method: "GET" });
+                const mailingRaw = await upstreamRequest(`${UPSTREAM_API_ROOT}/user/mailing/${encodeURIComponent(userId)}/`, { method: "GET" });
+                const next = applyMailingToState({ ...base, dispatchStatus: "stopped" }, mailingRaw);
+                const payload = await writeRecord(file, next, reason || "dispatch-stop-swagger");
+                return json(res, 200, payload);
+              }
             }
           } catch {
             // fallback below

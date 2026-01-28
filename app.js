@@ -20,6 +20,12 @@
       navInterval: "Интервал",
       menuTitle: "Меню",
       menuLogout: "Выйти из аккаунта",
+      menuInstall: "Установить приложение",
+      installTitle: "Установка приложения",
+      installTelegramHint: "В Telegram установка может не появиться. Откройте в браузере.",
+      installIosHint: "iPhone/iPad: Поделиться → «На экран Домой».",
+      installAndroidHint: "Android: Chrome меню ⋮ → «Установить приложение».",
+      installOpenBrowser: "Открыть в браузере",
       logoutTitle: "Выйти?",
       logoutText: "Все локальные настройки будут сброшены на устройстве.",
       cancel: "Отмена",
@@ -46,6 +52,7 @@
       toastNeedAccount: "Добавьте аккаунт",
       toastNeedMessage: "Добавьте сообщение",
       toastNeedGroups: "Выберите группы",
+      toastAlreadyInstalled: "Уже установлено",
       addAccountTitle: "Добавить аккаунт",
       addAccountPhoneHint: "Введите номер в международном формате: +998999065281, +7..., +1... (с кодом страны).",
       addAccountPhoneLabel: "Телефон",
@@ -141,6 +148,12 @@
       navInterval: "Interval",
       menuTitle: "Menyu",
       menuLogout: "Akkauntdan chiqish",
+      menuInstall: "Ilovani o‘rnatish",
+      installTitle: "Ilovani o‘rnatish",
+      installTelegramHint: "Telegram ichida install chiqmasligi mumkin. Brauzerda ochib o‘rnat.",
+      installIosHint: "iPhone/iPad: Share (ulashish) → Add to Home Screen.",
+      installAndroidHint: "Android: Chrome menyu ⋮ → Install app.",
+      installOpenBrowser: "Brauzerda ochish",
       logoutTitle: "Chiqasizmi?",
       logoutText: "Qurilmadagi barcha lokal sozlamalar o‘chiriladi.",
       cancel: "Bekor qilish",
@@ -167,6 +180,7 @@
       toastNeedAccount: "Avval akkaunt qo‘shing",
       toastNeedMessage: "Avval xabar qo‘shing",
       toastNeedGroups: "Guruhlarni tanlang",
+      toastAlreadyInstalled: "Allaqachon o‘rnatilgan",
       addAccountTitle: "Akkaunt qo‘shish",
       addAccountPhoneHint: "Telefon raqamini xalqaro formatda kiriting: +998999065281, +7..., +1... (davlat kodi bilan).",
       addAccountPhoneLabel: "Telefon",
@@ -262,6 +276,12 @@
       navInterval: "Интервал",
       menuTitle: "Меню",
       menuLogout: "Аккаунтдан чиқиш",
+      menuInstall: "Иловани ўрнатиш",
+      installTitle: "Иловани ўрнатиш",
+      installTelegramHint: "Telegram ичида install чиқмаслиги мумкин. Браузерда очиб ўрнат.",
+      installIosHint: "iPhone/iPad: Share (улашиш) → Add to Home Screen.",
+      installAndroidHint: "Android: Chrome меню ⋮ → Install app.",
+      installOpenBrowser: "Браузерда очиш",
       logoutTitle: "Чиқасизми?",
       logoutText: "Қурилмадаги барча локал созламалар ўчирилади.",
       cancel: "Бекор қилиш",
@@ -288,6 +308,7 @@
       toastNeedAccount: "Аввал аккаунт қўшинг",
       toastNeedMessage: "Аввал хабар қўшинг",
       toastNeedGroups: "Гуруҳларни танланг",
+      toastAlreadyInstalled: "Аллақачон ўрнатилган",
       addAccountTitle: "Аккаунт қўшиш",
       addAccountPhoneHint: "Телефон рақамини халқаро форматда киритинг: +998999065281, +7..., +1... (давлат коди билан).",
       addAccountPhoneLabel: "Телефон",
@@ -712,6 +733,85 @@
     if (w.Telegram && w.Telegram.WebApp) return w.Telegram.WebApp;
     return null;
   })();
+
+  let deferredInstallPrompt = null;
+  const initPwaInstall = () => {
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+    });
+    window.addEventListener("appinstalled", () => {
+      deferredInstallPrompt = null;
+    });
+  };
+
+  const isStandaloneMode = () => {
+    try {
+      if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return true;
+    } catch {
+      // ignore
+    }
+    return Boolean(window.navigator && window.navigator.standalone);
+  };
+
+  const openInstallInBrowser = () => {
+    const url = window.location.href;
+    if (tg && typeof tg.openLink === "function") {
+      try {
+        tg.openLink(url);
+        return;
+      } catch {
+        // ignore
+      }
+    }
+    try {
+      window.open(url, "_blank", "noopener,noreferrer");
+    } catch {
+      // ignore
+    }
+  };
+
+  const openInstallModal = async () => {
+    if (isStandaloneMode()) return toast(tr("toastAlreadyInstalled"));
+
+    const ua = navigator.userAgent || "";
+    const isIOS = /iPad|iPhone|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const isAndroid = /Android/i.test(ua);
+    const isTelegram = Boolean(tg);
+
+    if (deferredInstallPrompt && !isIOS) {
+      try {
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice.catch(() => null);
+        deferredInstallPrompt = null;
+      } catch {
+        // ignore
+      }
+      return;
+    }
+
+    const body = document.createElement("div");
+    const mk = (text) => {
+      const p = document.createElement("p");
+      p.className = "hint";
+      p.textContent = text;
+      return p;
+    };
+
+    if (isTelegram) body.append(mk(tr("installTelegramHint")));
+    if (isIOS) body.append(mk(tr("installIosHint")));
+    else if (isAndroid) body.append(mk(tr("installAndroidHint")));
+    else body.append(mk(tr("installAndroidHint")));
+
+    const close = button(tr("cancel"), "btn btn-secondary btn-full", () => modal.close());
+    const openBrowser = button(tr("installOpenBrowser"), "btn btn-primary btn-full", () => openInstallInBrowser());
+
+    modal.open({
+      title: tr("installTitle"),
+      body,
+      footer: isTelegram ? [openBrowser, close] : [close],
+    });
+  };
 
   const haptic = (type = "impact", style = "light") => {
     if (!tg || !tg.HapticFeedback) return;
@@ -1755,6 +1855,10 @@
 
   const openMenu = () => {
     const body = document.createElement("div");
+    const installBtn = button(tr("menuInstall"), "btn btn-primary btn-full", () => {
+      modal.close();
+      openInstallModal().catch(() => {});
+    });
     const logoutBtn = button(tr("menuLogout"), "btn btn-danger btn-full", () => {
       const text = document.createElement("p");
       text.className = "hint";
@@ -1763,7 +1867,7 @@
       const ok = button(tr("confirm"), "btn btn-primary", () => logoutReset());
       modal.open({ title: tr("logoutTitle"), body: text, footer: [cancel, ok] });
     });
-    body.append(logoutBtn);
+    body.append(installBtn, logoutBtn);
     const close = button(tr("cancel"), "btn btn-secondary btn-full", () => modal.close());
     modal.open({ title: tr("menuTitle"), body, footer: [close] });
   };
@@ -1991,6 +2095,7 @@
   };
 
   initTelegram();
+  initPwaInstall();
   initEvents();
   render();
 
