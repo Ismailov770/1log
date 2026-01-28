@@ -206,7 +206,7 @@ const toMiniappGroups = (data, prevGroups = []) => {
       title: String(g?.username ?? g?.title ?? id),
       folderLabel: String(g?.folderLabel ?? prev?.folderLabel ?? "Telegram"),
       groupsCount: Number(g?.groupsCount ?? prev?.groupsCount ?? 0),
-      selected: Boolean(prev?.selected ?? false),
+      selected: Boolean(g?.selected ?? g?.is_selected ?? g?.isSelected ?? prev?.selected ?? false),
       ok: true,
     };
   });
@@ -277,8 +277,7 @@ const tryUpstream = async (fn) => {
 const bumpStats = (state) => {
   if (state.dispatchStatus !== "running") return state;
   const bumpOk = Math.floor(Math.random() * 30) + 1;
-  const bumpFail = Math.random() < 0.2 ? 1 : 0;
-  return { ...state, stats: { sentOk: (state.stats?.sentOk || 0) + bumpOk, sentFail: (state.stats?.sentFail || 0) + bumpFail } };
+  return { ...state, stats: { sentOk: (state.stats?.sentOk || 0) + bumpOk, sentFail: 0 } };
 };
 
 const refreshGroups = (state) => {
@@ -420,7 +419,7 @@ const server = http.createServer(async (req, res) => {
                 method: "GET",
               });
               const sentOk = Number(statusRaw?.mailing?.sent_count ?? base.stats.sentOk ?? 0);
-              const next = { ...base, stats: { sentOk: Number.isFinite(sentOk) ? sentOk : 0, sentFail: base.stats.sentFail ?? 0 } };
+              const next = { ...base, stats: { sentOk: Number.isFinite(sentOk) ? sentOk : 0, sentFail: 0 } };
               const payload = await writeRecord(file, next, reason || "refresh-stats-swagger");
               return json(res, 200, payload);
             } else {
@@ -431,10 +430,9 @@ const server = http.createServer(async (req, res) => {
                   ? statsRaw.find((x) => String(x?.user || x?.user_id || x?.id) === String(userId))
                   : statsRaw;
                 const sentOk = Number(stats?.sent_ok ?? stats?.sentOk ?? stats?.sent_count ?? stats?.sentCount ?? base.stats.sentOk ?? 0);
-                const sentFail = Number(stats?.sent_fail ?? stats?.sentFail ?? stats?.failed_count ?? stats?.fail ?? base.stats.sentFail ?? 0);
                 const next = {
                   ...base,
-                  stats: { sentOk: Number.isFinite(sentOk) ? sentOk : 0, sentFail: Number.isFinite(sentFail) ? sentFail : 0 },
+                  stats: { sentOk: Number.isFinite(sentOk) ? sentOk : 0, sentFail: 0 },
                 };
                 const payload = await writeRecord(file, next, reason || "refresh-stats-swagger");
                 return json(res, 200, payload);

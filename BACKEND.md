@@ -70,7 +70,7 @@ $env:UPSTREAM_BASE_URL="https://1log.uz"
 $env:UPSTREAM_API_ROOT="/ru/api/v1"
 $env:UPSTREAM_GROUP_TYPE="1"
 $env:UPSTREAM_USE_AUTO_MAILING="1"    # 0 qilsangiz eski /user/* ishlaydi
-$env:UPSTREAM_BASIC="LOGIN:PASSWORD"  # kerak bo‘lsa
+$env:UPSTREAM_BASIC="LOGIN:PASSWORD"  # faqat kerak bo‘lsa (auth shart bo‘lmasa umuman qo‘ymang)
 node backend/server.mjs
 ```
 
@@ -83,6 +83,11 @@ Adapter ishlatadigan swagger endpointlar:
 - `GET /ru/api/v1/user/start-mailing/{user_id}/`
 - `GET /ru/api/v1/user/stop-mailing/{user_id}/`
 - `GET /ru/api/v1/user/statistics/`
+
+Eslatma (bizning miniapp uchun):
+- `Auth` majburiy bo‘lmasa: `UPSTREAM_BASIC*`ni bo‘sh qoldiring, backend hech narsa yubormaydi.
+- `Failed status` bizga kerak emas: front sent_fail ko‘rsatmaydi (kerak bo‘lsa keyin qo‘shamiz).
+- `Select group` ham frontdan emas: guruhlarni backend o‘zi tanlaydi/beradi, front faqat ro‘yxatni ko‘rsatadi.
 
 ## Backend eslatma
 Prod’da `initData`ni tekshirib, userga bog‘lab qo‘ying.

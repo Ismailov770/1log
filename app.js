@@ -833,7 +833,7 @@
   const continueSetupFlow = () => {
     if (!state.accounts.length) return setRoute("accounts");
     if (!(state.message && state.message.trim()) && !(Array.isArray(state.messageImages) && state.messageImages.length)) return setRoute("message");
-    if (!state.groups.some((g) => g.selected)) return setRoute("groups");
+    if (!Array.isArray(state.groups) || !state.groups.length) return setRoute("groups");
     return setRoute("interval");
   };
 
@@ -867,7 +867,7 @@
 
   const renderDashboard = () => {
     const accountsActive = state.accounts.filter((a) => a.status === "active").length;
-    const groupsSelected = state.groups.filter((g) => g.selected).length;
+    const groupsCount = Array.isArray(state.groups) ? state.groups.length : 0;
     const units = (() => {
       if (state.lang === "uz") return { h: "soat", d: "kun" };
       if (state.lang === "uz_cyrl") return { h: "соат", d: "кун" };
@@ -879,9 +879,10 @@
         : `0 ${units.h} / 0 ${units.d}`;
 
     qs("#stat-sent-ok").textContent = String(state.stats.sentOk);
-    qs("#stat-sent-fail").textContent = String(state.stats.sentFail);
+    const failEl = qs("#stat-sent-fail");
+    if (failEl) failEl.textContent = String(state.stats.sentFail);
     qs("#stat-accounts").textContent = String(accountsActive);
-    qs("#stat-groups").textContent = String(groupsSelected);
+    qs("#stat-groups").textContent = String(groupsCount);
     qs("#stat-interval").textContent = intervalLabel;
     qs("#stat-start").textContent = formatDateTime(state.schedule.startAt);
     qs("#stat-end").textContent = formatDateTime(state.schedule.endAt);
@@ -1110,7 +1111,7 @@
     const next = qs("#groups-next");
     const status = qs("#groups-status");
     const refreshBtn = qs('#screen-groups [data-action="refresh-groups"]');
-    const selected = state.groups.filter((g) => g.selected);
+    const hasGroups = Array.isArray(state.groups) && state.groups.length;
 
     if (list) list.hidden = false;
     if (refreshBtn) refreshBtn.hidden = false;
@@ -1143,7 +1144,7 @@
       }),
     );
 
-    if (selected.length) {
+    if (hasGroups) {
       status.textContent = tr("statusAdded");
       status.classList.remove("status-pill--muted");
       status.classList.add("status-pill--ok");
@@ -1636,12 +1637,7 @@
       setRoute("message");
       return;
     }
-    if (!state.groups.some((g) => g.selected)) {
-      toast(tr("toastNeedGroups"));
-      haptic("notification", "error");
-      setRoute("groups");
-      return;
-    }
+    if (!Array.isArray(state.groups) || !state.groups.length) return setRoute("groups");
 
     if (BACKEND.enabled) {
       backendMutate("/miniapp/dispatch/launch", "dispatch-launch")
@@ -1710,9 +1706,8 @@
     }
     if (state.dispatchStatus === "running") {
       const bumpOk = Math.floor(Math.random() * 30) + 1;
-      const bumpFail = Math.random() < 0.2 ? 1 : 0;
       state.stats.sentOk += bumpOk;
-      state.stats.sentFail += bumpFail;
+      state.stats.sentFail = 0;
       saveState();
       toast(tr("toastStatsUpdated"));
       haptic("impact", "light");
@@ -1743,13 +1738,8 @@
   };
 
   const toggleGroup = (id) => {
-    const g = state.groups.find((x) => x.id === id);
-    if (!g) return;
-    g.selected = !g.selected;
-    saveState();
-    haptic("selection");
-    renderGroups();
-    renderDashboard();
+    // Guruh tanlash backendda: bu yerda bosilganda hech narsa qilmaymiz.
+    void id;
   };
 
   const refreshGroups = () => {
@@ -1770,10 +1760,6 @@
       const groupsCount = g.groupsCount + (Math.random() > 0.7 ? Math.floor(Math.random() * 6) : 0);
       return { ...g, ok, groupsCount };
     });
-    if (!state.groups.some((g) => g.selected) && state.groups[0]) {
-      state.groups[0].selected = true;
-      state.groups[0].ok = true;
-    }
     saveState();
     toast(tr("toastUpdated"));
     haptic("impact", "light");
@@ -1994,13 +1980,6 @@
           const g = state.groups.find((x) => x.id === id);
           if (g) {
             copyText(`${g.title}`);
-            if (!g.selected) {
-              g.selected = true;
-              g.ok = true;
-              saveState();
-              renderGroups();
-              renderDashboard();
-            }
           }
           return;
         }
