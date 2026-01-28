@@ -1071,6 +1071,10 @@ body {
   margin-top: 12px
 }
 
+.modal__body .btn + .btn {
+  margin-top: 14px
+}
+
 .modal__footer {
   margin-top: 14px;
   display: flex;
