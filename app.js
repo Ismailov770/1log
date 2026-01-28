@@ -1855,6 +1855,8 @@
 
   const openMenu = () => {
     const body = document.createElement("div");
+    body.style.display = "grid";
+    body.style.gap = "12px";
     const installBtn = button(tr("menuInstall"), "btn btn-primary btn-full", () => {
       modal.close();
       openInstallModal().catch(() => {});
