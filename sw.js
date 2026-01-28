@@ -1,4 +1,4 @@
-const CACHE_NAME = "1log-pwa-v1";
+const CACHE_NAME = "1log-pwa-v2";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -46,6 +46,7 @@ self.addEventListener("fetch", (event) => {
 
   const accept = req.headers.get("accept") || "";
   const isHtml = req.mode === "navigate" || accept.includes("text/html");
+  const isJsCss = url.pathname.endsWith(".js") || url.pathname.endsWith(".css");
 
   if (isHtml) {
     event.respondWith(
@@ -58,6 +59,24 @@ self.addEventListener("fetch", (event) => {
         } catch {
           const cached = await caches.match(req);
           return cached || caches.match("./index.html");
+        }
+      })(),
+    );
+    return;
+  }
+
+  // JS/CSS: telefonlarda eski cache qolib ketmasin deb network-first qilamiz.
+  if (isJsCss) {
+    event.respondWith(
+      (async () => {
+        try {
+          const fresh = await fetch(req, { cache: "no-store" });
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(req, fresh.clone()).catch(() => {});
+          return fresh;
+        } catch {
+          const cached = await caches.match(req);
+          return cached;
         }
       })(),
     );
