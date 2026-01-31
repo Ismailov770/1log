@@ -4,6 +4,15 @@
   const STORAGE_KEY = "oneLogState:v1";
   const STATE_VERSION = 2;
 
+  const ruPlural = (n, one, few, many) => {
+    const v = Math.abs(Number(n) || 0);
+    const mod10 = v % 10;
+    const mod100 = v % 100;
+    if (mod10 === 1 && mod100 !== 11) return one;
+    if (mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)) return few;
+    return many;
+  };
+
   const qs = (sel, root = document) => root.querySelector(sel);
   const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
@@ -43,6 +52,7 @@
       toastCopyFail: "Не удалось скопировать",
       toastSaved: "Сохранено",
       toastUpdated: "Обновлено",
+      toastDeleted: "Удалено",
       toastStatsUpdated: "Статистика обновлена",
       toastNoActiveDispatch: "Нет активной рассылки",
       toastStopped: "Остановлено",
@@ -53,6 +63,10 @@
       toastNeedMessage: "Добавьте сообщение",
       toastNeedGroups: "Выберите группы",
       toastAlreadyInstalled: "Уже установлено",
+      confirmDeleteAccountTitle: "Удалить аккаунт?",
+      confirmDeleteAccountText: "Действительно хотите удалить аккаунт?",
+      btnYes: "Да",
+      btnNo: "Нет",
       toastMediaDeleted: "Медиа удалено",
       toastMediaDeleteFail: "Не удалось удалить медиа",
       toastVideoOnlyOne: "Видео: можно только 1 (взяли первое)",
@@ -143,7 +157,7 @@
       intervalDurTitle: "Продолжительность рассылки:",
       intervalDurSub: "• в течение какого времени отправлять сообщения.",
       intervalDurNone: "# Не указан",
-      intervalDurValue: (d) => `# ${d} день`,
+      intervalDurValue: (d) => `# ${d} ${ruPlural(d, "день", "дня", "дней")}`,
       intervalDur1d: "1 день",
       intervalDur3d: "3 дня",
       intervalDurCustom: "Свой вариант (в днях)",
@@ -193,6 +207,7 @@
       toastCopyFail: "Nusxalab bo‘lmadi",
       toastSaved: "Saqlandi",
       toastUpdated: "Yangilandi",
+      toastDeleted: "O‘chirildi",
       toastStatsUpdated: "Statistika yangilandi",
       toastNoActiveDispatch: "Faol jo'natma yo‘q",
       toastStopped: "To‘xtatildi",
@@ -203,6 +218,10 @@
       toastNeedMessage: "Avval xabar qo‘shing",
       toastNeedGroups: "Guruhlarni tanlang",
       toastAlreadyInstalled: "Allaqachon o‘rnatilgan",
+      confirmDeleteAccountTitle: "Akkauntni o‘chirish?",
+      confirmDeleteAccountText: "Rostan ham akkauntni o‘chirasizmi?",
+      btnYes: "Ha",
+      btnNo: "Yo‘q",
       toastMediaDeleted: "Media o‘chirildi",
       toastMediaDeleteFail: "Media o‘chmadi",
       toastVideoOnlyOne: "Video: faqat 1 ta bo‘ladi (1-tasi olindi)",
@@ -343,6 +362,7 @@
       toastCopyFail: "Нусхалаб бўлмади",
       toastSaved: "Сақланди",
       toastUpdated: "Янгиланди",
+      toastDeleted: "Ўчирилди",
       toastStatsUpdated: "Статистика янгиланди",
       toastNoActiveDispatch: "Фаол жўнатма йўқ",
       toastStopped: "Тўхтатилди",
@@ -353,6 +373,10 @@
       toastNeedMessage: "Аввал хабар қўшинг",
       toastNeedGroups: "Гуруҳларни танланг",
       toastAlreadyInstalled: "Аллақачон ўрнатилган",
+      confirmDeleteAccountTitle: "Аккаунтни ўчириш?",
+      confirmDeleteAccountText: "Ростдан ҳам аккаунтни ўчирасизми?",
+      btnYes: "Ҳа",
+      btnNo: "Йўқ",
       toastMediaDeleted: "Медиа ўчирилди",
       toastMediaDeleteFail: "Медиа ўчмади",
       toastVideoOnlyOne: "Видео: фақат 1 та бўлади (1-таси олинди)",
@@ -496,14 +520,19 @@
       const el = typeof sel === "string" ? qs(sel) : sel;
       if (el) el.textContent = text;
     };
-    const setBtn = (sel, text) => {
-      const btn = typeof sel === "string" ? qs(sel) : sel;
-      if (!btn) return;
-      Array.from(btn.childNodes).forEach((n) => {
-        if (n.nodeType === Node.TEXT_NODE) n.remove();
-      });
-      btn.append(document.createTextNode(` ${text}`));
-    };
+	    const setBtn = (sel, text) => {
+	      const btn = typeof sel === "string" ? qs(sel) : sel;
+	      if (!btn) return;
+	      Array.from(btn.childNodes).forEach((n) => {
+	        if (n.nodeType === Node.TEXT_NODE) n.remove();
+	      });
+	      const textEl = qs(".btn__text", btn);
+	      if (textEl) {
+	        textEl.textContent = text;
+	        return;
+	      }
+	      btn.append(document.createTextNode(` ${text}`));
+	    };
 
     setText("#screen-dashboard .title h1", tr("dashTitle"));
     setText("#screen-dashboard .title__sub", tr("dashSub"));
@@ -1347,12 +1376,18 @@
 	    const hasMedia = hasImages || hasVideo;
 	    const has = hasText || hasMedia;
 
-    const setMessageNextLabel = () => {
-      const showNext = Boolean(editor && editor.hidden && has);
-      const label = showNext ? tr("messageNext") : tr("messageSave");
-      if (btnMain) btnMain.textContent = label;
-      if (btnPreview) btnPreview.textContent = label;
-    };
+	    const setMessageNextLabel = () => {
+	      const showNext = Boolean(editor && editor.hidden && has);
+	      const label = showNext ? tr("messageNext") : tr("messageSave");
+	      if (btnMain) {
+	        const text = qs(".btn__text", btnMain);
+	        if (text) text.textContent = label;
+	        else btnMain.textContent = label;
+	        const icon = qs(".btn__save-icon", btnMain);
+	        if (icon) icon.hidden = showNext;
+	      }
+	      if (btnPreview) btnPreview.textContent = label;
+	    };
 
     const renderMedia = (container, editable) => {
       if (!container) return;
@@ -2343,18 +2378,31 @@
       webappRequest(`/accounts/${encodeURIComponent(telegramId)}/${encodeURIComponent(acc.phone)}/`, { method: "DELETE" })
         .then(() => webappSyncAccounts())
         .then(() => {
-          toast(tr("toastUpdated"));
+          toast(tr("toastDeleted"));
           haptic("impact", "light");
           render();
         })
-        .catch(() => {});
+        .catch((e) => toastApiError(e, tr("toastStartFail")));
       return;
     }
     state.accounts = state.accounts.filter((a) => a.id !== id);
     saveState();
-    toast("Удалено");
+    toast(tr("toastDeleted"));
     haptic("impact", "light");
     render();
+  };
+
+  const confirmDeleteAccount = (id) => {
+    const body = document.createElement("p");
+    body.className = "hint";
+    body.textContent = tr("confirmDeleteAccountText");
+
+    const no = button(tr("btnNo"), "btn btn-secondary btn-full", () => modal.close());
+    const yes = button(tr("btnYes"), "btn btn-danger btn-full", () => {
+      modal.close();
+      deleteAccount(id);
+    });
+    modal.open({ title: tr("confirmDeleteAccountTitle"), body, footer: [no, yes] });
   };
 
   const toggleGroup = (id) => {
@@ -2639,7 +2687,7 @@
           return;
         }
         if (action === "toggle-account") return toggleAccount(act.getAttribute("data-account-id"));
-        if (action === "delete-account") return deleteAccount(act.getAttribute("data-account-id"));
+        if (action === "delete-account") return confirmDeleteAccount(act.getAttribute("data-account-id"));
         if (action === "refresh-groups") return refreshGroups();
         if (action === "refresh-stats") return refreshStats();
         if (action === "stop") return stopDispatch();
@@ -2689,15 +2737,17 @@
       }
     });
 
-    document.addEventListener("change", (e) => {
-      const target = e.target instanceof Element ? e.target : null;
-      if (!target) return;
-      if (target.id !== "message-images-input") return;
-      const input = target;
-      const files = input.files;
-      input.value = "";
-      addMessageImages(files).catch(() => {});
-    });
+	    document.addEventListener("change", (e) => {
+	      const target = e.target instanceof Element ? e.target : null;
+	      if (!target) return;
+	      if (target.id !== "message-images-input") return;
+	      const input = target;
+	      // iOS/Telegram'da `input.value = ""` qilganda `input.files` ham bo'shab qolishi mumkin,
+	      // shuning uchun avval snapshot olamiz.
+	      const files = input.files ? Array.from(input.files) : [];
+	      input.value = "";
+	      addMessageImages(files).catch(() => {});
+	    });
 
     document.addEventListener("click", (e) => {
       const t = e.target instanceof Element ? e.target : null;
