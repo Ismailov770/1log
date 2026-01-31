@@ -38,7 +38,7 @@
       langRu: "Русский",
       toastLangChanged: "Язык изменён",
       toastSupportSoon: "Поддержка: скоро",
-      toastLoggedOut: "Вы вышли из аккаунта",
+      toastLoggedOut: "Настройки сброшены",
       toastCopied: "Скопировано",
       toastCopyFail: "Не удалось скопировать",
       toastSaved: "Сохранено",
@@ -53,6 +53,28 @@
       toastNeedMessage: "Добавьте сообщение",
       toastNeedGroups: "Выберите группы",
       toastAlreadyInstalled: "Уже установлено",
+      toastMediaDeleted: "Медиа удалено",
+      toastMediaDeleteFail: "Не удалось удалить медиа",
+      toastVideoOnlyOne: "Видео: можно только 1 (взяли первое)",
+      toastVideoTooLarge: (mb) => `Видео слишком большое (макс. ${mb} MB)`,
+      toastImageOnlyOne: "Медиа: можно только 1 картинку (взяли первую)",
+      toastMediaVideoIgnoresImages: "Медиа: выбрали видео — картинки игнорируются",
+      toastNeedMediaFile: "Выберите картинку или видео",
+      toastTooManyImages: (n) => `Можно добавить максимум ${n} картинок`,
+      toastImageTooLarge: (mb) => `Файл слишком большой (макс. ${mb} MB)`,
+      toastImageReadFail: "Не удалось прочитать картинку",
+      toastSendCodeFail: "Код не отправился",
+      toastVerifyCodeFail: "Код неверный",
+      toastVerify2faFail: "2FA пароль неверный",
+      toastStopFail: "Не остановилось",
+      toastStartFail: "Не запустилось",
+      apiBackendOff: "Бекенд выключен",
+      apiNeedAuth: "Нужна авторизация",
+      apiNotFound: "Не найдено",
+      apiFileTooLarge: "Файл слишком большой",
+      apiTooManyRequests: "Слишком часто, подождите",
+      apiServerError: "Ошибка сервера",
+      apiFloodWait: (sec) => `Подождите ${sec} сек`,
       addAccountTitle: "Добавить аккаунт",
       addAccountPhoneHint: "Введите номер в международном формате: +998999065281, +7..., +1... (с кодом страны).",
       addAccountPhoneLabel: "Телефон",
@@ -166,7 +188,7 @@
       langRu: "Русский",
       toastLangChanged: "Til o‘zgartirildi",
       toastSupportSoon: "Yordam: tez kunda",
-      toastLoggedOut: "Akkauntdan chiqdingiz",
+      toastLoggedOut: "Sozlamalar tozalandi",
       toastCopied: "Nusxalandi",
       toastCopyFail: "Nusxalab bo‘lmadi",
       toastSaved: "Saqlandi",
@@ -181,6 +203,28 @@
       toastNeedMessage: "Avval xabar qo‘shing",
       toastNeedGroups: "Guruhlarni tanlang",
       toastAlreadyInstalled: "Allaqachon o‘rnatilgan",
+      toastMediaDeleted: "Media o‘chirildi",
+      toastMediaDeleteFail: "Media o‘chmadi",
+      toastVideoOnlyOne: "Video: faqat 1 ta bo‘ladi (1-tasi olindi)",
+      toastVideoTooLarge: (mb) => `Video juda katta (maks. ${mb} MB)`,
+      toastImageOnlyOne: "Media: faqat 1 ta rasm ketadi (1-tasi olindi)",
+      toastMediaVideoIgnoresImages: "Media: video tanlangan — rasmlar hisobga olinmadi",
+      toastNeedMediaFile: "Rasm yoki video tanlang",
+      toastTooManyImages: (n) => `Ko‘pi bilan ${n} ta rasm qo‘shish mumkin`,
+      toastImageTooLarge: (mb) => `Fayl juda katta (maks. ${mb} MB)`,
+      toastImageReadFail: "Rasmni o‘qib bo‘lmadi",
+      toastSendCodeFail: "Kod yuborilmadi",
+      toastVerifyCodeFail: "Kod xato",
+      toastVerify2faFail: "2FA xato",
+      toastStopFail: "To‘xtamadi",
+      toastStartFail: "Ishga tushmadi",
+      apiBackendOff: "Бекенд ўчиқ",
+      apiNeedAuth: "Авторизация керак",
+      apiNotFound: "Топилмади",
+      apiFileTooLarge: "Файл жуда катта",
+      apiTooManyRequests: "Кўп уриняпсиз, кутинг",
+      apiServerError: "Серверда хато",
+      apiFloodWait: (sec) => `Бироз кутинг: ${sec} сония`,
       addAccountTitle: "Akkaunt qo‘shish",
       addAccountPhoneHint: "Telefon raqamini xalqaro formatda kiriting: +998999065281, +7..., +1... (davlat kodi bilan).",
       addAccountPhoneLabel: "Telefon",
@@ -294,7 +338,7 @@
       langRu: "Русский",
       toastLangChanged: "Тил ўзгартирилди",
       toastSupportSoon: "Ёрдам: тез кунда",
-      toastLoggedOut: "Аккаунтдан чиқдингиз",
+      toastLoggedOut: "Созламалар тозаланди",
       toastCopied: "Нусхаланди",
       toastCopyFail: "Нусхалаб бўлмади",
       toastSaved: "Сақланди",
@@ -309,6 +353,28 @@
       toastNeedMessage: "Аввал хабар қўшинг",
       toastNeedGroups: "Гуруҳларни танланг",
       toastAlreadyInstalled: "Аллақачон ўрнатилган",
+      toastMediaDeleted: "Медиа ўчирилди",
+      toastMediaDeleteFail: "Медиа ўчмади",
+      toastVideoOnlyOne: "Видео: фақат 1 та бўлади (1-таси олинди)",
+      toastVideoTooLarge: (mb) => `Видео жуда катта (макс. ${mb} MB)`,
+      toastImageOnlyOne: "Медиа: фақат 1 та расм кетади (1-таси олинди)",
+      toastMediaVideoIgnoresImages: "Медиа: видео танланган — расмлар ҳисобга олинмади",
+      toastNeedMediaFile: "Расм ёки видео танланг",
+      toastTooManyImages: (n) => `Кўпи билан ${n} та расм қўшиш мумкин`,
+      toastImageTooLarge: (mb) => `Файл жуда катта (макс. ${mb} MB)`,
+      toastImageReadFail: "Расмни ўқиб бўлмади",
+      toastSendCodeFail: "Код юборилмади",
+      toastVerifyCodeFail: "Код хато",
+      toastVerify2faFail: "2FA хато",
+      toastStopFail: "Тўхтамади",
+      toastStartFail: "Ишга тушмади",
+      apiBackendOff: "Backend o‘chiq",
+      apiNeedAuth: "Avtorizatsiya kerak",
+      apiNotFound: "Topilmadi",
+      apiFileTooLarge: "Fayl juda katta",
+      apiTooManyRequests: "Ko‘p urinyapsiz, kuting",
+      apiServerError: "Serverda xato",
+      apiFloodWait: (sec) => `Biroz kuting: ${sec} soniya`,
       addAccountTitle: "Аккаунт қўшиш",
       addAccountPhoneHint: "Телефон рақамини халқаро форматда киритинг: +998999065281, +7..., +1... (давлат коди билан).",
       addAccountPhoneLabel: "Телефон",
@@ -522,10 +588,12 @@
       sentOk: 0,
       sentFail: 0,
     },
-    accounts: [],
-    message: "",
-    messageImages: [],
-    groups: [
+	    accounts: [],
+	    message: "",
+	    messageImages: [],
+	    messageVideo: null,
+	    groupsTotal: 0,
+	    groups: [
       { id: "1log_1", title: "1LOG_1", folderLabel: "Папка с чатами", groupsCount: 67, selected: false, ok: true },
       { id: "1log_2", title: "1LOG_2", folderLabel: "Папка с чатами", groupsCount: 93, selected: false, ok: true },
       { id: "1log_3", title: "1LOG_3", folderLabel: "Папка с чатами", groupsCount: 96, selected: false, ok: true },
@@ -542,16 +610,18 @@
   });
 
   // Eski state bo'lsa shu yerda moslaymiz.
-  const migrateState = (raw) => {
-    const base = defaultState();
-    const merged = { ...base, ...(raw && typeof raw === "object" ? raw : {}) };
-    if (!merged.version || merged.version !== STATE_VERSION) {
-      merged.version = STATE_VERSION;
-    }
-    if (!Array.isArray(merged.messageImages)) merged.messageImages = [];
-    if ("groupsImported" in merged) delete merged.groupsImported;
-    return merged;
-  };
+	  const migrateState = (raw) => {
+	    const base = defaultState();
+	    const merged = { ...base, ...(raw && typeof raw === "object" ? raw : {}) };
+	    if (!merged.version || merged.version !== STATE_VERSION) {
+	      merged.version = STATE_VERSION;
+	    }
+	    if (!Array.isArray(merged.messageImages)) merged.messageImages = [];
+	    // Video faylni lokal storage'dan qayta tiklab bo'lmaydi (File yo'q), shuning uchun tozalab yuboramiz.
+	    merged.messageVideo = null;
+	    if ("groupsImported" in merged) delete merged.groupsImported;
+	    return merged;
+	  };
 
   const loadState = () => {
     try {
@@ -565,14 +635,14 @@
   };
 
   // State o'zgarsa shu saqlaydi.
-  // Backend ulangan bo'lsa push ham shu yerda.
+  // Eslatma: backendga state push/pull hozir ishlatilmaydi (har safar home viewdan boshlaymiz).
   const saveState = (_reason = "") => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
       // ignore
     }
-    scheduleSync(_reason);
+    void _reason;
   };
 
   // Backend ulash joyi.
@@ -582,6 +652,7 @@
   const BACKEND = {
     enabled: false,
     baseUrl: "",
+    mode: "miniapp", // miniapp/webapp
     userKey: "",
     telegramId: "",
   };
@@ -611,10 +682,17 @@
     const cfg = { ...fromStorage, ...fromWindow, ...fromQuery };
     const baseUrl = String(cfg.backendBaseUrl || cfg.baseUrl || "").trim().replace(/\/+$/, "");
     const enabled = Boolean(cfg.backendEnabled ?? cfg.enabled);
+    const modeRaw = String(cfg.backendMode || cfg.mode || "").trim();
+    const inferredMode =
+      baseUrl.includes("/api/v1/webapp") || baseUrl.includes("/api/v1/auto-mailing") || baseUrl.includes("/ru/api/v1/auto-mailing")
+        ? "webapp"
+        : "miniapp";
+    const mode = modeRaw === "webapp" || modeRaw === "miniapp" ? modeRaw : inferredMode;
     const userKey = String(cfg.backendUserKey || cfg.userKey || "").trim();
     const telegramId = String(cfg.backendTelegramId || cfg.telegramId || "").trim();
     BACKEND.baseUrl = baseUrl;
     BACKEND.enabled = Boolean(enabled && baseUrl);
+    BACKEND.mode = mode;
     BACKEND.userKey = userKey;
     BACKEND.telegramId = telegramId;
   };
@@ -622,28 +700,73 @@
 
   let syncTimer = null;
   const scheduleSync = (reason = "") => {
-    if (!BACKEND.enabled || !BACKEND.baseUrl) return;
-    if (reason === "pull") return; // pull bo'lsa push yo'q
+    // State sync yo'q (backendga /miniapp/state shart emas).
+    void reason;
     clearTimeout(syncTimer);
-    syncTimer = setTimeout(() => {
-      backendPushState(reason).catch(() => {});
-    }, 500);
   };
 
-  // Telegram bo'lsa initData yuboramiz.
-  // Backend o'zi tekshiradi.
-  const backendRequest = async (path, options = {}) => {
-    const headers = new Headers(options.headers || {});
-    headers.set("Content-Type", "application/json");
-    if (BACKEND.userKey) headers.set("X-User-Key", BACKEND.userKey);
-    if (BACKEND.telegramId) headers.set("X-Telegram-Id", BACKEND.telegramId);
-    if (tg && typeof tg.initData === "string" && tg.initData) {
-      headers.set("X-Telegram-Init-Data", tg.initData);
-    }
-    const res = await fetch(`${BACKEND.baseUrl}${path}`, { ...options, headers });
-    if (!res.ok) throw new Error(`Backend error: ${res.status}`);
-    return res.json();
-  };
+	  // Telegram bo'lsa initData yuboramiz.
+	  // Backend o'zi tekshiradi.
+	  const safeReadBody = async (res) => {
+	    try {
+	      const ct = String(res?.headers?.get("content-type") || "");
+	      if (ct.includes("application/json")) {
+	        return await res.json();
+	      }
+	      const text = await res.text();
+	      if (!text) return null;
+	      try {
+	        return JSON.parse(text);
+	      } catch {
+	        return text;
+	      }
+	    } catch {
+	      return null;
+	    }
+	  };
+
+	  const buildApiError = (prefix, res, data) => {
+	    const err = new Error(`${prefix}: ${res?.status || "unknown"}`);
+	    err.status = res?.status || 0;
+	    err.data = data;
+	    if (data && typeof data === "object") {
+	      const code = data.code || data.error_code || data.errorCode || data.error;
+	      if (typeof code === "string") err.code = code;
+	    }
+	    return err;
+	  };
+
+	  const backendRequest = async (path, options = {}) => {
+	    const headers = new Headers(options.headers || {});
+	    headers.set("Content-Type", "application/json");
+	    if (BACKEND.userKey) headers.set("X-User-Key", BACKEND.userKey);
+	    if (BACKEND.telegramId) headers.set("X-Telegram-Id", BACKEND.telegramId);
+	    if (tg && typeof tg.initData === "string" && tg.initData) {
+	      headers.set("X-Telegram-Init-Data", tg.initData);
+	    }
+	    const res = await fetch(`${BACKEND.baseUrl}${path}`, { ...options, headers });
+	    const data = await safeReadBody(res);
+	    if (!res.ok) throw buildApiError("Backend error", res, data);
+	    return data;
+	  };
+
+	  const webappRequest = async (path, options = {}) => {
+	    if (!BACKEND.enabled || !BACKEND.baseUrl) {
+	      const e = new Error("backend_off");
+	      e.code = "backend_off";
+	      throw e;
+	    }
+	    const res = await fetch(`${BACKEND.baseUrl}${path}`, {
+	      ...options,
+	      headers: {
+	        Accept: "application/json",
+	        ...(options.headers || {}),
+	      },
+	    });
+	    const data = await safeReadBody(res);
+	    if (!res.ok) throw buildApiError("WebApp API error", res, data);
+	    return data;
+	  };
 
   // Backendga faqat kerakli state ketadi (masalan `route` ketmaydi).
   const getPersistedState = () => ({
@@ -697,6 +820,153 @@
     await backendRequest("/miniapp/state", { method: "POST", body: JSON.stringify({ state: getPersistedState(), reason: _reason }) });
   };
 
+  const digitsOnly = (value) => String(value || "").replace(/\D+/g, "");
+
+  const webappLangToUi = (lang) => (lang === 1 ? "uz" : lang === 2 ? "uz_cyrl" : "ru");
+
+  const webappEnsureTelegramId = () => {
+    const id = getTelegramId();
+    if (!id) {
+      toast("Telegram ID yo‘q");
+      return null;
+    }
+    return id;
+  };
+
+  const webappClearMailingMedia = async (telegramId) => {
+    const id = encodeURIComponent(String(telegramId || ""));
+    const patch = (payload) =>
+      webappRequest(`/mailing/${id}/`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+    try {
+      await patch({ image: null, video: null });
+      return;
+    } catch {
+      // fallback: backend faqat bittasini qabul qilishi mumkin
+    }
+
+    const results = await Promise.allSettled([patch({ image: null }), patch({ video: null })]);
+    const ok = results.some((r) => r.status === "fulfilled");
+    if (!ok) {
+      const firstRejected = results.find((r) => r.status === "rejected");
+      if (firstRejected && firstRejected.reason) throw firstRejected.reason;
+    }
+  };
+
+  const webappSyncAccounts = async () => {
+    if (!BACKEND.enabled || BACKEND.mode !== "webapp") return;
+    const telegramId = webappEnsureTelegramId();
+    if (!telegramId) return;
+    const list = await webappRequest(`/accounts/${encodeURIComponent(telegramId)}/`, { method: "GET" });
+    const rows = Array.isArray(list) ? list : [];
+    state.accounts = rows.map((acc) => {
+      const phoneDigits = digitsOnly(acc && acc.phone);
+      const id = phoneDigits || cryptoId();
+      return {
+        id,
+        name: `${tr("accountNamePrefix")} +${phoneDigits || id}`,
+        phone: phoneDigits || String(acc && acc.phone ? acc.phone : id),
+        status: acc && (acc.is_active ?? acc.isActive) ? "active" : "paused",
+        groupsCount: Number(acc && (acc.groups_count ?? acc.groupsCount)) || 0,
+      };
+    });
+    saveState("webapp-accounts");
+    renderAccounts();
+    renderDashboard();
+  };
+
+  const webappSyncGroups = async (doSync = false) => {
+    if (!BACKEND.enabled || BACKEND.mode !== "webapp") return;
+    const telegramId = webappEnsureTelegramId();
+    if (!telegramId) return;
+    if (doSync) {
+      await webappRequest(`/groups/${encodeURIComponent(telegramId)}/sync/`, { method: "GET" }).catch(() => {});
+    }
+    const list = await webappRequest(`/groups/${encodeURIComponent(telegramId)}/`, { method: "GET" });
+    const rows = Array.isArray(list) ? list : [];
+    state.groups = rows.map((g) => ({
+      id: String(g && (g.id ?? g.telegram_id ?? g.link ?? cryptoId())),
+      title: String(g && (g.name ?? g.title ?? "Telegram")),
+      folderLabel: g && typeof g.type === "number" ? (g.type === 0 ? "Public" : "Private") : "Telegram",
+      groupsCount: 0,
+      selected: false,
+      ok: true,
+      link: String(g && g.link ? g.link : ""),
+    }));
+    saveState("webapp-groups");
+    renderGroups();
+    renderDashboard();
+  };
+
+  const parseHmsToHours = (hms) => {
+    const m = String(hms || "").match(/^(\d+):(\d{2}):(\d{2})$/);
+    if (!m) return null;
+    const h = Number(m[1]);
+    const mm = Number(m[2]);
+    const ss = Number(m[3]);
+    if (!Number.isFinite(h) || !Number.isFinite(mm) || !Number.isFinite(ss)) return null;
+    return h + (mm ? mm / 60 : 0) + (ss ? ss / 3600 : 0);
+  };
+
+  const formatHoursToHms = (hours) => {
+    const h = Math.max(0, Math.floor(Number(hours) || 0));
+    const hh = String(h).padStart(2, "0");
+    return `${hh}:00:00`;
+  };
+
+  const dataUrlToBlob = async (dataUrl) => {
+    try {
+      const res = await fetch(String(dataUrl || ""));
+      return await res.blob();
+    } catch {
+      throw new Error("dataurl_to_blob_failed");
+    }
+  };
+
+  const webappSyncStatus = async () => {
+    if (!BACKEND.enabled || BACKEND.mode !== "webapp") return;
+    const telegramId = webappEnsureTelegramId();
+    if (!telegramId) return;
+    const data = await webappRequest(`/status/${encodeURIComponent(telegramId)}/`, { method: "GET" });
+
+    if (data && typeof data === "object" && data.user && typeof data.user === "object" && typeof data.user.lang === "number") {
+      const nextLang = webappLangToUi(data.user.lang);
+      if (I18N[nextLang]) state.lang = nextLang;
+    }
+
+    const groupsTotal = Number(data && typeof data === "object" ? data.groups_count : 0);
+    if (Number.isFinite(groupsTotal)) state.groupsTotal = groupsTotal;
+
+    const mailing = data && typeof data === "object" ? data.mailing : null;
+    if (mailing && typeof mailing === "object") {
+      if (typeof mailing.text === "string") state.message = mailing.text;
+      const sent = Number(mailing.sent_count || 0);
+      if (Number.isFinite(sent)) state.stats.sentOk = sent;
+      state.stats.sentFail = 0;
+
+      state.dispatchStatus = mailing.is_active ? "running" : "idle";
+      state.schedule.startAt = mailing.started_at || null;
+      state.schedule.endAt = mailing.ends_at || null;
+
+      const freqHours = parseHmsToHours(mailing.frequency);
+      const durHours = parseHmsToHours(mailing.duration);
+      if (freqHours && freqHours >= 1) state.interval.freqHours = Math.round(freqHours);
+      if (durHours && durHours > 0) state.interval.durationDays = Math.max(1, Math.ceil(durHours / 24));
+    }
+
+    saveState("webapp-status");
+    render();
+  };
+
+  const webappBootstrap = async () => {
+    if (!BACKEND.enabled || BACKEND.mode !== "webapp") return;
+    await Promise.allSettled([webappSyncStatus(), webappSyncAccounts(), webappSyncGroups(false)]);
+  };
+
   const toastEl = () => qs("#toast");
   let toastTimer = null;
   const toast = (text) => {
@@ -708,6 +978,37 @@
     toastTimer = setTimeout(() => {
       el.hidden = true;
     }, 1600);
+  };
+
+  const apiErrorToText = (err, fallback = "Xatolik") => {
+    const status = err && typeof err === "object" ? err.status : null;
+    const data = err && typeof err === "object" ? err.data : null;
+    const code = err && typeof err === "object" ? err.code : null;
+
+    const detail =
+      (data && typeof data === "object" && (data.detail || data.error || data.message || data.msg || data.title)) ||
+      (typeof data === "string" ? data : null);
+
+    const flood = typeof detail === "string" ? detail.match(/FLOOD_WAIT_(\d+)/i) : null;
+    if (flood) {
+      const sec = Number(flood[1]) || 0;
+      return tr("apiFloodWait", sec);
+    }
+
+    if (code === "backend_off" || code === "backend_disabled") return tr("apiBackendOff");
+    if (status === 401 || status === 403) return tr("apiNeedAuth");
+    if (status === 404) return tr("apiNotFound");
+    if (status === 413) return tr("apiFileTooLarge");
+    if (status === 429) return tr("apiTooManyRequests");
+    if (typeof status === "number" && status >= 500) return tr("apiServerError");
+
+    if (typeof detail === "string" && detail.trim()) return detail.trim();
+    return String(fallback || "Error");
+  };
+
+  const toastApiError = (err, fallback) => {
+    toast(apiErrorToText(err, fallback));
+    haptic("notification", "error");
   };
 
   const modal = {
@@ -733,6 +1034,28 @@
     if (w.Telegram && w.Telegram.WebApp) return w.Telegram.WebApp;
     return null;
   })();
+
+  const parseTelegramIdFromInitData = (initData) => {
+    try {
+      const params = new URLSearchParams(String(initData || ""));
+      const rawUser = params.get("user");
+      if (!rawUser) return null;
+      const user = JSON.parse(rawUser);
+      const id = user && typeof user === "object" ? user.id : null;
+      return id != null ? String(id) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const getTelegramId = () => {
+    if (BACKEND.telegramId) return String(BACKEND.telegramId);
+    if (tg && typeof tg.initData === "string" && tg.initData) {
+      const id = parseTelegramIdFromInitData(tg.initData);
+      if (id) return id;
+    }
+    return null;
+  };
 
   let deferredInstallPrompt = null;
   const initPwaInstall = () => {
@@ -832,8 +1155,15 @@
 
   const continueSetupFlow = () => {
     if (!state.accounts.length) return setRoute("accounts");
-    if (!(state.message && state.message.trim()) && !(Array.isArray(state.messageImages) && state.messageImages.length)) return setRoute("message");
-    if (!Array.isArray(state.groups) || !state.groups.length) return setRoute("groups");
+    if (
+      !(state.message && state.message.trim()) &&
+      !(Array.isArray(state.messageImages) && state.messageImages.length) &&
+      !pendingVideoFile
+    )
+      return setRoute("message");
+    const hasGroups = Array.isArray(state.groups) && state.groups.length;
+    const hasAny = hasGroups && state.groups.some((g) => Boolean(g && (g.ok === true || g.selected === true)));
+    if (!hasAny) return setRoute("groups");
     return setRoute("interval");
   };
 
@@ -867,7 +1197,8 @@
 
   const renderDashboard = () => {
     const accountsActive = state.accounts.filter((a) => a.status === "active").length;
-    const groupsCount = Array.isArray(state.groups) ? state.groups.length : 0;
+    const groupsFromAccounts = state.accounts.reduce((sum, a) => sum + (Number(a && a.groupsCount) || 0), 0);
+    const groupsCount = groupsFromAccounts > 0 ? groupsFromAccounts : Number(state.groupsTotal || 0);
     const units = (() => {
       if (state.lang === "uz") return { h: "soat", d: "kun" };
       if (state.lang === "uz_cyrl") return { h: "соат", d: "кун" };
@@ -1008,10 +1339,13 @@
     const btnMain = qs("#message-next");
     const btnPreview = qs("#message-next-preview");
 
-    const images = Array.isArray(state.messageImages) ? state.messageImages : [];
-    const hasText = Boolean(state.message && state.message.trim().length);
-    const hasImages = images.length > 0;
-    const has = hasText || hasImages;
+	    const images = Array.isArray(state.messageImages) ? state.messageImages : [];
+	    const hasText = Boolean(state.message && state.message.trim().length);
+	    const hasImages = images.length > 0;
+	    const video = pendingVideoFile && state.messageVideo && typeof state.messageVideo === "object" ? state.messageVideo : null;
+	    const hasVideo = Boolean(video);
+	    const hasMedia = hasImages || hasVideo;
+	    const has = hasText || hasMedia;
 
     const setMessageNextLabel = () => {
       const showNext = Boolean(editor && editor.hidden && has);
@@ -1022,13 +1356,37 @@
 
     const renderMedia = (container, editable) => {
       if (!container) return;
-      if (!images.length) {
+      if (!images.length && !(hasVideo && video && video.url)) {
         container.hidden = true;
         container.replaceChildren();
         return;
       }
       container.hidden = false;
+      const videoNodes = [];
+      if (hasVideo && video && video.url) {
+        const item = document.createElement("div");
+        item.className = "media-item";
+
+        const videoEl = document.createElement("video");
+        videoEl.src = video.url;
+        videoEl.controls = true;
+        videoEl.playsInline = true;
+        item.append(videoEl);
+
+        if (editable) {
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "media-item__remove";
+          remove.textContent = "Ã—";
+          remove.setAttribute("data-action", "remove-message-video");
+          remove.setAttribute("aria-label", "Remove");
+          item.append(remove);
+        }
+
+        videoNodes.push(item);
+      }
       container.replaceChildren(
+        ...videoNodes,
         ...images.map((img) => {
           const item = document.createElement("div");
           item.className = "media-item";
@@ -1052,9 +1410,12 @@
           return item;
         }),
       );
-    };
+	    };
 
-    if (has && messageMode !== "edit") {
+	    const removeMediaBtn = qs("#message-remove-media");
+	    if (removeMediaBtn) removeMediaBtn.hidden = !hasMedia;
+
+	    if (has && messageMode !== "edit") {
       editor.hidden = true;
       preview.hidden = false;
       status.textContent = tr("statusAdded");
@@ -1102,8 +1463,14 @@
   };
 
   const groupMark = (g) => {
-    if (!g.selected) return "";
-    return g.ok ? `<span class="tag tag--ok">✓</span>` : `<span class="tag tag--bad">✕</span>`;
+    const v =
+      g && typeof g.ok === "boolean"
+        ? g.ok
+        : g && typeof g.selected === "boolean"
+          ? g.selected
+          : null;
+    if (typeof v !== "boolean") return "";
+    return v ? `<span class="tag tag--ok">✓</span>` : `<span class="tag tag--bad">✕</span>`;
   };
 
   const renderGroups = () => {
@@ -1112,6 +1479,7 @@
     const status = qs("#groups-status");
     const refreshBtn = qs('#screen-groups [data-action="refresh-groups"]');
     const hasGroups = Array.isArray(state.groups) && state.groups.length;
+    const hasAny = hasGroups && state.groups.some((g) => Boolean(g && (g.ok === true || g.selected === true)));
 
     if (list) list.hidden = false;
     if (refreshBtn) refreshBtn.hidden = false;
@@ -1144,7 +1512,7 @@
       }),
     );
 
-    if (hasGroups) {
+    if (hasAny) {
       status.textContent = tr("statusAdded");
       status.classList.remove("status-pill--muted");
       status.classList.add("status-pill--ok");
@@ -1214,6 +1582,7 @@
   const openAddAccount = () => {
     // Real backendda bu flow serverda bo'ladi.
     // Hozir demo: tekshiruv ok bo'lsa lokalga yozamiz.
+    const useWebapp = BACKEND.enabled && BACKEND.mode === "webapp";
     const normalizePhone = (raw) => {
       const input = String(raw || "").trim();
       const digits = input.replace(/\D+/g, "");
@@ -1262,6 +1631,16 @@
         haptic("notification", "error");
         return;
       }
+
+      if (useWebapp) {
+        modal.close();
+        toast(tr("toastAccountAdded"));
+        haptic("notification", "success");
+        webappSyncAccounts().catch(() => {});
+        render();
+        return;
+      }
+
       state.accounts.unshift({
         id: cryptoId(),
         name: `${tr("accountNamePrefix")} ${formatPhone(digits)}`,
@@ -1271,7 +1650,7 @@
       });
       saveState();
       modal.close();
-      toast("Аккаунт добавлен");
+      toast(tr("toastAccountAdded"));
       haptic("notification", "success");
       render();
     };
@@ -1323,6 +1702,28 @@
           session.code = "";
           session.password = "";
           session.need2fa = false;
+          if (useWebapp) {
+            const telegramId = webappEnsureTelegramId();
+            if (!telegramId) return;
+            const id = encodeURIComponent(telegramId);
+	            webappRequest(`/accounts/${id}/send-code/`, {
+	              method: "POST",
+	              headers: { "Content-Type": "application/json" },
+	              body: JSON.stringify({ phone: session.phoneRaw }),
+	            })
+              .then((r) => {
+                if (r && r.success) {
+                  toast(tr("toastCodeSent", formatPhone(digits)));
+                  haptic("notification", "success");
+                  renderStep("code");
+                  return;
+                }
+	                toast(String((r && (r.error || r.message)) || "error"));
+	                haptic("notification", "error");
+	              })
+	              .catch((e) => toastApiError(e, tr("toastSendCodeFail")));
+	            return;
+	          }
           toast(tr("toastCodeSent", formatPhone(digits)));
           haptic("notification", "success");
           renderStep("code");
@@ -1345,20 +1746,25 @@
         hint.className = "hint";
         hint.textContent = tr("addAccountCodeHint", formatPhone(session.phone));
 
-        const need2fa = document.createElement("input");
-        need2fa.type = "checkbox";
-        need2fa.checked = session.need2fa;
+        let need2fa = null;
+        if (!useWebapp) {
+          need2fa = document.createElement("input");
+          need2fa.type = "checkbox";
+          need2fa.checked = session.need2fa;
 
-        const need2faLabel = document.createElement("label");
-        need2faLabel.style.display = "flex";
-        need2faLabel.style.alignItems = "center";
-        need2faLabel.style.gap = "10px";
-        need2faLabel.style.marginTop = "10px";
-        need2faLabel.style.fontWeight = "900";
-        need2faLabel.style.color = "#374151";
-        need2faLabel.append(need2fa, document.createTextNode(tr("addAccountNeed2fa")));
+          const need2faLabel = document.createElement("label");
+          need2faLabel.style.display = "flex";
+          need2faLabel.style.alignItems = "center";
+          need2faLabel.style.gap = "10px";
+          need2faLabel.style.marginTop = "10px";
+          need2faLabel.style.fontWeight = "900";
+          need2faLabel.style.color = "#374151";
+          need2faLabel.append(need2fa, document.createTextNode(tr("addAccountNeed2fa")));
 
-        body.append(hint, field(tr("addAccountCodeLabel"), code), need2faLabel);
+          body.append(hint, field(tr("addAccountCodeLabel"), code), need2faLabel);
+        } else {
+          body.append(hint, field(tr("addAccountCodeLabel"), code));
+        }
 
         const back = button(tr("back"), "btn btn-secondary", () => renderStep("phone"));
         const next = button(tr("confirm"), "btn btn-primary", () => {
@@ -1369,11 +1775,26 @@
             return;
           }
           session.code = v;
-          session.need2fa = Boolean(need2fa.checked);
-          if (session.need2fa) {
-            renderStep("password");
-            return;
-          }
+          if (useWebapp) {
+            const telegramId = webappEnsureTelegramId();
+            if (!telegramId) return;
+            const id = encodeURIComponent(telegramId);
+	            webappRequest(`/accounts/${id}/verify-code/`, {
+	              method: "POST",
+	              headers: { "Content-Type": "application/json" },
+	              body: JSON.stringify({ phone: session.phoneRaw, code: session.code }),
+	            })
+              .then((r) => {
+	                if (r && r.success) return finish();
+	                if (r && r.needs_2fa) return renderStep("password");
+	                toast(String((r && (r.error || r.message)) || "error"));
+	                haptic("notification", "error");
+	              })
+	              .catch((e) => toastApiError(e, tr("toastVerifyCodeFail")));
+	            return;
+	          }
+          session.need2fa = Boolean(need2fa && need2fa.checked);
+          if (session.need2fa) return renderStep("password");
           finish();
         });
 
@@ -1404,6 +1825,23 @@
             return;
           }
           session.password = v;
+          if (useWebapp) {
+            const telegramId = webappEnsureTelegramId();
+            if (!telegramId) return;
+            const id = encodeURIComponent(telegramId);
+	            webappRequest(`/accounts/${id}/verify-2fa/`, {
+	              method: "POST",
+	              headers: { "Content-Type": "application/json" },
+	              body: JSON.stringify({ phone: session.phoneRaw, password: session.password }),
+	            })
+              .then((r) => {
+	                if (r && r.success) return finish();
+	                toast(String((r && (r.error || r.message)) || "error"));
+	                haptic("notification", "error");
+	              })
+	              .catch((e) => toastApiError(e, tr("toastVerify2faFail")));
+	            return;
+	          }
           finish();
         });
 
@@ -1472,9 +1910,53 @@
     }
   };
 
-  const MESSAGE_IMAGE_MAX_COUNT = 5;
-  const MESSAGE_IMAGE_MAX_BYTES = 1_000_000;
-  const MESSAGE_IMAGE_MAX_SOURCE_BYTES = 15_000_000;
+	  const MESSAGE_IMAGE_MAX_COUNT = 5;
+	  const MESSAGE_IMAGE_MAX_BYTES = 1_000_000;
+	  const MESSAGE_IMAGE_MAX_SOURCE_BYTES = 15_000_000;
+	  const MESSAGE_VIDEO_MAX_BYTES = 50 * 1024 * 1024; // 50 MB
+
+	  const VIDEO_EXTS = new Set(["mp4", "mov", "mkv", "avi", "webm", "3gp", "m4v", "mpeg", "mpg"]);
+
+	  let pendingVideoFile = null;
+	  let pendingVideoUrl = null;
+
+	  const clearPendingVideo = () => {
+	    try {
+	      if (pendingVideoUrl && typeof URL !== "undefined" && URL.revokeObjectURL) URL.revokeObjectURL(pendingVideoUrl);
+	    } catch {
+	      // ignore
+	    }
+	    pendingVideoUrl = null;
+	    pendingVideoFile = null;
+	    if (state && typeof state === "object") state.messageVideo = null;
+	  };
+
+	  const setPendingVideo = (file) => {
+	    clearPendingVideo();
+	    pendingVideoFile = file;
+	    try {
+	      pendingVideoUrl = typeof URL !== "undefined" && URL.createObjectURL ? URL.createObjectURL(file) : null;
+	    } catch {
+	      pendingVideoUrl = null;
+	    }
+	    if (state && typeof state === "object") {
+	      state.messageVideo = {
+	        id: cryptoId(),
+	        name: String(file?.name || "video"),
+	        type: String(file?.type || ""),
+	        size: Number(file?.size) || 0,
+	        url: pendingVideoUrl,
+	      };
+	    }
+	  };
+
+	  const isVideoFile = (file) => {
+	    const type = String(file?.type || "");
+	    if (type.startsWith("video/")) return true;
+	    const name = String(file?.name || "");
+	    const ext = (name.split(".").pop() || "").toLowerCase();
+	    return Boolean(ext && VIDEO_EXTS.has(ext));
+	  };
 
   const readFileAsDataUrl = (file) =>
     new Promise((resolve, reject) => {
@@ -1578,9 +2060,30 @@
     return { dataUrl: await blobToDataUrl(blob), type: blob.type || "image/jpeg", size: blob.size };
   };
 
-  const addMessageImages = async (files) => {
-    const inputFiles = Array.from(files || []);
-    if (!inputFiles.length) return;
+	  const addMessageImages = async (files) => {
+	    const inputFiles = Array.from(files || []);
+	    if (!inputFiles.length) return;
+
+	    const videos = inputFiles.filter((f) => isVideoFile(f));
+	    if (videos.length) {
+	      const v = videos[0];
+	      if (!v) return;
+	      if (videos.length > 1) toast(tr("toastVideoOnlyOne"));
+	      const maxMb = Math.round((MESSAGE_VIDEO_MAX_BYTES / 1024 / 1024) * 10) / 10;
+	      if (typeof v.size === "number" && v.size > MESSAGE_VIDEO_MAX_BYTES) {
+	        toast(tr("toastVideoTooLarge", maxMb));
+	        haptic("notification", "error");
+	        return;
+	      }
+	      state.messageImages = [];
+	      setPendingVideo(v);
+	      saveState();
+	      renderMessage();
+	      return;
+	    }
+
+	    // Rasm tanlansa, videoni o'chiramiz.
+	    clearPendingVideo();
 
     if (!Array.isArray(state.messageImages)) state.messageImages = [];
 
@@ -1588,18 +2091,18 @@
 
     for (const f of inputFiles) {
       if (state.messageImages.length >= MESSAGE_IMAGE_MAX_COUNT) {
-        toast(`Ko‘pi bilan ${MESSAGE_IMAGE_MAX_COUNT} ta rasm qo‘shish mumkin`);
+        toast(tr("toastTooManyImages", MESSAGE_IMAGE_MAX_COUNT));
         haptic("notification", "error");
         break;
       }
 
-      if (!String(f.type || "").startsWith("image/")) {
-        toast("Rasm faylini tanlang");
-        haptic("notification", "error");
-        continue;
-      }
+	      if (!String(f.type || "").startsWith("image/")) {
+	        toast(tr("toastNeedMediaFile"));
+	        haptic("notification", "error");
+	        continue;
+	      }
       if (typeof f.size === "number" && f.size > MESSAGE_IMAGE_MAX_SOURCE_BYTES) {
-        toast(`Fayl juda katta (maks. ${maxMb} MB)`);
+        toast(tr("toastImageTooLarge", maxMb));
         haptic("notification", "error");
         continue;
       }
@@ -1609,16 +2112,30 @@
         const name = String(f.name || "image").replace(/\.[^.]+$/i, "") + ".jpg";
         state.messageImages.push({ id: cryptoId(), name, type: normalized.type, size: normalized.size, dataUrl: normalized.dataUrl });
       } catch {
-        toast("Rasmni o‘qib bo‘lmadi");
+        toast(tr("toastImageReadFail"));
         haptic("notification", "error");
       }
     }
 
-    saveState();
-    renderMessage();
-  };
+	    saveState();
+	    renderMessage();
+	  };
 
-  const launchDispatch = () => {
+	  const clearMessageMedia = async ({ remote = false } = {}) => {
+	    state.messageImages = [];
+	    clearPendingVideo();
+	    saveState();
+	    renderMessage();
+	    renderDashboard();
+
+	    if (!remote) return;
+	    if (!BACKEND.enabled || BACKEND.mode !== "webapp") return;
+	    const telegramId = webappEnsureTelegramId();
+	    if (!telegramId) return;
+	    await webappClearMailingMedia(telegramId);
+	  };
+
+	  const launchDispatch = () => {
     // Real backendda dispatch endpoint bor.
     if (!state.interval.freqHours || !state.interval.durationDays) {
       toast(tr("toastNeedInterval"));
@@ -1631,15 +2148,79 @@
       setRoute("accounts");
       return;
     }
-    if (!(state.message && state.message.trim()) && !(Array.isArray(state.messageImages) && state.messageImages.length)) {
-      toast(tr("toastNeedMessage"));
-      haptic("notification", "error");
-      setRoute("message");
-      return;
-    }
-    if (!Array.isArray(state.groups) || !state.groups.length) return setRoute("groups");
+	    if (!(state.message && state.message.trim()) && !(Array.isArray(state.messageImages) && state.messageImages.length) && !pendingVideoFile) {
+	      toast(tr("toastNeedMessage"));
+	      haptic("notification", "error");
+	      setRoute("message");
+	      return;
+	    }
+    const hasAny = Array.isArray(state.groups) && state.groups.some((g) => Boolean(g && (g.ok === true || g.selected === true)));
+    if (!hasAny) return setRoute("groups");
 
     if (BACKEND.enabled) {
+      if (BACKEND.mode === "webapp") {
+        const telegramId = webappEnsureTelegramId();
+        if (!telegramId) return;
+        const id = encodeURIComponent(telegramId);
+        const text = String(state.message || "");
+        const frequency = formatHoursToHms(state.interval.freqHours);
+        const duration = formatHoursToHms((Number(state.interval.durationDays) || 0) * 24);
+
+	        const upload = async () => {
+	          const images = Array.isArray(state.messageImages) ? state.messageImages : [];
+
+	          if (pendingVideoFile) {
+	            if (images.length) toast(tr("toastMediaVideoIgnoresImages"));
+	            const maxMb = Math.round((MESSAGE_VIDEO_MAX_BYTES / 1024 / 1024) * 10) / 10;
+	            if (typeof pendingVideoFile.size === "number" && pendingVideoFile.size > MESSAGE_VIDEO_MAX_BYTES) {
+	              toast(tr("toastVideoTooLarge", maxMb));
+	              throw new Error("video_too_large");
+	            }
+	            const form = new FormData();
+	            form.append("text", text);
+	            form.append("video", pendingVideoFile, (state.messageVideo && state.messageVideo.name) || pendingVideoFile.name || "video");
+	            await webappRequest(`/mailing/${id}/`, { method: "PATCH", body: form });
+	            return;
+	          }
+
+	          if (images.length > 1) toast(tr("toastImageOnlyOne"));
+	          if (!images.length) {
+	            await webappRequest(`/mailing/${id}/`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+	            return;
+	          }
+	          const first = images[0];
+	          if (!first || !first.dataUrl) {
+	            await webappRequest(`/mailing/${id}/`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+	            return;
+	          }
+
+	          const blob = await dataUrlToBlob(first.dataUrl);
+	          const form = new FormData();
+	          form.append("text", text);
+	          form.append("image", blob, first.name || "image.jpg");
+	          await webappRequest(`/mailing/${id}/`, { method: "PATCH", body: form });
+	        };
+
+	        upload()
+          .then(() =>
+            webappRequest(`/mailing/${id}/interval/`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ frequency, duration }),
+            }),
+          )
+          .then(() => webappRequest(`/mailing/${id}/start/`, { method: "POST" }))
+          .then(() => webappBootstrap())
+          .then(() => {
+            toast(tr("toastDispatchStarted"));
+            haptic("notification", "success");
+            setRoute("dashboard");
+          })
+	          .catch((e) => {
+	            toastApiError(e, tr("toastStartFail"));
+	          });
+	        return;
+	      }
       backendMutate("/miniapp/dispatch/launch", "dispatch-launch")
         .then(() => {
           toast(tr("toastDispatchStarted"));
@@ -1662,6 +2243,20 @@
 
   const stopDispatch = () => {
     if (BACKEND.enabled) {
+      if (BACKEND.mode === "webapp") {
+        const telegramId = webappEnsureTelegramId();
+        if (!telegramId) return;
+        const id = encodeURIComponent(telegramId);
+	        webappRequest(`/mailing/${id}/stop/`, { method: "POST" })
+	          .then(() => webappBootstrap())
+	          .then(() => {
+	            toast(tr("toastStopped"));
+	            haptic("notification", "warning");
+	            render();
+	          })
+	          .catch((e) => toastApiError(e, tr("toastStopFail")));
+	        return;
+	      }
       backendMutate("/miniapp/dispatch/stop", "dispatch-stop")
         .then(() => {
           toast(tr("toastStopped"));
@@ -1690,6 +2285,16 @@
   const refreshStats = () => {
     // Real backendda stats serverdan keladi.
     if (BACKEND.enabled) {
+      if (BACKEND.mode === "webapp") {
+        webappSyncStatus()
+          .then(() => {
+            toast(tr("toastStatsUpdated"));
+            haptic("impact", "light");
+            renderDashboard();
+          })
+          .catch(() => {});
+        return;
+      }
       if (state.dispatchStatus !== "running") {
         toast(tr("toastNoActiveDispatch"));
         haptic("impact", "light");
@@ -1719,6 +2324,7 @@
   };
 
   const toggleAccount = (id) => {
+    if (BACKEND.enabled && BACKEND.mode === "webapp") return;
     const acc = state.accounts.find((a) => a.id === id);
     if (!acc) return;
     if (acc.status === "active") acc.status = "paused";
@@ -1730,6 +2336,20 @@
   };
 
   const deleteAccount = (id) => {
+    if (BACKEND.enabled && BACKEND.mode === "webapp") {
+      const acc = state.accounts.find((a) => a.id === id);
+      const telegramId = webappEnsureTelegramId();
+      if (!acc || !telegramId) return;
+      webappRequest(`/accounts/${encodeURIComponent(telegramId)}/${encodeURIComponent(acc.phone)}/`, { method: "DELETE" })
+        .then(() => webappSyncAccounts())
+        .then(() => {
+          toast(tr("toastUpdated"));
+          haptic("impact", "light");
+          render();
+        })
+        .catch(() => {});
+      return;
+    }
     state.accounts = state.accounts.filter((a) => a.id !== id);
     saveState();
     toast("Удалено");
@@ -1745,6 +2365,17 @@
   const refreshGroups = () => {
     // Real backendda groups serverdan keladi.
     if (BACKEND.enabled) {
+      if (BACKEND.mode === "webapp") {
+        webappSyncGroups(true)
+          .then(() => {
+            toast(tr("toastUpdated"));
+            haptic("impact", "light");
+            renderGroups();
+            renderDashboard();
+          })
+          .catch(() => {});
+        return;
+      }
       backendMutate("/miniapp/groups/refresh", "refresh-groups")
         .then(() => {
           toast(tr("toastUpdated"));
@@ -1925,30 +2556,55 @@
           return;
         }
 
-        if (action === "remove-message-image") {
-          const id = act.getAttribute("data-image-id");
-          if (!id) return;
-          state.messageImages = (Array.isArray(state.messageImages) ? state.messageImages : []).filter((x) => String(x.id) !== String(id));
-          saveState();
-          haptic("selection");
-          renderMessage();
-          return;
-        }
+	        if (action === "remove-message-image") {
+	          const id = act.getAttribute("data-image-id");
+	          if (!id) return;
+	          state.messageImages = (Array.isArray(state.messageImages) ? state.messageImages : []).filter((x) => String(x.id) !== String(id));
+	          saveState();
+	          haptic("selection");
+	          renderMessage();
+	          renderDashboard();
+
+	          const hasAnyMedia = Boolean((Array.isArray(state.messageImages) && state.messageImages.length) || pendingVideoFile);
+	          if (!hasAnyMedia && BACKEND.enabled && BACKEND.mode === "webapp") {
+	            const telegramId = webappEnsureTelegramId();
+	            if (telegramId) webappClearMailingMedia(telegramId).catch((e) => toastApiError(e, tr("toastMediaDeleteFail")));
+	          }
+	          return;
+	        }
+
+	        if (action === "remove-message-video") {
+	          clearMessageMedia({ remote: BACKEND.enabled && BACKEND.mode === "webapp" })
+	            .then(() => haptic("selection"))
+	            .catch((e) => toastApiError(e, tr("toastMediaDeleteFail")));
+	          return;
+	        }
+
+	        if (action === "remove-message-media") {
+	          clearMessageMedia({ remote: BACKEND.enabled && BACKEND.mode === "webapp" })
+	            .then(() => {
+	              toast(tr("toastMediaDeleted"));
+	              haptic("notification", "success");
+	            })
+	            .catch((e) => toastApiError(e, tr("toastMediaDeleteFail")));
+	          return;
+	        }
 
         if (action === "add-account") return openAddAccount();
         if (action === "accounts-next") return setRoute("message");
-        if (action === "message-next") {
-          const editorVisible = Boolean(qs("#message-editor") && !qs("#message-editor").hidden);
+	        if (action === "message-next") {
+	          const editorVisible = Boolean(qs("#message-editor") && !qs("#message-editor").hidden);
 
-          if (editorVisible) {
-            const text = (qs("#message-text") ? qs("#message-text").value : "") || "";
-            const hasText = Boolean(String(text).trim());
-            const hasImages = Boolean(Array.isArray(state.messageImages) && state.messageImages.length);
-            if (!hasText && !hasImages) {
-              toast(tr("toastNeedText"));
-              haptic("notification", "error");
-              return;
-            }
+	          if (editorVisible) {
+	            const text = (qs("#message-text") ? qs("#message-text").value : "") || "";
+	            const hasText = Boolean(String(text).trim());
+	            const hasImages = Boolean(Array.isArray(state.messageImages) && state.messageImages.length);
+	            const hasVideo = Boolean(pendingVideoFile);
+	            if (!hasText && !hasImages && !hasVideo) {
+	              toast(tr("toastNeedText"));
+	              haptic("notification", "error");
+	              return;
+	            }
             state.message = String(text);
             messageMode = "auto";
             messagePreviewExpanded = false;
@@ -1978,7 +2634,7 @@
           const id = act.getAttribute("data-group-id");
           const g = state.groups.find((x) => x.id === id);
           if (g) {
-            copyText(`${g.title}`);
+            copyText(g.link || `${g.title}`);
           }
           return;
         }
@@ -2077,7 +2733,7 @@
   initPwaInstall();
   initEvents();
   render();
+  webappBootstrap().catch(() => {});
 
-  // Backend yoqilsa startda state'ni tortamiz.
-  backendPullState().catch(() => {});
+  // Backend state pull yo'q (home viewdan boshlaymiz).
 })();

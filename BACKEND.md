@@ -20,8 +20,8 @@ Yoki tezkor query:
 ## Kerakli endpointlar
 Frontend quyidagilarni chaqiradi:
 
-- `GET /miniapp/state` -> `state` JSON (yoki `{ state: <state> }`)
-- `POST /miniapp/state` -> body: `{ state, reason }`
+- `GET /miniapp/state` -> ixtiyoriy (agar serverda state saqlamoqchi bo‘lsangiz)
+- `POST /miniapp/state` -> ixtiyoriy (agar serverda state saqlamoqchi bo‘lsangiz)
 
 Qo'shimcha (demo) endpointlar:
 
@@ -66,7 +66,7 @@ Keyin frontendni shunday oching:
 PowerShell misol:
 
 ```powershell
-$env:UPSTREAM_BASE_URL="https://1log.uz"
+$env:UPSTREAM_BASE_URL="https://dev.1log.uz"
 $env:UPSTREAM_API_ROOT="/ru/api/v1"
 $env:UPSTREAM_GROUP_TYPE="1"
 $env:UPSTREAM_USE_AUTO_MAILING="1"    # 0 qilsangiz eski /user/* ishlaydi
@@ -91,3 +91,19 @@ Eslatma (bizning miniapp uchun):
 
 ## Backend eslatma
 Prod’da `initData`ni tekshirib, userga bog‘lab qo‘ying.
+
+---
+
+## WEBAPP API / AUTO-MAILING (bekendchingiz bergan)
+Hozirgi `WEBAPP_API.md`/`WEBAPP_API (2).md` bo‘yicha frontend bevosita shu API’ga ulanadi (adapter shart emas), agar CORS ruxsat bersa.
+
+Sozlash:
+- `backendEnabled: true`
+- `backendBaseUrl` ni **to‘liq** shunday bering:
+  - `https://dev.1log.uz/ru/api/v1/auto-mailing` (dev)
+  - yoki prod domeningiz bo‘lsa o‘sha.
+  - Shunda app avtomat `status/{telegram_id}`, `accounts/{telegram_id}`, `groups/{telegram_id}`, `mailing/{telegram_id}` endpointlarni ishlatadi.
+
+Eslatma:
+- Bu API `telegram_id` ni URL ichida kutadi (header emas).
+- Media (image/video) upload: `multipart/form-data` kerak bo‘lsa, frontni alohida ulash kerak (hozir text+interval+start/stop ulangan).

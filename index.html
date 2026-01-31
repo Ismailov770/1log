@@ -23,8 +23,8 @@
     <link rel="stylesheet" href="./app.css" />
     <script>
       window.__APP_CONFIG__ = {
-        backendEnabled: false,
-        backendBaseUrl: "",
+        backendEnabled: true,
+        backendBaseUrl: "https://dev.1log.uz/ru/api/v1/auto-mailing",
       };
     </script>
     <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
@@ -160,7 +160,7 @@
                 <path d="M17 19H3" />
               </svg>
             </button>
-            <input id="message-images-input" type="file" accept="image/*" multiple hidden />
+            <input id="message-images-input" type="file" accept="image/*,video/*" multiple hidden />
           </div>
         </div>
       </div>
@@ -355,6 +355,11 @@
             <button class="icon-btn icon-btn--muted" type="button" data-action="insert-image" aria-label="Изображение">
               <svg class="icon icon--sm">
                 <use href="#i-image"></use>
+              </svg>
+            </button>
+            <button class="icon-btn icon-btn--muted" type="button" data-action="remove-message-media" id="message-remove-media" aria-label="Удалить медиа" hidden>
+              <svg class="icon icon--sm">
+                <use href="#i-trash"></use>
               </svg>
             </button>
           </div>
