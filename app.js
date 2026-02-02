@@ -679,8 +679,8 @@
   // - `index.html`: `window.__APP_CONFIG__ = { backendEnabled: true, backendBaseUrl: "https://api.example.com" }`
   // - yoki localStorage: `localStorage.setItem("1log_backend", JSON.stringify({ backendEnabled: true, backendBaseUrl: "..." }))`
   const BACKEND = {
-    enabled: false,
-    baseUrl: "",
+    enabled: true,
+    baseUrl: "https://1log.uz/ru/api/v1/",
     mode: "miniapp", // miniapp/webapp
     userKey: "",
     telegramId: "",
