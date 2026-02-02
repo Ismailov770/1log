@@ -686,6 +686,15 @@
     telegramId: "",
   };
   const BACKEND_STORAGE_KEY = "1log_backend";
+  const persistBackendConfig = (patch) => {
+    try {
+      const currentRaw = localStorage.getItem(BACKEND_STORAGE_KEY);
+      const current = currentRaw ? JSON.parse(currentRaw) : {};
+      localStorage.setItem(BACKEND_STORAGE_KEY, JSON.stringify({ ...(current && typeof current === "object" ? current : {}), ...(patch || {}) }));
+    } catch {
+      // ignore
+    }
+  };
   const loadBackendConfig = () => {
     const fromWindow =
       typeof window !== "undefined" && window && typeof window.__APP_CONFIG__ === "object" && window.__APP_CONFIG__
@@ -853,10 +862,54 @@
 
   const webappLangToUi = (lang) => (lang === 1 ? "uz" : lang === 2 ? "uz_cyrl" : "ru");
 
+  let telegramIdPromptShown = false;
+  const openTelegramIdPrompt = ({ title, onSaved } = {}) => {
+    if (telegramIdPromptShown) return;
+    telegramIdPromptShown = true;
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.inputMode = "numeric";
+    input.placeholder = "Masalan: 123456789";
+    input.autocomplete = "off";
+    input.value = String(BACKEND.telegramId || "").trim();
+
+    const hint = document.createElement("p");
+    hint.className = "hint";
+    hint.textContent =
+      "Telegram ID topilmadi. Agar Telegram MiniApp ichida ochilgan bo'lsa, bot WebApp tugmasi orqali ochilganini tekshiring. Test uchun ID ni qo'lda kiriting.";
+
+    const body = document.createElement("div");
+    body.append(hint, field("Telegram ID", input));
+
+    const cancel = button(tr("cancel"), "btn btn-secondary", () => modal.close());
+    const save = button(tr("save"), "btn btn-primary", () => {
+      const id = String(input.value || "").trim();
+      if (!id || !/^\d{5,20}$/.test(id)) {
+        toast("Telegram ID noto'g'ri");
+        haptic("notification", "error");
+        return;
+      }
+      persistBackendConfig({ backendTelegramId: id });
+      loadBackendConfig();
+      modal.close();
+      toast("Saqlandi");
+      haptic("notification", "success");
+      if (typeof onSaved === "function") onSaved(id);
+    });
+
+    modal.open({ title: title || "Telegram ID", body, footer: [cancel, save] });
+    setTimeout(() => input.focus(), 0);
+  };
+
   const webappEnsureTelegramId = () => {
     const id = getTelegramId();
     if (!id) {
-      toast("Telegram ID yo‘q");
+      if (BACKEND.enabled && BACKEND.mode === "webapp") {
+        openTelegramIdPrompt({ onSaved: () => webappBootstrap().catch(() => {}) });
+      } else {
+        toast("Telegram ID yo'q");
+      }
       return null;
     }
     return id;
@@ -1079,6 +1132,28 @@
 
   const getTelegramId = () => {
     if (BACKEND.telegramId) return String(BACKEND.telegramId);
+    // Fallback: some Telegram environments pass initData via URL params (e.g. tgWebAppData).
+    try {
+      const params = new URLSearchParams(String(window.location && window.location.search ? window.location.search : ""));
+      const tgWebAppData = params.get("tgWebAppData");
+      if (tgWebAppData) {
+        const decoded = decodeURIComponent(tgWebAppData);
+        const id = parseTelegramIdFromInitData(decoded);
+        if (id) return id;
+      }
+    } catch {
+      // ignore
+    }
+    // Telegram WebApp: prefer initDataUnsafe (object), because initData (string)
+    // can be empty/unavailable depending on how the page was opened.
+    try {
+      const unsafe = tg && typeof tg === "object" ? tg.initDataUnsafe : null;
+      const user = unsafe && typeof unsafe === "object" ? unsafe.user : null;
+      const id = user && typeof user === "object" ? user.id : null;
+      if (id != null) return String(id);
+    } catch {
+      // ignore
+    }
     if (tg && typeof tg.initData === "string" && tg.initData) {
       const id = parseTelegramIdFromInitData(tg.initData);
       if (id) return id;
