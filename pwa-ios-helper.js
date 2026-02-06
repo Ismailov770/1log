@@ -66,6 +66,10 @@
   document.head.appendChild(style);
 
   // --- Telegram WebView holati ------------------------------------
+  // Android Telegram'da hech narsa ko'rsatmaymiz; iOS Telegram'da faqat banner.
+  const isAndroid = /Android/i.test(ua);
+  if (isTelegram && isAndroid) return;
+
   if (isTelegram) {
     const btn = document.createElement("button");
     btn.type = "button";
