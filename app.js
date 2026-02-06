@@ -1182,14 +1182,40 @@
 	  };
 
   let deferredInstallPrompt = null;
+  let shouldAutoPromptFromQuery = false; // Chrome'da qayta ochilganda avtomatik prompt uchun
   const initPwaInstall = () => {
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       deferredInstallPrompt = e;
+      // Agar URL'ga maxsus flag bilan kelgan bo'lsa, avtomatik prompt beramiz (faqat Android).
+      if (shouldAutoPromptFromQuery && /Android/i.test(navigator.userAgent || "")) {
+        shouldAutoPromptFromQuery = false;
+        try {
+          deferredInstallPrompt.prompt();
+          deferredInstallPrompt.userChoice.catch(() => null);
+          deferredInstallPrompt = null;
+        } catch {
+          // ignore
+        }
+      }
     });
     window.addEventListener("appinstalled", () => {
       deferredInstallPrompt = null;
     });
+  };
+
+  // URL dagi flag orqali Chrome'da avtomatik prompt berish
+  const checkInstallQueryFlag = () => {
+    try {
+      const url = new URL(window.location.href);
+      const hasFlag = url.searchParams.get("pwa_install") === "1";
+      if (!hasFlag) return;
+      url.searchParams.delete("pwa_install");
+      history.replaceState({}, document.title, url.toString());
+      shouldAutoPromptFromQuery = true;
+    } catch {
+      // ignore
+    }
   };
 
   const isStandaloneMode = () => {
@@ -1202,7 +1228,9 @@
   };
 
   const openInstallInBrowser = ({ preferChrome = false } = {}) => {
-    const url = window.location.href;
+    const urlObj = new URL(window.location.href);
+    if (!urlObj.searchParams.has("pwa_install")) urlObj.searchParams.set("pwa_install", "1");
+    const url = urlObj.toString();
     const ua = navigator.userAgent || "";
     const isAndroid = /Android/i.test(ua);
 
@@ -1242,19 +1270,18 @@
     const isAndroidLocal = /Android/i.test(uaLocal);
     const isIOSLocal = /iPad|iPhone|iPod/i.test(uaLocal) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-    // Telegram WebView: PWA install prompt chiqmaydi. Android'da Chrome'da ochishni taklif qilamiz.
+    // Telegram WebView: Android'da Chrome'da ochib beramiz va qisqa ko'rsatma beramiz.
     if (isTelegramWebView) {
       if (isAndroidLocal) {
         const body = document.createElement("div");
         const p = document.createElement("p");
         p.className = "hint";
-        p.textContent = "Chrome’da ochib ilovani o‘rnatamizmi?";
+        p.textContent = "Chrome’da ochiladi. Keyin ⋮ → “Install app” ni bosing.";
         body.append(p);
         const cancel = button(tr("btnNo"), "btn btn-secondary", () => modal.close());
         const ok = button(tr("btnYes"), "btn btn-primary", () => {
           modal.close();
-          // Telegram WebView'da _blank odatda tashqi brauzerni ochadi.
-          window.open(window.location.href, "_blank", "noopener,noreferrer");
+          openInstallInBrowser({ preferChrome: true });
         });
         modal.open({ title: tr("installTitle"), body, footer: [cancel, ok] });
         return;
@@ -2926,6 +2953,7 @@
   };
 
   initTelegram();
+  checkInstallQueryFlag();
   initPwaInstall();
   initEvents();
   render();
