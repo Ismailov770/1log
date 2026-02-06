@@ -1244,6 +1244,12 @@
     const isAndroid = /Android/i.test(ua);
     const isTelegram = Boolean(tg);
 
+    // Miniapp (Telegram WebView) on Android: open Chrome via intent straight away.
+    if (isAndroid && isTelegram) {
+      openInstallInBrowser({ preferChrome: true });
+      return;
+    }
+
     if (deferredInstallPrompt && !isIOS) {
       try {
         deferredInstallPrompt.prompt();
