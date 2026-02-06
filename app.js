@@ -1242,22 +1242,12 @@
     const isAndroidLocal = /Android/i.test(uaLocal);
     const isIOSLocal = /iPad|iPhone|iPod/i.test(uaLocal) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-    // Telegram WebView: Androidda Chrome intentga, iOSda Safari'ga ochamiz (prompt yo'q).
+    // Telegram WebView: intent ishlamaydi (ERR_UNKNOWN_URL_SCHEME), shuning uchun faqat https ga ochamiz.
     if (isTelegramWebView) {
       const url = window.location.href;
       if (isAndroidLocal) {
-        try {
-          const u = new URL(url);
-          const scheme = (u.protocol || "https:").replace(":", "");
-          const intent = `intent://${u.host}${u.pathname}${u.search}${u.hash}#Intent;scheme=${scheme};package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(
-            url,
-          )};end`;
-          window.location.href = intent;
-          return;
-        } catch {
-          window.open(url, "_blank", "noopener,noreferrer");
-          return;
-        }
+        window.open(url, "_blank", "noopener,noreferrer");
+        return;
       }
       if (isIOSLocal) {
         window.open(url, "_blank", "noopener,noreferrer");
