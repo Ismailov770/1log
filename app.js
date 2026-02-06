@@ -1242,17 +1242,25 @@
     const isAndroidLocal = /Android/i.test(uaLocal);
     const isIOSLocal = /iPad|iPhone|iPod/i.test(uaLocal) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-    // Telegram WebView: intent ishlamaydi (ERR_UNKNOWN_URL_SCHEME), shuning uchun faqat https ga ochamiz.
+    // Telegram WebView: PWA install prompt chiqmaydi. Android'da Chrome'da ochishni taklif qilamiz.
     if (isTelegramWebView) {
-      const url = window.location.href;
       if (isAndroidLocal) {
-        window.open(url, "_blank", "noopener,noreferrer");
+        const body = document.createElement("div");
+        const p = document.createElement("p");
+        p.className = "hint";
+        p.textContent = "Chrome’da ochib ilovani o‘rnatamizmi?";
+        body.append(p);
+        const cancel = button(tr("btnNo"), "btn btn-secondary", () => modal.close());
+        const ok = button(tr("btnYes"), "btn btn-primary", () => {
+          modal.close();
+          // Telegram WebView'da _blank odatda tashqi brauzerni ochadi.
+          window.open(window.location.href, "_blank", "noopener,noreferrer");
+        });
+        modal.open({ title: tr("installTitle"), body, footer: [cancel, ok] });
         return;
       }
-      if (isIOSLocal) {
-        window.open(url, "_blank", "noopener,noreferrer");
-        return;
-      }
+      // iOS Telegram: faqat ogohlantiramiz
+      toast(tr("installTelegramHint"));
       return;
     }
 
