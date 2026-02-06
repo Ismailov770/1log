@@ -1126,6 +1126,7 @@
     if (w.Telegram && w.Telegram.WebApp) return w.Telegram.WebApp;
     return null;
   })();
+  const isTelegramWebView = Boolean(tg);
 
   const parseTelegramIdFromInitData = (initData) => {
     try {
@@ -1237,6 +1238,11 @@
   };
 
   const openInstallModal = async () => {
+    // Telegram WebView ichida install prompt chiqmaydi, shuning uchun bu yerda to'xtaymiz.
+    if (isTelegramWebView) {
+      toast(tr("installTelegramHint"));
+      return;
+    }
     if (isStandaloneMode()) return toast(tr("toastAlreadyInstalled"));
 
     const ua = navigator.userAgent || "";
