@@ -1238,19 +1238,40 @@
   };
 
   const openInstallModal = async () => {
-    // Telegram WebView ichida install prompt chiqmaydi, shuning uchun bu yerda to'xtaymiz.
+    const uaLocal = navigator.userAgent || "";
+    const isAndroidLocal = /Android/i.test(uaLocal);
+    const isIOSLocal = /iPad|iPhone|iPod/i.test(uaLocal) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+    // Telegram WebView: Androidda Chrome intentga, iOSda Safari'ga ochamiz (prompt yo'q).
     if (isTelegramWebView) {
-      toast(tr("installTelegramHint"));
+      const url = window.location.href;
+      if (isAndroidLocal) {
+        try {
+          const u = new URL(url);
+          const scheme = (u.protocol || "https:").replace(":", "");
+          const intent = `intent://${u.host}${u.pathname}${u.search}${u.hash}#Intent;scheme=${scheme};package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(
+            url,
+          )};end`;
+          window.location.href = intent;
+          return;
+        } catch {
+          window.open(url, "_blank", "noopener,noreferrer");
+          return;
+        }
+      }
+      if (isIOSLocal) {
+        window.open(url, "_blank", "noopener,noreferrer");
+        return;
+      }
       return;
     }
+
     if (isStandaloneMode()) return toast(tr("toastAlreadyInstalled"));
 
-    const ua = navigator.userAgent || "";
-    const isIOS = /iPad|iPhone|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-    const isAndroid = /Android/i.test(ua);
+    const isAndroid = isAndroidLocal;
+    const isIOS = isIOSLocal;
     const isTelegram = Boolean(tg);
 
-    // Miniapp (Telegram WebView) on Android: open Chrome via intent straight away.
     if (isAndroid && isTelegram) {
       openInstallInBrowser({ preferChrome: true });
       return;
