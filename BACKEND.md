@@ -9,7 +9,7 @@ Frontend `app.js` ichida backend ulash tayyor (state pull/push).
 window.__APP_CONFIG__ = {
   backendEnabled: true,
   backendBaseUrl: "https://YOUR-API-DOMAIN",
-  backendUserKey: "demo-user", // Telegram bo'lmasa ham user ajratish uchun (ixtiyoriy)
+  backendUserKey: "demo-user", 
 };
 ```
 

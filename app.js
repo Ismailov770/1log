@@ -736,6 +736,13 @@
   };
   loadBackendConfig();
 
+  const persistTelegramId = (telegramId) => {
+    const id = telegramId != null ? String(telegramId) : "";
+    if (!id) return;
+    BACKEND.telegramId = id;
+    persistBackendConfig({ backendTelegramId: id });
+  };
+
   let syncTimer = null;
   const scheduleSync = (reason = "") => {
     // State sync yo'q (backendga /miniapp/state shart emas).
@@ -1130,36 +1137,45 @@
     }
   };
 
-  const getTelegramId = () => {
-    if (BACKEND.telegramId) return String(BACKEND.telegramId);
-    // Fallback: some Telegram environments pass initData via URL params (e.g. tgWebAppData).
-    try {
-      const params = new URLSearchParams(String(window.location && window.location.search ? window.location.search : ""));
-      const tgWebAppData = params.get("tgWebAppData");
-      if (tgWebAppData) {
-        const decoded = decodeURIComponent(tgWebAppData);
-        const id = parseTelegramIdFromInitData(decoded);
-        if (id) return id;
-      }
-    } catch {
-      // ignore
-    }
+	  const getTelegramId = () => {
+	    if (BACKEND.telegramId) return String(BACKEND.telegramId);
+	    // Fallback: some Telegram environments pass initData via URL params (e.g. tgWebAppData).
+	    try {
+	      const params = new URLSearchParams(String(window.location && window.location.search ? window.location.search : ""));
+	      const tgWebAppData = params.get("tgWebAppData");
+	      if (tgWebAppData) {
+	        const decoded = decodeURIComponent(tgWebAppData);
+	        const id = parseTelegramIdFromInitData(decoded);
+	        if (id) {
+	          persistTelegramId(id);
+	          return id;
+	        }
+	      }
+	    } catch {
+	      // ignore
+	    }
     // Telegram WebApp: prefer initDataUnsafe (object), because initData (string)
     // can be empty/unavailable depending on how the page was opened.
-    try {
-      const unsafe = tg && typeof tg === "object" ? tg.initDataUnsafe : null;
-      const user = unsafe && typeof unsafe === "object" ? unsafe.user : null;
-      const id = user && typeof user === "object" ? user.id : null;
-      if (id != null) return String(id);
-    } catch {
-      // ignore
-    }
-    if (tg && typeof tg.initData === "string" && tg.initData) {
-      const id = parseTelegramIdFromInitData(tg.initData);
-      if (id) return id;
-    }
-    return null;
-  };
+	    try {
+	      const unsafe = tg && typeof tg === "object" ? tg.initDataUnsafe : null;
+	      const user = unsafe && typeof unsafe === "object" ? unsafe.user : null;
+	      const id = user && typeof user === "object" ? user.id : null;
+	      if (id != null) {
+	        persistTelegramId(id);
+	        return String(id);
+	      }
+	    } catch {
+	      // ignore
+	    }
+	    if (tg && typeof tg.initData === "string" && tg.initData) {
+	      const id = parseTelegramIdFromInitData(tg.initData);
+	      if (id) {
+	        persistTelegramId(id);
+	        return id;
+	      }
+	    }
+	    return null;
+	  };
 
   let deferredInstallPrompt = null;
   const initPwaInstall = () => {
