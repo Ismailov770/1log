@@ -21,9 +21,27 @@
   })();
 
   const currentUrl = window.location.href.split("#")[0];
+  const installTexts = [
+    "установить приложение",
+    "ilovani o‘rnatish",
+    "ilovani o'rnatish",
+    "иловани ўрнатиш",
+  ];
 
-  // Bir marta dismiss qilingan yoki PWA o‘rnatilgan bo‘lsa, hech narsa qilmaymiz
-  if (isStandalone || isDismissed()) return;
+  const openExternal = () => {
+    try {
+      if (window.Telegram && Telegram.WebApp && typeof Telegram.WebApp.openLink === "function") {
+        Telegram.WebApp.openLink(currentUrl, { try_instant_view: false });
+        return;
+      }
+    } catch {}
+    window.open(currentUrl, "_blank", "noopener,noreferrer");
+  };
+
+  // Faqat iOS yoki Telegram WebView uchun ishlaymiz
+  if (!isIOS && !isTelegram) return;
+  // PWA o'rnatilgan yoki foydalanuvchi yopgan bo'lsa (va Telegram emas) — to'xtaymiz
+  if (!isTelegram && (isStandalone || isDismissed())) return;
 
   // --- Style (isolated) -------------------------------------------
   const style = document.createElement("style");
@@ -53,16 +71,28 @@
     btn.type = "button";
     btn.className = "tg-open-safari";
     btn.textContent = "Safari’da ochib o‘rnatish";
-    btn.addEventListener("click", () => {
-      try {
-        if (window.Telegram && Telegram.WebApp && typeof Telegram.WebApp.openLink === "function") {
-          Telegram.WebApp.openLink(currentUrl, { try_instant_view: false });
-          return;
-        }
-      } catch {}
-      window.open(currentUrl, "_blank", "noopener,noreferrer");
-    });
+    btn.addEventListener("click", openExternal);
     document.body.appendChild(btn);
+
+    // Telegramda “install” yozuvi bor tugmalarni ham Safari/Chrome'ga ochib yuboramiz
+    const bindTgInstallButtons = () => {
+      const buttons = Array.from(document.querySelectorAll("button"));
+      buttons.forEach((b) => {
+        if (b.dataset._pwaTgBound) return;
+        const t = (b.textContent || "").trim().toLowerCase();
+        if (installTexts.some((txt) => t.includes(txt))) {
+          b.dataset._pwaTgBound = "1";
+          b.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            ev.preventDefault();
+            openExternal();
+          });
+        }
+      });
+    };
+    const moTg = new MutationObserver(bindTgInstallButtons);
+    moTg.observe(document.body, { childList: true, subtree: true });
+    bindTgInstallButtons();
     return; // Telegramda iOS modal ko‘rsatilmaydi
   }
 
@@ -100,6 +130,22 @@
   root.querySelector(".secondary-btn").addEventListener("click", hide);
   root.querySelector(".pwa-ios-backdrop").addEventListener("click", hide);
 
-  // Ko‘rsatish
-  show();
+  const bindInstallButtons = () => {
+    const buttons = Array.from(document.querySelectorAll("button"));
+    buttons.forEach((btn) => {
+      if (btn.dataset._pwaIosBound) return;
+      const t = (btn.textContent || "").trim().toLowerCase();
+      if (installTexts.some((txt) => t.includes(txt))) {
+        btn.dataset._pwaIosBound = "1";
+        btn.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          show();
+        });
+      }
+    });
+  };
+
+  const mo = new MutationObserver(bindInstallButtons);
+  mo.observe(document.body, { childList: true, subtree: true });
+  bindInstallButtons();
 })();
