@@ -35,6 +35,7 @@
       installIosHint: "iPhone/iPad: Поделиться → «На экран Домой».",
       installAndroidHint: "Android: Chrome меню ⋮ → «Установить приложение».",
       installOpenBrowser: "Открыть в браузере",
+      installOpenChrome: "Открыть в Chrome",
       logoutTitle: "Сбросить настройки?",
       logoutText: "Все локальные настройки на устройстве будут удалены.",
       cancel: "Отмена",
@@ -190,6 +191,7 @@
       installIosHint: "iPhone/iPad: Share (ulashish) → Add to Home Screen.",
       installAndroidHint: "Android: Chrome menyu ⋮ → Install app.",
       installOpenBrowser: "Brauzerda ochish",
+      installOpenChrome: "Chrome’da ochish",
       logoutTitle: "Sozlamani tozalaysizmi?",
       logoutText: "Qurilmadagi barcha lokal sozlamalar o‘chadi.",
       cancel: "Bekor qilish",
@@ -345,6 +347,7 @@
       installIosHint: "iPhone/iPad: Share (улашиш) → Add to Home Screen.",
       installAndroidHint: "Android: Chrome меню ⋮ → Install app.",
       installOpenBrowser: "Браузерда очиш",
+      installOpenChrome: "Chrome’да очиш",
       logoutTitle: "Созламани тозалайсизми?",
       logoutText: "Қурилмадаги барча локал созламалар ўчади.",
       cancel: "Бекор қилиш",
@@ -1197,8 +1200,27 @@
     return Boolean(window.navigator && window.navigator.standalone);
   };
 
-  const openInstallInBrowser = () => {
+  const openInstallInBrowser = ({ preferChrome = false } = {}) => {
     const url = window.location.href;
+    const ua = navigator.userAgent || "";
+    const isAndroid = /Android/i.test(ua);
+
+    // Telegram WebView ichida PWA install prompt odatda chiqmaydi.
+    // Android'da Chrome'ni majburan ochib ko'ramiz (hammasida ham 100% ishlamaydi).
+    if (preferChrome && isAndroid) {
+      try {
+        const u = new URL(url);
+        const scheme = String(u.protocol || "https:").replace(":", "");
+        const intent = `intent://${u.host}${u.pathname}${u.search}${u.hash}#Intent;scheme=${scheme};package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(
+          url,
+        )};end`;
+        window.open(intent, "_blank", "noopener,noreferrer");
+        return;
+      } catch {
+        // ignore
+      }
+    }
+
     if (tg && typeof tg.openLink === "function") {
       try {
         tg.openLink(url);
@@ -1247,7 +1269,9 @@
     else body.append(mk(tr("installAndroidHint")));
 
     const close = button(tr("cancel"), "btn btn-secondary btn-full", () => modal.close());
-    const openBrowser = button(tr("installOpenBrowser"), "btn btn-primary btn-full", () => openInstallInBrowser());
+    const openBrowser = button(tr(isTelegram && isAndroid ? "installOpenChrome" : "installOpenBrowser"), "btn btn-primary btn-full", () =>
+      openInstallInBrowser({ preferChrome: Boolean(isTelegram && isAndroid) }),
+    );
 
     modal.open({
       title: tr("installTitle"),
