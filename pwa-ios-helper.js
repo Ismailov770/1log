@@ -29,6 +29,11 @@
   ];
 
   const openExternal = () => {
+    // Android Telegram intentlarida not-responding chiqmasligi uchun to'g'ridan-to'g'ri location'ga o'tkazamiz
+    if (isAndroid) {
+      window.location.href = currentUrl;
+      return;
+    }
     try {
       if (window.Telegram && Telegram.WebApp && typeof Telegram.WebApp.openLink === "function") {
         Telegram.WebApp.openLink(currentUrl, { try_instant_view: false });
@@ -68,7 +73,7 @@
   // --- Telegram WebView holati ------------------------------------
   // Android Telegram'da hech narsa ko'rsatmaymiz; iOS Telegram'da faqat banner.
   const isAndroid = /Android/i.test(ua);
-  if (isTelegram && isAndroid) return;
+  if (isTelegram && isAndroid) return; // banner ham ko'rsatilmaydi
 
   if (isTelegram) {
     const btn = document.createElement("button");
