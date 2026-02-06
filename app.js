@@ -1227,29 +1227,12 @@
     return Boolean(window.navigator && window.navigator.standalone);
   };
 
-  const openInstallInBrowser = ({ preferChrome = false } = {}) => {
+  const openInstallInBrowser = () => {
     const urlObj = new URL(window.location.href);
     if (!urlObj.searchParams.has("pwa_install")) urlObj.searchParams.set("pwa_install", "1");
     const url = urlObj.toString();
-    const ua = navigator.userAgent || "";
-    const isAndroid = /Android/i.test(ua);
 
-    // Telegram WebView ichida PWA install prompt odatda chiqmaydi.
-    // Android'da Chrome'ni majburan ochib ko'ramiz (hammasida ham 100% ishlamaydi).
-    if (preferChrome && isAndroid) {
-      try {
-        const u = new URL(url);
-        const scheme = String(u.protocol || "https:").replace(":", "");
-        const intent = `intent://${u.host}${u.pathname}${u.search}${u.hash}#Intent;scheme=${scheme};package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(
-          url,
-        )};end`;
-        window.open(intent, "_blank", "noopener,noreferrer");
-        return;
-      } catch {
-        // ignore
-      }
-    }
-
+    // Telegram WebView'da eng xavfsiz usul: openLink (tashqi brauzer).
     if (tg && typeof tg.openLink === "function") {
       try {
         tg.openLink(url);
@@ -1258,6 +1241,8 @@
         // ignore
       }
     }
+
+    // Oddiy brauzerlar uchun
     try {
       window.open(url, "_blank", "noopener,noreferrer");
     } catch {
@@ -1270,7 +1255,7 @@
     const isAndroidLocal = /Android/i.test(uaLocal);
     const isIOSLocal = /iPad|iPhone|iPod/i.test(uaLocal) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-    // Telegram WebView: Android'da Chrome'da ochib beramiz va qisqa ko'rsatma beramiz.
+    // Telegram WebView: Android'da tashqi brauzerga olib chiqamiz va qisqa ko'rsatma beramiz.
     if (isTelegramWebView) {
       if (isAndroidLocal) {
         const body = document.createElement("div");
@@ -1281,7 +1266,7 @@
         const cancel = button(tr("btnNo"), "btn btn-secondary", () => modal.close());
         const ok = button(tr("btnYes"), "btn btn-primary", () => {
           modal.close();
-          openInstallInBrowser({ preferChrome: true });
+          openInstallInBrowser();
         });
         modal.open({ title: tr("installTitle"), body, footer: [cancel, ok] });
         return;
@@ -1297,10 +1282,7 @@
     const isIOS = isIOSLocal;
     const isTelegram = Boolean(tg);
 
-    if (isAndroid && isTelegram) {
-      openInstallInBrowser({ preferChrome: true });
-      return;
-    }
+    if (isAndroid && isTelegram) return openInstallInBrowser();
 
     if (deferredInstallPrompt && !isIOS) {
       try {
