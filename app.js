@@ -609,6 +609,28 @@
   };
 
   const nowIso = () => new Date().toISOString();
+  const GROUP_IMPORT_LINKS = {
+    "1LOG_1": "https://t.me/addlist/H6cTrr5iDVBmYjI6",
+    "1LOG_2": "https://t.me/addlist/cWM-OKaVmVkxZWYy",
+    "1LOG_3": "https://t.me/addlist/t-Lp5AkzRD4yMjli",
+    "1LOG_4": "https://t.me/addlist/SLrgb1H0EKM0M2Iy",
+  };
+
+  const resolveGroupCopyLink = (group) => {
+    if (!group || typeof group !== "object") return "";
+    const rawLink = String(group.link || "").trim();
+    if (/^https?:\/\//i.test(rawLink)) return rawLink;
+
+    const idKey = String(group.id || "")
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g, "");
+    const titleKey = String(group.title || "")
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g, "");
+    return GROUP_IMPORT_LINKS[idKey] || GROUP_IMPORT_LINKS[titleKey] || "";
+  };
 
   // Asosiy state.
   const defaultState = () => ({
@@ -626,10 +648,10 @@
 	    messageVideo: null,
 	    groupsTotal: 0,
 	    groups: [
-      { id: "1log_1", title: "1LOG_1", folderLabel: "Папка с чатами", groupsCount: 67, selected: false, ok: true },
-      { id: "1log_2", title: "1LOG_2", folderLabel: "Папка с чатами", groupsCount: 93, selected: false, ok: true },
-      { id: "1log_3", title: "1LOG_3", folderLabel: "Папка с чатами", groupsCount: 96, selected: false, ok: true },
-      { id: "1log_4", title: "1LOG_4", folderLabel: "Папка с чатами", groupsCount: 100, selected: false, ok: true },
+      { id: "1log_1", title: "1LOG_1", folderLabel: "Папка с чатами", groupsCount: 67, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_1"] },
+      { id: "1log_2", title: "1LOG_2", folderLabel: "Папка с чатами", groupsCount: 93, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_2"] },
+      { id: "1log_3", title: "1LOG_3", folderLabel: "Папка с чатами", groupsCount: 96, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_3"] },
+      { id: "1log_4", title: "1LOG_4", folderLabel: "Папка с чатами", groupsCount: 100, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_4"] },
     ],
     interval: {
       freqHours: null,
@@ -988,7 +1010,7 @@
       selected: false,
       ok: true,
       link: String(g && g.link ? g.link : ""),
-    }));
+    })).map((g) => ({ ...g, link: resolveGroupCopyLink(g) }));
     saveState("webapp-groups");
     renderGroups();
     renderDashboard();
@@ -1227,12 +1249,11 @@
     return Boolean(window.navigator && window.navigator.standalone);
   };
 
-  const openInstallInBrowser = () => {
+  const openInstallInBrowser = ({ withInstallFlag = true } = {}) => {
     const urlObj = new URL(window.location.href);
-    if (!urlObj.searchParams.has("pwa_install")) urlObj.searchParams.set("pwa_install", "1");
+    if (withInstallFlag) urlObj.searchParams.set("pwa_install", "1");
     const url = urlObj.toString();
 
-    // Telegram WebView'da eng xavfsiz usul: openLink (tashqi brauzer).
     if (tg && typeof tg.openLink === "function") {
       try {
         tg.openLink(url);
@@ -1242,7 +1263,6 @@
       }
     }
 
-    // Oddiy brauzerlar uchun
     try {
       window.open(url, "_blank", "noopener,noreferrer");
     } catch {
@@ -1251,40 +1271,14 @@
   };
 
   const openInstallModal = async () => {
-    const uaLocal = navigator.userAgent || "";
-    const isAndroidLocal = /Android/i.test(uaLocal);
-    const isIOSLocal = /iPad|iPhone|iPod/i.test(uaLocal) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-
-    // Telegram WebView: Android'da tashqi brauzerga olib chiqamiz va qisqa ko'rsatma beramiz.
-    if (isTelegramWebView) {
-      if (isAndroidLocal) {
-        const body = document.createElement("div");
-        const p = document.createElement("p");
-        p.className = "hint";
-        p.textContent = "Chrome’da ochiladi. Keyin ⋮ → “Install app” ni bosing.";
-        body.append(p);
-        const cancel = button(tr("btnNo"), "btn btn-secondary", () => modal.close());
-        const ok = button(tr("btnYes"), "btn btn-primary", () => {
-          modal.close();
-          openInstallInBrowser();
-        });
-        modal.open({ title: tr("installTitle"), body, footer: [cancel, ok] });
-        return;
-      }
-      // iOS Telegram: faqat ogohlantiramiz
-      toast(tr("installTelegramHint"));
-      return;
-    }
-
     if (isStandaloneMode()) return toast(tr("toastAlreadyInstalled"));
 
-    const isAndroid = isAndroidLocal;
-    const isIOS = isIOSLocal;
-    const isTelegram = Boolean(tg);
+    const ua = navigator.userAgent || "";
+    const isAndroid = /Android/i.test(ua);
+    const isIOS = /iPad|iPhone|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const isTelegram = isTelegramWebView;
 
-    if (isAndroid && isTelegram) return openInstallInBrowser();
-
-    if (deferredInstallPrompt && !isIOS) {
+    if (!isTelegram && isAndroid && deferredInstallPrompt) {
       try {
         deferredInstallPrompt.prompt();
         await deferredInstallPrompt.userChoice.catch(() => null);
@@ -1296,28 +1290,37 @@
     }
 
     const body = document.createElement("div");
-    const mk = (text) => {
-      const p = document.createElement("p");
-      p.className = "hint";
-      p.textContent = text;
-      return p;
-    };
+    const hint = document.createElement("p");
+    hint.className = "hint";
 
-    if (isTelegram) body.append(mk(tr("installTelegramHint")));
-    if (isIOS) body.append(mk(tr("installIosHint")));
-    else if (isAndroid) body.append(mk(tr("installAndroidHint")));
-    else body.append(mk(tr("installAndroidHint")));
+    if (isTelegram && isAndroid) hint.textContent = "Brauzerda ochiladi. Keyin Chrome menyusidan Install app ni bosing.";
+    else if (isTelegram && isIOS) hint.textContent = "Safari'da oching va Share -> Add to Home Screen ni bosing.";
+    else if (isIOS) hint.textContent = tr("installIosHint");
+    else hint.textContent = tr("installAndroidHint");
+
+    body.append(hint);
 
     const close = button(tr("cancel"), "btn btn-secondary btn-full", () => modal.close());
-    const openBrowser = button(tr(isTelegram && isAndroid ? "installOpenChrome" : "installOpenBrowser"), "btn btn-primary btn-full", () =>
-      openInstallInBrowser({ preferChrome: Boolean(isTelegram && isAndroid) }),
+    const openBrowser = button(
+      tr(isAndroid ? "installOpenChrome" : "installOpenBrowser"),
+      "btn btn-primary btn-full",
+      () => {
+        modal.close();
+        openInstallInBrowser({ withInstallFlag: isAndroid });
+      },
     );
 
-    modal.open({
-      title: tr("installTitle"),
-      body,
-      footer: isTelegram ? [openBrowser, close] : [close],
-    });
+    if (isTelegram) {
+      modal.open({ title: tr("installTitle"), body, footer: [openBrowser, close] });
+      return;
+    }
+
+    if (isAndroid) {
+      modal.open({ title: tr("installTitle"), body, footer: [openBrowser, close] });
+      return;
+    }
+
+    modal.open({ title: tr("installTitle"), body, footer: [close] });
   };
 
   const haptic = (type = "impact", style = "light") => {
@@ -2833,11 +2836,25 @@
         }
 
         if (action === "copy-message") return copyText(state.message || "");
+        if (action === "groups-import-link") {
+          const link = String(act.getAttribute("data-link") || "").trim();
+          if (!link) return;
+          copyText(link);
+          try {
+            if (tg && typeof tg.openLink === "function") tg.openLink(link);
+            else window.open(link, "_blank", "noopener,noreferrer");
+          } catch {
+            // ignore
+          }
+          return;
+        }
         if (action === "copy-group") {
           const id = act.getAttribute("data-group-id");
           const g = state.groups.find((x) => x.id === id);
           if (g) {
-            copyText(g.link || `${g.title}`);
+            const link = resolveGroupCopyLink(g);
+            if (link) copyText(link);
+            else toast(tr("toastCopyFail"));
           }
           return;
         }
