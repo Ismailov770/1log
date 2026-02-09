@@ -632,6 +632,43 @@
     return GROUP_IMPORT_LINKS[idKey] || GROUP_IMPORT_LINKS[titleKey] || "";
   };
 
+  const buildDefaultGroups = () => [
+    { id: "1log_1", title: "1LOG_1", folderLabel: "Папка с чатами", groupsCount: 67, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_1"] },
+    { id: "1log_2", title: "1LOG_2", folderLabel: "Папка с чатами", groupsCount: 93, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_2"] },
+    { id: "1log_3", title: "1LOG_3", folderLabel: "Папка с чатами", groupsCount: 96, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_3"] },
+    { id: "1log_4", title: "1LOG_4", folderLabel: "Папка с чатами", groupsCount: 100, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_4"] },
+  ];
+
+  const mergeFixedGroups = (groups) => {
+    const items = Array.isArray(groups) ? groups : [];
+    const byKey = new Map();
+    items.forEach((g) => {
+      const idKey = String(g && g.id ? g.id : "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, "");
+      const titleKey = String(g && g.title ? g.title : "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, "");
+      if (idKey) byKey.set(idKey, g);
+      if (titleKey) byKey.set(titleKey, g);
+    });
+
+    return buildDefaultGroups().map((base) => {
+      const key = String(base.title || "").toUpperCase();
+      const hit = byKey.get(key) || byKey.get(String(base.id || "").toUpperCase());
+      if (!hit) return base;
+      return {
+        ...base,
+        groupsCount: Number(hit.groupsCount ?? base.groupsCount) || 0,
+        ok: typeof hit.ok === "boolean" ? hit.ok : base.ok,
+        selected: typeof hit.selected === "boolean" ? hit.selected : base.selected,
+        link: resolveGroupCopyLink(hit) || base.link,
+      };
+    });
+  };
+
   // Asosiy state.
   const defaultState = () => ({
     version: STATE_VERSION,
@@ -647,12 +684,7 @@
 	    messageImages: [],
 	    messageVideo: null,
 	    groupsTotal: 0,
-	    groups: [
-      { id: "1log_1", title: "1LOG_1", folderLabel: "Папка с чатами", groupsCount: 67, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_1"] },
-      { id: "1log_2", title: "1LOG_2", folderLabel: "Папка с чатами", groupsCount: 93, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_2"] },
-      { id: "1log_3", title: "1LOG_3", folderLabel: "Папка с чатами", groupsCount: 96, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_3"] },
-      { id: "1log_4", title: "1LOG_4", folderLabel: "Папка с чатами", groupsCount: 100, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_4"] },
-    ],
+	    groups: buildDefaultGroups(),
     interval: {
       freqHours: null,
       durationDays: null,
@@ -673,6 +705,7 @@
 	    if (!Array.isArray(merged.messageImages)) merged.messageImages = [];
 	    // Video faylni lokal storage'dan qayta tiklab bo'lmaydi (File yo'q), shuning uchun tozalab yuboramiz.
 	    merged.messageVideo = null;
+	    merged.groups = mergeFixedGroups(merged.groups);
 	    if ("groupsImported" in merged) delete merged.groupsImported;
 	    return merged;
 	  };
@@ -1002,7 +1035,7 @@
     }
     const list = await webappRequest(`/groups/${encodeURIComponent(telegramId)}/`, { method: "GET" });
     const rows = Array.isArray(list) ? list : [];
-    state.groups = rows.map((g) => ({
+    const mapped = rows.map((g) => ({
       id: String(g && (g.id ?? g.telegram_id ?? g.link ?? cryptoId())),
       title: String(g && (g.name ?? g.title ?? "Telegram")),
       folderLabel: g && typeof g.type === "number" ? (g.type === 0 ? "Public" : "Private") : "Telegram",
@@ -1011,6 +1044,8 @@
       ok: true,
       link: String(g && g.link ? g.link : ""),
     })).map((g) => ({ ...g, link: resolveGroupCopyLink(g) }));
+
+    state.groups = mergeFixedGroups(mapped.length ? mapped : buildDefaultGroups());
     saveState("webapp-groups");
     renderGroups();
     renderDashboard();
