@@ -1672,22 +1672,12 @@
     const status = qs("#groups-status");
     const refreshBtn = qs('#screen-groups [data-action="refresh-groups"]');
     const importBox = qs("#groups-import");
-    const importButtons = qsa('#groups-import [data-action="groups-import-link"]');
     const hasGroups = Array.isArray(state.groups) && state.groups.length;
     const hasAny = hasGroups && state.groups.some((g) => Boolean(g && (g.ok === true || g.selected === true)));
 
     if (list) list.hidden = false;
     if (refreshBtn) refreshBtn.hidden = false;
-    if (importBox) importBox.hidden = false;
-
-    const importKeys = ["1LOG_1", "1LOG_2", "1LOG_3", "1LOG_4"];
-    importButtons.forEach((btn, idx) => {
-      const key = importKeys[idx];
-      const link = key ? GROUP_IMPORT_LINKS[key] : "";
-      if (!link) return;
-      btn.setAttribute("data-link", link);
-      btn.textContent = `${key} (${link})`;
-    });
+    if (importBox) importBox.hidden = true;
 
     list.replaceChildren(
       ...state.groups.map((g) => {
