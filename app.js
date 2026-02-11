@@ -1060,15 +1060,17 @@
     if (!telegramId) return;
     const list = await webappRequest(`/accounts/${encodeURIComponent(telegramId)}/`, { method: "GET" });
     const rows = Array.isArray(list) ? list : [];
+    const fallbackGroups = Number(state && state.groupsTotal ? state.groupsTotal : 0);
     state.accounts = rows.map((acc) => {
       const phoneDigits = digitsOnly(acc && acc.phone);
       const id = phoneDigits || cryptoId();
+      const groupsCountRaw = acc && (acc.groups_count ?? acc.groupsCount);
       return {
         id,
         name: `${tr("accountNamePrefix")} +${phoneDigits || id}`,
         phone: phoneDigits || String(acc && acc.phone ? acc.phone : id),
         status: acc && (acc.is_active ?? acc.isActive) ? "active" : "paused",
-        groupsCount: Number(acc && (acc.groups_count ?? acc.groupsCount)) || 0,
+        groupsCount: Number(groupsCountRaw != null ? groupsCountRaw : fallbackGroups) || 0,
       };
     });
     saveState("webapp-accounts");
@@ -1096,6 +1098,7 @@
     })).map((g) => ({ ...g, link: resolveGroupCopyLink(g) }));
 
     state.groups = mergeFixedGroups(mapped.length ? mapped : buildDefaultGroups());
+    state.groupsTotal = mapped.length || state.groupsTotal || 0;
     saveState("webapp-groups");
     renderGroups();
     renderDashboard();
@@ -1999,8 +2002,8 @@
             const telegramId = webappEnsureTelegramId();
             if (!telegramId) return;
             const id = encodeURIComponent(telegramId);
-	            webappRequest(`/accounts/${id}/send-code/`, {
-	              method: "POST",
+            webappRequest(`/accounts/${id}/send-code/`, {
+              method: "POST",
 	              headers: { "Content-Type": "application/json" },
 	              body: JSON.stringify({ phone: session.phoneRaw }),
 	            })
@@ -2011,9 +2014,9 @@
                   renderStep("code");
                   return;
                 }
-	                toast(String((r && (r.error || r.message)) || "error"));
-	                haptic("notification", "error");
-	              })
+                toast(String((r && (r.error || r.message)) || "error"));
+                haptic("notification", "error");
+              })
 	              .catch((e) => toastApiError(e, tr("toastSendCodeFail")));
 	            return;
 	          }
@@ -2072,19 +2075,23 @@
             const telegramId = webappEnsureTelegramId();
             if (!telegramId) return;
             const id = encodeURIComponent(telegramId);
-	            webappRequest(`/accounts/${id}/verify-code/`, {
-	              method: "POST",
+            webappRequest(`/accounts/${id}/verify-code/`, {
+              method: "POST",
 	              headers: { "Content-Type": "application/json" },
 	              body: JSON.stringify({ phone: session.phoneRaw, code: session.code }),
 	            })
               .then((r) => {
-	                if (r && r.success) return finish();
-	                if (r && r.needs_2fa) return renderStep("password");
-	                toast(String((r && (r.error || r.message)) || "error"));
-	                haptic("notification", "error");
-	              })
-	              .catch((e) => toastApiError(e, tr("toastVerifyCodeFail")));
-	            return;
+                  if (r && r.success) {
+                    webappSyncGroups(true).catch(() => {});
+                    webappSyncStatus().catch(() => {});
+                    return finish();
+                  }
+                  if (r && r.needs_2fa) return renderStep("password");
+                  toast(String((r && (r.error || r.message)) || "error"));
+                  haptic("notification", "error");
+                })
+                .catch((e) => toastApiError(e, tr("toastVerifyCodeFail")));
+            return;
 	          }
           session.need2fa = Boolean(need2fa && need2fa.checked);
           if (session.need2fa) return renderStep("password");
@@ -2122,18 +2129,22 @@
             const telegramId = webappEnsureTelegramId();
             if (!telegramId) return;
             const id = encodeURIComponent(telegramId);
-	            webappRequest(`/accounts/${id}/verify-2fa/`, {
-	              method: "POST",
+            webappRequest(`/accounts/${id}/verify-2fa/`, {
+              method: "POST",
 	              headers: { "Content-Type": "application/json" },
 	              body: JSON.stringify({ phone: session.phoneRaw, password: session.password }),
 	            })
               .then((r) => {
-	                if (r && r.success) return finish();
-	                toast(String((r && (r.error || r.message)) || "error"));
-	                haptic("notification", "error");
-	              })
-	              .catch((e) => toastApiError(e, tr("toastVerify2faFail")));
-	            return;
+                if (r && r.success) {
+                  webappSyncGroups(true).catch(() => {});
+                  webappSyncStatus().catch(() => {});
+                  return finish();
+                }
+                toast(String((r && (r.error || r.message)) || "error"));
+                haptic("notification", "error");
+              })
+              .catch((e) => toastApiError(e, tr("toastVerify2faFail")));
+            return;
 	          }
           finish();
         });
