@@ -487,6 +487,14 @@
     },
   };
 
+  // Oddiy checksum: localStoragedagi telegramId + initData bog'lanishini tekshirish uchun.
+  const checksum = (input) => {
+    const s = String(input || "");
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = ((h * 31 + s.charCodeAt(i)) >>> 0) & 0xffffffff;
+    return h.toString(16);
+  };
+
   const tr = (key, ...args) => {
     const lang = state?.lang && I18N[state.lang] ? state.lang : "ru";
     const value = I18N[lang]?.[key] ?? I18N.ru[key];
@@ -742,6 +750,8 @@
     mode: "miniapp", // miniapp/webapp
     userKey: "",
     telegramId: "",
+    initDataRaw: "",
+    lock: "",
   };
   const BACKEND_STORAGE_KEY = "1log_backend";
   const persistBackendConfig = (patch) => {
@@ -785,12 +795,47 @@
         : "miniapp";
     const mode = modeRaw === "webapp" || modeRaw === "miniapp" ? modeRaw : inferredMode;
     const userKey = String(cfg.backendUserKey || cfg.userKey || "").trim();
-    const telegramId = String(cfg.backendTelegramId || cfg.telegramId || "").trim();
+
+    const initDataFromWindow = (() => {
+      try {
+        if (typeof window !== "undefined" && window && window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData)
+          return String(window.Telegram.WebApp.initData);
+      } catch {
+        // ignore
+      }
+      return "";
+    })();
+
+    const initDataFromQuery = (() => {
+      if (!params) return "";
+      const raw = params.get("tgWebAppData");
+      if (!raw) return "";
+      try {
+        return decodeURIComponent(raw);
+      } catch {
+        return raw;
+      }
+    })();
+
+    const initDataRaw = String(cfg.backendInitData || cfg.initData || initDataFromQuery || initDataFromWindow || "").trim();
+    const telegramIdFromInit = initDataRaw ? parseTelegramIdFromInitData(initDataRaw) : null;
+    const telegramIdExplicit = String(cfg.backendTelegramId || cfg.telegramId || "").trim();
+    const telegramId = (telegramIdFromInit && String(telegramIdFromInit)) || telegramIdExplicit;
+    const storedLock = String(cfg.backendLock || cfg.lock || "").trim();
     BACKEND.baseUrl = baseUrl;
     BACKEND.enabled = Boolean(enabled && baseUrl);
     BACKEND.mode = mode;
     BACKEND.userKey = userKey;
     BACKEND.telegramId = telegramId;
+    BACKEND.initDataRaw = initDataRaw;
+    BACKEND.lock = telegramId ? storedLock || checksum(`${telegramId}:${initDataRaw || ""}`) : "";
+
+    // Tamper guard: agar localStorage'dagi ID+initData checksum to'g'ri kelmasa, ID ni bekor qilamiz.
+    if (telegramId && storedLock && storedLock !== checksum(`${telegramId}:${initDataRaw || ""}`)) {
+      BACKEND.telegramId = "";
+      BACKEND.lock = "";
+      persistBackendConfig({ backendTelegramId: "", backendLock: "", backendInitData: initDataRaw || "" });
+    }
   };
   loadBackendConfig();
 
@@ -798,7 +843,9 @@
     const id = telegramId != null ? String(telegramId) : "";
     if (!id) return;
     BACKEND.telegramId = id;
-    persistBackendConfig({ backendTelegramId: id });
+    const lock = BACKEND.initDataRaw ? checksum(`${id}:${BACKEND.initDataRaw}`) : "";
+    BACKEND.lock = lock;
+    persistBackendConfig({ backendTelegramId: id, backendInitData: BACKEND.initDataRaw || "", backendLock: lock });
   };
 
   let syncTimer = null;
@@ -844,9 +891,8 @@
 	    headers.set("Content-Type", "application/json");
 	    if (BACKEND.userKey) headers.set("X-User-Key", BACKEND.userKey);
 	    if (BACKEND.telegramId) headers.set("X-Telegram-Id", BACKEND.telegramId);
-	    if (tg && typeof tg.initData === "string" && tg.initData) {
-	      headers.set("X-Telegram-Init-Data", tg.initData);
-	    }
+	    const initForHeader = BACKEND.initDataRaw || (tg && typeof tg.initData === "string" ? tg.initData : "");
+	    if (initForHeader) headers.set("X-Telegram-Init-Data", initForHeader);
 	    const res = await fetch(`${BACKEND.baseUrl}${path}`, { ...options, headers });
 	    const data = await safeReadBody(res);
 	    if (!res.ok) throw buildApiError("Backend error", res, data);
@@ -930,6 +976,10 @@
   let telegramIdPromptShown = false;
   const openTelegramIdPrompt = ({ title, onSaved } = {}) => {
     if (telegramIdPromptShown) return;
+    if (BACKEND.lock) {
+      toast("Telegram ID locked");
+      return;
+    }
     telegramIdPromptShown = true;
 
     const input = document.createElement("input");
@@ -1201,42 +1251,55 @@
 	  const getTelegramId = () => {
 	    if (BACKEND.telegramId) return String(BACKEND.telegramId);
 	    // Fallback: some Telegram environments pass initData via URL params (e.g. tgWebAppData).
-	    try {
-	      const params = new URLSearchParams(String(window.location && window.location.search ? window.location.search : ""));
-	      const tgWebAppData = params.get("tgWebAppData");
-	      if (tgWebAppData) {
-	        const decoded = decodeURIComponent(tgWebAppData);
-	        const id = parseTelegramIdFromInitData(decoded);
-	        if (id) {
-	          persistTelegramId(id);
-	          return id;
-	        }
-	      }
-	    } catch {
-	      // ignore
-	    }
-    // Telegram WebApp: prefer initDataUnsafe (object), because initData (string)
-    // can be empty/unavailable depending on how the page was opened.
-	    try {
-	      const unsafe = tg && typeof tg === "object" ? tg.initDataUnsafe : null;
-	      const user = unsafe && typeof unsafe === "object" ? unsafe.user : null;
-	      const id = user && typeof user === "object" ? user.id : null;
-	      if (id != null) {
-	        persistTelegramId(id);
-	        return String(id);
-	      }
-	    } catch {
-	      // ignore
-	    }
-	    if (tg && typeof tg.initData === "string" && tg.initData) {
-	      const id = parseTelegramIdFromInitData(tg.initData);
-	      if (id) {
-	        persistTelegramId(id);
-	        return id;
-	      }
-	    }
-	    return null;
-	  };
+    try {
+      const params = new URLSearchParams(String(window.location && window.location.search ? window.location.search : ""));
+      const tgWebAppData = params.get("tgWebAppData");
+      if (tgWebAppData) {
+        const decoded = decodeURIComponent(tgWebAppData);
+        const id = parseTelegramIdFromInitData(decoded);
+        if (id) {
+          BACKEND.initDataRaw = decoded;
+          const lock = checksum(`${id}:${decoded}`);
+          BACKEND.lock = lock;
+          persistBackendConfig({ backendTelegramId: id, backendInitData: decoded, backendLock: lock });
+          return id;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    // Telegram WebApp: prefer signed initData string; fallback to initDataUnsafe user.id
+    if (tg && typeof tg.initData === "string" && tg.initData) {
+      const id = parseTelegramIdFromInitData(tg.initData);
+      if (id) {
+        BACKEND.initDataRaw = tg.initData;
+        const lock = checksum(`${id}:${tg.initData}`);
+        BACKEND.lock = lock;
+        persistBackendConfig({ backendTelegramId: id, backendInitData: tg.initData, backendLock: lock });
+        return id;
+      }
+    }
+    try {
+      const unsafe = tg && typeof tg === "object" ? tg.initDataUnsafe : null;
+      const user = unsafe && typeof unsafe === "object" ? unsafe.user : null;
+      const id = user && typeof user === "object" ? user.id : null;
+      if (id != null) {
+        const raw = BACKEND.initDataRaw || (tg && typeof tg.initData === "string" ? tg.initData : "");
+        const lock = raw ? checksum(`${id}:${raw}`) : "";
+        if (raw) {
+          BACKEND.initDataRaw = raw;
+          BACKEND.lock = lock;
+          persistBackendConfig({ backendTelegramId: id, backendInitData: raw, backendLock: lock });
+        } else {
+          persistTelegramId(id);
+        }
+        return String(id);
+      }
+    } catch {
+      // ignore
+    }
+    return null;
+  };
 
   let deferredInstallPrompt = null;
   let shouldAutoPromptFromQuery = false; // Chrome'da qayta ochilganda avtomatik prompt uchun
