@@ -1235,7 +1235,7 @@
   })();
   const isTelegramWebView = Boolean(tg);
 
-  const parseTelegramIdFromInitData = (initData) => {
+  function parseTelegramIdFromInitData(initData) {
     try {
       const params = new URLSearchParams(String(initData || ""));
       const rawUser = params.get("user");
@@ -1246,7 +1246,7 @@
     } catch {
       return null;
     }
-  };
+  }
 
 	  const getTelegramId = () => {
 	    if (BACKEND.telegramId) return String(BACKEND.telegramId);
