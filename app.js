@@ -1306,6 +1306,23 @@
 
   let deferredInstallPrompt = null;
   let shouldAutoPromptFromQuery = false; // Chrome'da qayta ochilganda avtomatik prompt uchun
+  const PWA_AUTO_KEY = "pwa_install_prompted";
+
+  const markPwaPrompted = () => {
+    try {
+      localStorage.setItem(PWA_AUTO_KEY, "1");
+    } catch {
+      // ignore
+    }
+  };
+
+  const wasPwaPrompted = () => {
+    try {
+      return localStorage.getItem(PWA_AUTO_KEY) === "1";
+    } catch {
+      return false;
+    }
+  };
   const initPwaInstall = () => {
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
@@ -1320,6 +1337,17 @@
         } catch {
           // ignore
         }
+      }
+      // Agar query flag yo'q bo'lsa ham, foydalanuvchi hali install ko'rmagan bo'lsa, avtomatik prompt qilamiz.
+      if (!wasPwaPrompted() && !isStandaloneMode()) {
+        setTimeout(() => {
+          try {
+            deferredInstallPrompt?.prompt();
+            deferredInstallPrompt?.userChoice.finally(() => markPwaPrompted());
+          } catch {
+            // ignore
+          }
+        }, 800);
       }
     });
     window.addEventListener("appinstalled", () => {
