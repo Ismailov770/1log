@@ -1,8 +1,9 @@
 {
   "name": "АвтоРассылка",
   "short_name": "АвтоРассылка",
-  "start_url": "./",
-  "scope": "./",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0A39C8",
   "theme_color": "#05238B",

@@ -487,6 +487,14 @@
     },
   };
 
+  // Oddiy checksum: localStoragedagi telegramId + initData bog'lanishini tekshirish uchun.
+  const checksum = (input) => {
+    const s = String(input || "");
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = ((h * 31 + s.charCodeAt(i)) >>> 0) & 0xffffffff;
+    return h.toString(16);
+  };
+
   const tr = (key, ...args) => {
     const lang = state?.lang && I18N[state.lang] ? state.lang : "ru";
     const value = I18N[lang]?.[key] ?? I18N.ru[key];
@@ -609,6 +617,65 @@
   };
 
   const nowIso = () => new Date().toISOString();
+  const GROUP_IMPORT_LINKS = {
+    "1LOG_1": "https://t.me/addlist/H6cTrr5iDVBmYjI6",
+    "1LOG_2": "https://t.me/addlist/cWM-OKaVmVkxZWYy",
+    "1LOG_3": "https://t.me/addlist/t-Lp5AkzRD4yMjli",
+    "1LOG_4": "https://t.me/addlist/SLrgb1H0EKM0M2Iy",
+  };
+
+  const resolveGroupCopyLink = (group) => {
+    if (!group || typeof group !== "object") return "";
+    const rawLink = String(group.link || "").trim();
+    if (/^https?:\/\//i.test(rawLink)) return rawLink;
+
+    const idKey = String(group.id || "")
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g, "");
+    const titleKey = String(group.title || "")
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g, "");
+    return GROUP_IMPORT_LINKS[idKey] || GROUP_IMPORT_LINKS[titleKey] || "";
+  };
+
+  const buildDefaultGroups = () => [
+    { id: "1log_1", title: "1LOG_1", folderLabel: "Папка с чатами", groupsCount: 67, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_1"] },
+    { id: "1log_2", title: "1LOG_2", folderLabel: "Папка с чатами", groupsCount: 93, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_2"] },
+    { id: "1log_3", title: "1LOG_3", folderLabel: "Папка с чатами", groupsCount: 96, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_3"] },
+    { id: "1log_4", title: "1LOG_4", folderLabel: "Папка с чатами", groupsCount: 100, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_4"] },
+  ];
+
+  const mergeFixedGroups = (groups) => {
+    const items = Array.isArray(groups) ? groups : [];
+    const byKey = new Map();
+    items.forEach((g) => {
+      const idKey = String(g && g.id ? g.id : "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, "");
+      const titleKey = String(g && g.title ? g.title : "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, "");
+      if (idKey) byKey.set(idKey, g);
+      if (titleKey) byKey.set(titleKey, g);
+    });
+
+    return buildDefaultGroups().map((base) => {
+      const key = String(base.title || "").toUpperCase();
+      const hit = byKey.get(key) || byKey.get(String(base.id || "").toUpperCase());
+      if (!hit) return base;
+      return {
+        ...base,
+        groupsCount: Number(hit.groupsCount ?? base.groupsCount) || 0,
+        ok: typeof hit.ok === "boolean" ? hit.ok : base.ok,
+        selected: typeof hit.selected === "boolean" ? hit.selected : base.selected,
+        link: resolveGroupCopyLink(hit) || base.link,
+      };
+    });
+  };
 
   // Asosiy state.
   const defaultState = () => ({
@@ -625,12 +692,7 @@
 	    messageImages: [],
 	    messageVideo: null,
 	    groupsTotal: 0,
-	    groups: [
-      { id: "1log_1", title: "1LOG_1", folderLabel: "Папка с чатами", groupsCount: 67, selected: false, ok: true },
-      { id: "1log_2", title: "1LOG_2", folderLabel: "Папка с чатами", groupsCount: 93, selected: false, ok: true },
-      { id: "1log_3", title: "1LOG_3", folderLabel: "Папка с чатами", groupsCount: 96, selected: false, ok: true },
-      { id: "1log_4", title: "1LOG_4", folderLabel: "Папка с чатами", groupsCount: 100, selected: false, ok: true },
-    ],
+	    groups: buildDefaultGroups(),
     interval: {
       freqHours: null,
       durationDays: null,
@@ -651,6 +713,7 @@
 	    if (!Array.isArray(merged.messageImages)) merged.messageImages = [];
 	    // Video faylni lokal storage'dan qayta tiklab bo'lmaydi (File yo'q), shuning uchun tozalab yuboramiz.
 	    merged.messageVideo = null;
+	    merged.groups = mergeFixedGroups(merged.groups);
 	    if ("groupsImported" in merged) delete merged.groupsImported;
 	    return merged;
 	  };
@@ -687,6 +750,8 @@
     mode: "miniapp", // miniapp/webapp
     userKey: "",
     telegramId: "",
+    initDataRaw: "",
+    lock: "",
   };
   const BACKEND_STORAGE_KEY = "1log_backend";
   const persistBackendConfig = (patch) => {
@@ -730,12 +795,47 @@
         : "miniapp";
     const mode = modeRaw === "webapp" || modeRaw === "miniapp" ? modeRaw : inferredMode;
     const userKey = String(cfg.backendUserKey || cfg.userKey || "").trim();
-    const telegramId = String(cfg.backendTelegramId || cfg.telegramId || "").trim();
+
+    const initDataFromWindow = (() => {
+      try {
+        if (typeof window !== "undefined" && window && window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData)
+          return String(window.Telegram.WebApp.initData);
+      } catch {
+        // ignore
+      }
+      return "";
+    })();
+
+    const initDataFromQuery = (() => {
+      if (!params) return "";
+      const raw = params.get("tgWebAppData");
+      if (!raw) return "";
+      try {
+        return decodeURIComponent(raw);
+      } catch {
+        return raw;
+      }
+    })();
+
+    const initDataRaw = String(cfg.backendInitData || cfg.initData || initDataFromQuery || initDataFromWindow || "").trim();
+    const telegramIdFromInit = initDataRaw ? parseTelegramIdFromInitData(initDataRaw) : null;
+    const telegramIdExplicit = String(cfg.backendTelegramId || cfg.telegramId || "").trim();
+    const telegramId = (telegramIdFromInit && String(telegramIdFromInit)) || telegramIdExplicit;
+    const storedLock = String(cfg.backendLock || cfg.lock || "").trim();
     BACKEND.baseUrl = baseUrl;
     BACKEND.enabled = Boolean(enabled && baseUrl);
     BACKEND.mode = mode;
     BACKEND.userKey = userKey;
     BACKEND.telegramId = telegramId;
+    BACKEND.initDataRaw = initDataRaw;
+    BACKEND.lock = telegramId ? storedLock || checksum(`${telegramId}:${initDataRaw || ""}`) : "";
+
+    // Tamper guard: agar localStorage'dagi ID+initData checksum to'g'ri kelmasa, ID ni bekor qilamiz.
+    if (telegramId && storedLock && storedLock !== checksum(`${telegramId}:${initDataRaw || ""}`)) {
+      BACKEND.telegramId = "";
+      BACKEND.lock = "";
+      persistBackendConfig({ backendTelegramId: "", backendLock: "", backendInitData: initDataRaw || "" });
+    }
   };
   loadBackendConfig();
 
@@ -743,7 +843,9 @@
     const id = telegramId != null ? String(telegramId) : "";
     if (!id) return;
     BACKEND.telegramId = id;
-    persistBackendConfig({ backendTelegramId: id });
+    const lock = BACKEND.initDataRaw ? checksum(`${id}:${BACKEND.initDataRaw}`) : "";
+    BACKEND.lock = lock;
+    persistBackendConfig({ backendTelegramId: id, backendInitData: BACKEND.initDataRaw || "", backendLock: lock });
   };
 
   let syncTimer = null;
@@ -789,9 +891,8 @@
 	    headers.set("Content-Type", "application/json");
 	    if (BACKEND.userKey) headers.set("X-User-Key", BACKEND.userKey);
 	    if (BACKEND.telegramId) headers.set("X-Telegram-Id", BACKEND.telegramId);
-	    if (tg && typeof tg.initData === "string" && tg.initData) {
-	      headers.set("X-Telegram-Init-Data", tg.initData);
-	    }
+	    const initForHeader = BACKEND.initDataRaw || (tg && typeof tg.initData === "string" ? tg.initData : "");
+	    if (initForHeader) headers.set("X-Telegram-Init-Data", initForHeader);
 	    const res = await fetch(`${BACKEND.baseUrl}${path}`, { ...options, headers });
 	    const data = await safeReadBody(res);
 	    if (!res.ok) throw buildApiError("Backend error", res, data);
@@ -875,6 +976,10 @@
   let telegramIdPromptShown = false;
   const openTelegramIdPrompt = ({ title, onSaved } = {}) => {
     if (telegramIdPromptShown) return;
+    if (BACKEND.lock) {
+      toast("Telegram ID locked");
+      return;
+    }
     telegramIdPromptShown = true;
 
     const input = document.createElement("input");
@@ -955,15 +1060,17 @@
     if (!telegramId) return;
     const list = await webappRequest(`/accounts/${encodeURIComponent(telegramId)}/`, { method: "GET" });
     const rows = Array.isArray(list) ? list : [];
+    const fallbackGroups = Number(state && state.groupsTotal ? state.groupsTotal : 0);
     state.accounts = rows.map((acc) => {
       const phoneDigits = digitsOnly(acc && acc.phone);
       const id = phoneDigits || cryptoId();
+      const groupsCountRaw = acc && (acc.groups_count ?? acc.groupsCount);
       return {
         id,
         name: (acc && (acc.full_name || acc.fullName || acc.name || acc.title)) || `${tr("accountNamePrefix")} +${phoneDigits || id}`,
         phone: phoneDigits || String(acc && acc.phone ? acc.phone : id),
         status: acc && (acc.is_active ?? acc.isActive) ? "active" : "paused",
-        groupsCount: Number(acc && (acc.groups_count ?? acc.groupsCount)) || 0,
+        groupsCount: Number(groupsCountRaw != null ? groupsCountRaw : fallbackGroups) || 0,
       };
     });
     saveState("webapp-accounts");
@@ -980,7 +1087,7 @@
     }
     const list = await webappRequest(`/groups/${encodeURIComponent(telegramId)}/`, { method: "GET" });
     const rows = Array.isArray(list) ? list : [];
-    state.groups = rows.map((g) => ({
+    const mapped = rows.map((g) => ({
       id: String(g && (g.id ?? g.telegram_id ?? g.link ?? cryptoId())),
       title: String(g && (g.name ?? g.title ?? "Telegram")),
       folderLabel: g && typeof g.type === "number" ? (g.type === 0 ? "Public" : "Private") : "Telegram",
@@ -988,7 +1095,10 @@
       selected: false,
       ok: true,
       link: String(g && g.link ? g.link : ""),
-    }));
+    })).map((g) => ({ ...g, link: resolveGroupCopyLink(g) }));
+
+    state.groups = mergeFixedGroups(mapped.length ? mapped : buildDefaultGroups());
+    state.groupsTotal = mapped.length || state.groupsTotal || 0;
     saveState("webapp-groups");
     renderGroups();
     renderDashboard();
@@ -1128,7 +1238,7 @@
   })();
   const isTelegramWebView = Boolean(tg);
 
-  const parseTelegramIdFromInitData = (initData) => {
+  function parseTelegramIdFromInitData(initData) {
     try {
       const params = new URLSearchParams(String(initData || ""));
       const rawUser = params.get("user");
@@ -1139,50 +1249,80 @@
     } catch {
       return null;
     }
-  };
+  }
 
 	  const getTelegramId = () => {
 	    if (BACKEND.telegramId) return String(BACKEND.telegramId);
 	    // Fallback: some Telegram environments pass initData via URL params (e.g. tgWebAppData).
-	    try {
-	      const params = new URLSearchParams(String(window.location && window.location.search ? window.location.search : ""));
-	      const tgWebAppData = params.get("tgWebAppData");
-	      if (tgWebAppData) {
-	        const decoded = decodeURIComponent(tgWebAppData);
-	        const id = parseTelegramIdFromInitData(decoded);
-	        if (id) {
-	          persistTelegramId(id);
-	          return id;
-	        }
-	      }
-	    } catch {
-	      // ignore
-	    }
-    // Telegram WebApp: prefer initDataUnsafe (object), because initData (string)
-    // can be empty/unavailable depending on how the page was opened.
-	    try {
-	      const unsafe = tg && typeof tg === "object" ? tg.initDataUnsafe : null;
-	      const user = unsafe && typeof unsafe === "object" ? unsafe.user : null;
-	      const id = user && typeof user === "object" ? user.id : null;
-	      if (id != null) {
-	        persistTelegramId(id);
-	        return String(id);
-	      }
-	    } catch {
-	      // ignore
-	    }
-	    if (tg && typeof tg.initData === "string" && tg.initData) {
-	      const id = parseTelegramIdFromInitData(tg.initData);
-	      if (id) {
-	        persistTelegramId(id);
-	        return id;
-	      }
-	    }
-	    return null;
-	  };
+    try {
+      const params = new URLSearchParams(String(window.location && window.location.search ? window.location.search : ""));
+      const tgWebAppData = params.get("tgWebAppData");
+      if (tgWebAppData) {
+        const decoded = decodeURIComponent(tgWebAppData);
+        const id = parseTelegramIdFromInitData(decoded);
+        if (id) {
+          BACKEND.initDataRaw = decoded;
+          const lock = checksum(`${id}:${decoded}`);
+          BACKEND.lock = lock;
+          persistBackendConfig({ backendTelegramId: id, backendInitData: decoded, backendLock: lock });
+          return id;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    // Telegram WebApp: prefer signed initData string; fallback to initDataUnsafe user.id
+    if (tg && typeof tg.initData === "string" && tg.initData) {
+      const id = parseTelegramIdFromInitData(tg.initData);
+      if (id) {
+        BACKEND.initDataRaw = tg.initData;
+        const lock = checksum(`${id}:${tg.initData}`);
+        BACKEND.lock = lock;
+        persistBackendConfig({ backendTelegramId: id, backendInitData: tg.initData, backendLock: lock });
+        return id;
+      }
+    }
+    try {
+      const unsafe = tg && typeof tg === "object" ? tg.initDataUnsafe : null;
+      const user = unsafe && typeof unsafe === "object" ? unsafe.user : null;
+      const id = user && typeof user === "object" ? user.id : null;
+      if (id != null) {
+        const raw = BACKEND.initDataRaw || (tg && typeof tg.initData === "string" ? tg.initData : "");
+        const lock = raw ? checksum(`${id}:${raw}`) : "";
+        if (raw) {
+          BACKEND.initDataRaw = raw;
+          BACKEND.lock = lock;
+          persistBackendConfig({ backendTelegramId: id, backendInitData: raw, backendLock: lock });
+        } else {
+          persistTelegramId(id);
+        }
+        return String(id);
+      }
+    } catch {
+      // ignore
+    }
+    return null;
+  };
 
   let deferredInstallPrompt = null;
   let shouldAutoPromptFromQuery = false; // Chrome'da qayta ochilganda avtomatik prompt uchun
+  const PWA_AUTO_KEY = "pwa_install_prompted";
+
+  const markPwaPrompted = () => {
+    try {
+      localStorage.setItem(PWA_AUTO_KEY, "1");
+    } catch {
+      // ignore
+    }
+  };
+
+  const wasPwaPrompted = () => {
+    try {
+      return localStorage.getItem(PWA_AUTO_KEY) === "1";
+    } catch {
+      return false;
+    }
+  };
   const initPwaInstall = () => {
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
@@ -1197,6 +1337,17 @@
         } catch {
           // ignore
         }
+      }
+      // Agar query flag yo'q bo'lsa ham, foydalanuvchi hali install ko'rmagan bo'lsa, avtomatik prompt qilamiz.
+      if (!wasPwaPrompted() && !isStandaloneMode()) {
+        setTimeout(() => {
+          try {
+            deferredInstallPrompt?.prompt();
+            deferredInstallPrompt?.userChoice.finally(() => markPwaPrompted());
+          } catch {
+            // ignore
+          }
+        }, 800);
       }
     });
     window.addEventListener("appinstalled", () => {
@@ -1227,12 +1378,11 @@
     return Boolean(window.navigator && window.navigator.standalone);
   };
 
-  const openInstallInBrowser = () => {
+  const openInstallInBrowser = ({ withInstallFlag = true } = {}) => {
     const urlObj = new URL(window.location.href);
-    if (!urlObj.searchParams.has("pwa_install")) urlObj.searchParams.set("pwa_install", "1");
+    if (withInstallFlag) urlObj.searchParams.set("pwa_install", "1");
     const url = urlObj.toString();
 
-    // Telegram WebView'da eng xavfsiz usul: openLink (tashqi brauzer).
     if (tg && typeof tg.openLink === "function") {
       try {
         tg.openLink(url);
@@ -1242,7 +1392,6 @@
       }
     }
 
-    // Oddiy brauzerlar uchun
     try {
       window.open(url, "_blank", "noopener,noreferrer");
     } catch {
@@ -1251,40 +1400,14 @@
   };
 
   const openInstallModal = async () => {
-    const uaLocal = navigator.userAgent || "";
-    const isAndroidLocal = /Android/i.test(uaLocal);
-    const isIOSLocal = /iPad|iPhone|iPod/i.test(uaLocal) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-
-    // Telegram WebView: Android'da tashqi brauzerga olib chiqamiz va qisqa ko'rsatma beramiz.
-    if (isTelegramWebView) {
-      if (isAndroidLocal) {
-        const body = document.createElement("div");
-        const p = document.createElement("p");
-        p.className = "hint";
-        p.textContent = "Chrome’da ochiladi. Keyin ⋮ → “Install app” ni bosing.";
-        body.append(p);
-        const cancel = button(tr("btnNo"), "btn btn-secondary", () => modal.close());
-        const ok = button(tr("btnYes"), "btn btn-primary", () => {
-          modal.close();
-          openInstallInBrowser();
-        });
-        modal.open({ title: tr("installTitle"), body, footer: [cancel, ok] });
-        return;
-      }
-      // iOS Telegram: faqat ogohlantiramiz
-      toast(tr("installTelegramHint"));
-      return;
-    }
-
     if (isStandaloneMode()) return toast(tr("toastAlreadyInstalled"));
 
-    const isAndroid = isAndroidLocal;
-    const isIOS = isIOSLocal;
-    const isTelegram = Boolean(tg);
+    const ua = navigator.userAgent || "";
+    const isAndroid = /Android/i.test(ua);
+    const isIOS = /iPad|iPhone|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const isTelegram = isTelegramWebView;
 
-    if (isAndroid && isTelegram) return openInstallInBrowser();
-
-    if (deferredInstallPrompt && !isIOS) {
+    if (!isTelegram && isAndroid && deferredInstallPrompt) {
       try {
         deferredInstallPrompt.prompt();
         await deferredInstallPrompt.userChoice.catch(() => null);
@@ -1296,28 +1419,37 @@
     }
 
     const body = document.createElement("div");
-    const mk = (text) => {
-      const p = document.createElement("p");
-      p.className = "hint";
-      p.textContent = text;
-      return p;
-    };
+    const hint = document.createElement("p");
+    hint.className = "hint";
 
-    if (isTelegram) body.append(mk(tr("installTelegramHint")));
-    if (isIOS) body.append(mk(tr("installIosHint")));
-    else if (isAndroid) body.append(mk(tr("installAndroidHint")));
-    else body.append(mk(tr("installAndroidHint")));
+    if (isTelegram && isAndroid) hint.textContent = "Brauzerda ochiladi. Keyin Chrome menyusidan Install app ni bosing.";
+    else if (isTelegram && isIOS) hint.textContent = "Safari'da oching va Share -> Add to Home Screen ni bosing.";
+    else if (isIOS) hint.textContent = tr("installIosHint");
+    else hint.textContent = tr("installAndroidHint");
+
+    body.append(hint);
 
     const close = button(tr("cancel"), "btn btn-secondary btn-full", () => modal.close());
-    const openBrowser = button(tr(isTelegram && isAndroid ? "installOpenChrome" : "installOpenBrowser"), "btn btn-primary btn-full", () =>
-      openInstallInBrowser({ preferChrome: Boolean(isTelegram && isAndroid) }),
+    const openBrowser = button(
+      tr(isAndroid ? "installOpenChrome" : "installOpenBrowser"),
+      "btn btn-primary btn-full",
+      () => {
+        modal.close();
+        openInstallInBrowser({ withInstallFlag: isAndroid });
+      },
     );
 
-    modal.open({
-      title: tr("installTitle"),
-      body,
-      footer: isTelegram ? [openBrowser, close] : [close],
-    });
+    if (isTelegram) {
+      modal.open({ title: tr("installTitle"), body, footer: [openBrowser, close] });
+      return;
+    }
+
+    if (isAndroid) {
+      modal.open({ title: tr("installTitle"), body, footer: [openBrowser, close] });
+      return;
+    }
+
+    modal.open({ title: tr("installTitle"), body, footer: [close] });
   };
 
   const haptic = (type = "impact", style = "light") => {
@@ -1668,11 +1800,13 @@
     const next = qs("#groups-next");
     const status = qs("#groups-status");
     const refreshBtn = qs('#screen-groups [data-action="refresh-groups"]');
+    const importBox = qs("#groups-import");
     const hasGroups = Array.isArray(state.groups) && state.groups.length;
     const hasAny = hasGroups && state.groups.some((g) => Boolean(g && (g.ok === true || g.selected === true)));
 
     if (list) list.hidden = false;
     if (refreshBtn) refreshBtn.hidden = false;
+    if (importBox) importBox.hidden = true;
 
     list.replaceChildren(
       ...state.groups.map((g) => {
@@ -1896,8 +2030,8 @@
             const telegramId = webappEnsureTelegramId();
             if (!telegramId) return;
             const id = encodeURIComponent(telegramId);
-	            webappRequest(`/accounts/${id}/send-code/`, {
-	              method: "POST",
+            webappRequest(`/accounts/${id}/send-code/`, {
+              method: "POST",
 	              headers: { "Content-Type": "application/json" },
 	              body: JSON.stringify({ phone: session.phoneRaw }),
 	            })
@@ -1908,9 +2042,9 @@
                   renderStep("code");
                   return;
                 }
-	                toast(String((r && (r.error || r.message)) || "error"));
-	                haptic("notification", "error");
-	              })
+                toast(String((r && (r.error || r.message)) || "error"));
+                haptic("notification", "error");
+              })
 	              .catch((e) => toastApiError(e, tr("toastSendCodeFail")));
 	            return;
 	          }
@@ -1969,19 +2103,23 @@
             const telegramId = webappEnsureTelegramId();
             if (!telegramId) return;
             const id = encodeURIComponent(telegramId);
-	            webappRequest(`/accounts/${id}/verify-code/`, {
-	              method: "POST",
+            webappRequest(`/accounts/${id}/verify-code/`, {
+              method: "POST",
 	              headers: { "Content-Type": "application/json" },
 	              body: JSON.stringify({ phone: session.phoneRaw, code: session.code }),
 	            })
               .then((r) => {
-	                if (r && r.success) return finish();
-	                if (r && r.needs_2fa) return renderStep("password");
-	                toast(String((r && (r.error || r.message)) || "error"));
-	                haptic("notification", "error");
-	              })
-	              .catch((e) => toastApiError(e, tr("toastVerifyCodeFail")));
-	            return;
+                  if (r && r.success) {
+                    webappSyncGroups(true).catch(() => {});
+                    webappSyncStatus().catch(() => {});
+                    return finish();
+                  }
+                  if (r && r.needs_2fa) return renderStep("password");
+                  toast(String((r && (r.error || r.message)) || "error"));
+                  haptic("notification", "error");
+                })
+                .catch((e) => toastApiError(e, tr("toastVerifyCodeFail")));
+            return;
 	          }
           session.need2fa = Boolean(need2fa && need2fa.checked);
           if (session.need2fa) return renderStep("password");
@@ -2019,18 +2157,22 @@
             const telegramId = webappEnsureTelegramId();
             if (!telegramId) return;
             const id = encodeURIComponent(telegramId);
-	            webappRequest(`/accounts/${id}/verify-2fa/`, {
-	              method: "POST",
+            webappRequest(`/accounts/${id}/verify-2fa/`, {
+              method: "POST",
 	              headers: { "Content-Type": "application/json" },
 	              body: JSON.stringify({ phone: session.phoneRaw, password: session.password }),
 	            })
               .then((r) => {
-	                if (r && r.success) return finish();
-	                toast(String((r && (r.error || r.message)) || "error"));
-	                haptic("notification", "error");
-	              })
-	              .catch((e) => toastApiError(e, tr("toastVerify2faFail")));
-	            return;
+                if (r && r.success) {
+                  webappSyncGroups(true).catch(() => {});
+                  webappSyncStatus().catch(() => {});
+                  return finish();
+                }
+                toast(String((r && (r.error || r.message)) || "error"));
+                haptic("notification", "error");
+              })
+              .catch((e) => toastApiError(e, tr("toastVerify2faFail")));
+            return;
 	          }
           finish();
         });
@@ -2833,11 +2975,25 @@
         }
 
         if (action === "copy-message") return copyText(state.message || "");
+        if (action === "groups-import-link") {
+          const link = String(act.getAttribute("data-link") || "").trim();
+          if (!link) return;
+          copyText(link);
+          try {
+            if (tg && typeof tg.openLink === "function") tg.openLink(link);
+            else window.open(link, "_blank", "noopener,noreferrer");
+          } catch {
+            // ignore
+          }
+          return;
+        }
         if (action === "copy-group") {
           const id = act.getAttribute("data-group-id");
           const g = state.groups.find((x) => x.id === id);
           if (g) {
-            copyText(g.link || `${g.title}`);
+            const link = resolveGroupCopyLink(g);
+            if (link) copyText(link);
+            else toast(tr("toastCopyFail"));
           }
           return;
         }
