@@ -1091,14 +1091,14 @@
       id: String(g && (g.id ?? g.telegram_id ?? g.link ?? cryptoId())),
       title: String(g && (g.name ?? g.title ?? "Telegram")),
       folderLabel: g && typeof g.type === "number" ? (g.type === 0 ? "Public" : "Private") : "Telegram",
-      groupsCount: 0,
+      groupsCount: Number(g && (g.groups_count ?? g.groupsCount ?? g.count)) || 0,
       selected: false,
       ok: true,
       link: String(g && g.link ? g.link : ""),
     })).map((g) => ({ ...g, link: resolveGroupCopyLink(g) }));
 
     state.groups = mergeFixedGroups(mapped.length ? mapped : buildDefaultGroups());
-    state.groupsTotal = mapped.length || state.groupsTotal || 0;
+    state.groupsTotal = mapped.reduce((sum, g) => sum + (Number(g.groupsCount) || 0), 0) || (mapped.length ? mapped.length : 0) || state.groupsTotal || 0;
     saveState("webapp-groups");
     renderGroups();
     renderDashboard();
@@ -3099,5 +3099,7 @@
 
   // Backend state pull yo'q (home viewdan boshlaymiz).
 })();
+
+
 
 
