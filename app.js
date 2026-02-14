@@ -1067,7 +1067,9 @@
       const groupsCountRaw = acc && (acc.groups_count ?? acc.groupsCount);
       return {
         id,
-        name: (acc && (acc.full_name || acc.fullName || acc.name || acc.title)) || `${tr("accountNamePrefix")} +${phoneDigits || id}`,
+        name:
+          (acc && (acc.full_name || acc.fullName || acc.name || acc.title || (acc.first_name && acc.last_name && `${acc.first_name} ${acc.last_name}`) || (acc.first_name && `${acc.first_name}`))) ||
+          `${tr("accountNamePrefix")} +${phoneDigits || id}`,
         phone: phoneDigits || String(acc && acc.phone ? acc.phone : id),
         status: acc && (acc.is_active ?? acc.isActive) ? "active" : "paused",
         groupsCount: Number(groupsCountRaw != null ? groupsCountRaw : fallbackGroups) || 0,
@@ -3099,6 +3101,7 @@
 
   // Backend state pull yo'q (home viewdan boshlaymiz).
 })();
+
 
 
 
