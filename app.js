@@ -669,7 +669,8 @@
       if (!hit) return base;
       return {
         ...base,
-        groupsCount: Number(hit.groupsCount ?? base.groupsCount) || 0,
+        // Backend ba'zan groups_count qaytaradi, shu yerda uni ham o'qib olamiz.
+        groupsCount: Number(hit.groups_count ?? hit.groupsCount ?? base.groupsCount) || 0,
         ok: typeof hit.ok === "boolean" ? hit.ok : base.ok,
         selected: typeof hit.selected === "boolean" ? hit.selected : base.selected,
         link: resolveGroupCopyLink(hit) || base.link,
