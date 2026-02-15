@@ -2887,13 +2887,6 @@
         btn.addEventListener("pointerup", handler, { passive: false });
       });
     };
-        btn._navHandler = handler;
-        btn.addEventListener("click", handler, { passive: false });
-        btn.addEventListener("touchend", handler, { passive: false });
-        btn.addEventListener("pointerup", handler, { passive: false });
-      });
-    };
-    forceBindNavButtons();
 
     document.addEventListener("click", (e) => {
       const target = e.target instanceof Element ? e.target : null;
