@@ -2863,9 +2863,14 @@
     // Ayrim webview / PWA kesh holatlarida delegation ishlamasa, nav tugmalarini majburiy bog'laymiz.
     const forceBindNavButtons = () => {
       qsa(".nav-item").forEach((btn) => {
-        if (btn._navHandler) btn.removeEventListener("click", btn._navHandler);
+        if (btn._navHandler) {
+          btn.removeEventListener("click", btn._navHandler);
+          btn.removeEventListener("touchend", btn._navHandler);
+          btn.removeEventListener("pointerup", btn._navHandler);
+        }
         const handler = (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
           const route = btn.getAttribute("data-nav");
           if (route) {
             haptic("selection");
@@ -2873,7 +2878,9 @@
           }
         };
         btn._navHandler = handler;
-        btn.addEventListener("click", handler);
+        btn.addEventListener("click", handler, { passive: false });
+        btn.addEventListener("touchend", handler, { passive: false });
+        btn.addEventListener("pointerup", handler, { passive: false });
       });
     };
     forceBindNavButtons();
