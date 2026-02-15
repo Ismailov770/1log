@@ -2859,6 +2859,24 @@
   };
 
   const initEvents = () => {
+    // Ayrim webview / PWA kesh holatlarida delegation ishlamasa, nav tugmalarini majburiy bog'laymiz.
+    const forceBindNavButtons = () => {
+      qsa(".nav-item").forEach((btn) => {
+        if (btn._navHandler) btn.removeEventListener("click", btn._navHandler);
+        const handler = (ev) => {
+          ev.preventDefault();
+          const route = btn.getAttribute("data-nav");
+          if (route) {
+            haptic("selection");
+            setRoute(route);
+          }
+        };
+        btn._navHandler = handler;
+        btn.addEventListener("click", handler);
+      });
+    };
+    forceBindNavButtons();
+
     document.addEventListener("click", (e) => {
       const target = e.target instanceof Element ? e.target : null;
       if (!target) return;
