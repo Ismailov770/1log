@@ -16,95 +16,95 @@
   const qs = (sel, root = document) => root.querySelector(sel);
   const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-  const I18N = {
+        const I18N = {
     ru: {
       langLabel: "RU",
       topSupport: "Поддержка",
       topLang: "Язык",
       topMenu: "Меню",
-      navDashboard: "Главная",
+      navDashboard: "Дашборд",
       navAccounts: "Аккаунты",
       navMessage: "Сообщение",
       navGroups: "Группы",
       navInterval: "Интервал",
       menuTitle: "Меню",
-      menuLogout: "Сбросить настройки",
+      menuLogout: "Очистить настройки",
       menuInstall: "Установить приложение",
-      installTitle: "Установка приложения",
-      installTelegramHint: "В Telegram установка может не появиться. Откройте в браузере.",
-      installIosHint: "iPhone/iPad: Поделиться → «На экран Домой».",
-      installAndroidHint: "Android: меню Chrome ⋮ → «Установить приложение».",
+      installTitle: "Установить приложение",
+      installTelegramHint: "Внутри Telegram установка может не появиться. Откройте в браузере.",
+      installIosHint: "iPhone/iPad: Поделиться -> На экран Домой.",
+      installAndroidHint: "Android: Меню Chrome ... -> Установить приложение.",
       installOpenBrowser: "Открыть в браузере",
       installOpenChrome: "Открыть в Chrome",
-      logoutTitle: "Сбросить настройки?",
+      logoutTitle: "Очистить настройки?",
       logoutText: "Все локальные настройки на устройстве будут удалены.",
       cancel: "Отмена",
       save: "Сохранить",
       confirm: "Подтвердить",
       back: "Назад",
-      langPickerTitle: "Выбор языка",
-      langUz: "O‘zbek (Lotin)",
-      langUzCyrl: "Ўзбекча (Кирилл)",
+      langPickerTitle: "Выберите язык",
+      langUz: "O'zbek (Lotin)",
+      langUzCyrl: "O'zbekcha (Kiril)",
       langRu: "Русский",
       toastLangChanged: "Язык изменён",
       toastSupportSoon: "Поддержка: скоро",
-      toastLoggedOut: "Настройки сброшены",
+      toastLoggedOut: "Настройки очищены",
       toastCopied: "Скопировано",
-      toastCopyFail: "Не удалось скопировать",
+      toastCopyFail: "Не скопировано",
       toastSaved: "Сохранено",
       toastUpdated: "Обновлено",
       toastDeleted: "Удалено",
       toastStatsUpdated: "Статистика обновлена",
       toastNoActiveDispatch: "Нет активной рассылки",
       toastStopped: "Остановлено",
-      toastDispatchStarted: "Настройка завершена. Рассылка запущена.",
+      toastDispatchStarted: "Настройки завершены. Рассылка запущена.",
       toastNeedText: "Введите текст",
       toastNeedInterval: "Сначала настройте интервал",
-      toastNeedAccount: "Добавьте аккаунт",
-      toastNeedMessage: "Добавьте сообщение",
+      toastNeedAccount: "Сначала добавьте аккаунт",
+      toastNeedMessage: "Сначала добавьте сообщение",
       toastNeedGroups: "Выберите группы",
       toastAlreadyInstalled: "Уже установлено",
       confirmDeleteAccountTitle: "Удалить аккаунт?",
-      confirmDeleteAccountText: "Действительно хотите удалить аккаунт?",
+      confirmDeleteAccountText: "Действительно удалить аккаунт?",
       btnYes: "Да",
       btnNo: "Нет",
       toastMediaDeleted: "Медиа удалено",
       toastMediaDeleteFail: "Не удалось удалить медиа",
-      toastVideoOnlyOne: "Видео: можно только 1 (взяли первое)",
-      toastVideoTooLarge: (mb) => `Видео слишком большое (макс. ${mb} MB)`,
-      toastImageOnlyOne: "Можно только 1 картинку (взяли первую)",
-      toastMediaVideoIgnoresImages: "Выбрано видео — картинки игнорируются",
-      toastNeedMediaFile: "Выберите картинку или видео",
-      toastTooManyImages: (n) => `Можно добавить максимум ${n} картинок`,
-      toastImageTooLarge: (mb) => `Файл слишком большой (макс. ${mb} MB)`,
-      toastImageReadFail: "Не удалось прочитать картинку",
-      toastSendCodeFail: "Код не отправился",
+      toastVideoOnlyOne: "Видео: только 1 (взято первое)",
+      toastVideoTooLarge: (mb) => `Видео слишком большое (макс. ${mb} MB)` ,
+      toastImageOnlyOne: "Медиа: только 1 изображение (взято первое)",
+      toastMediaVideoIgnoresImages: "Медиа: выбрано видео — изображения игнорируются",
+      toastNeedMediaFile: "Выберите изображение или видео",
+      toastTooManyImages: (n) => `Можно добавить не более ${n} изображений`,
+      toastImageTooLarge: (mb) => `Файл слишком большой (макс. ${mb} MB)` ,
+      toastImageReadFail: "Не удалось прочитать изображение",
+      toastSendCodeFail: "Код не отправлен",
       toastVerifyCodeFail: "Код неверный",
       toastVerify2faFail: "Пароль 2FA неверный",
-      toastStopFail: "Не остановилось",
-      toastStartFail: "Не запустилось",
-      apiBackendOff: "Бэкенд выключен",
+      toastStopFail: "Не остановлено",
+      toastStartFail: "Не запущено",
+      apiBackendOff: "Backend недоступен",
       apiNeedAuth: "Нужна авторизация",
       apiNotFound: "Не найдено",
       apiFileTooLarge: "Файл слишком большой",
-      apiTooManyRequests: "Слишком часто, подождите",
+      apiTooManyRequests: "Слишком много запросов, подождите",
       apiServerError: "Ошибка сервера",
       apiFloodWait: (sec) => `Подождите ${sec} сек`,
       addAccountTitle: "Добавить аккаунт",
-      addAccountPhoneHint: "Введите номер в международном формате: +998..., +7..., +1... (с кодом страны).",
+      addAccountPhoneHint: "Введите телефон в международном формате: +998..., +7..., +1... (с кодом страны).",
       addAccountPhoneLabel: "Телефон",
       addAccountGetCode: "Получить код",
       addAccountCodeTitle: "Подтверждение",
-      addAccountCodeHint: (phone) => `Введите код, который пришёл на ${phone}.`,
+      addAccountCodeHint: (phone) => `Введите код, отправленный на ${phone}.`,
       addAccountCodeLabel: "Код",
-      addAccountNeed2fa: "Запросили пароль 2FA (если включено)",
+      addAccountNeed2fa: "Если включён 2FA, введите пароль",
       addAccount2faTitle: "Пароль 2FA",
       addAccount2faLabel: "Пароль 2FA",
-      addAccount2faHint: "Укажите пароль двухэтапной аутентификации (2FA), если он включён.",
+      addAccount2faHint: "Введите пароль, если 2FA включён.",
       toastPhoneInvalid: "Введите корректный телефон (международный формат, с кодом страны)",
       toastCodeSent: (phone) => `Код отправлен на ${phone}`,
       toastEnterCode: "Введите код",
-      toastEnter2fa: "Введите 2FA пароль",
+      toastEnter2fa: "Введите пароль 2FA",
       toastAccountAdded: "Аккаунт добавлен",
       accountNamePrefix: "Аккаунт",
 
@@ -120,59 +120,61 @@
       dashLabelInterval: "Интервал",
       dashLabelStart: "Начало рассылки",
       dashLabelEnd: "Конец рассылки",
-      dashStatusIdle: "• Не запущена",
-      dashStatusRunning: "• Идёт рассылка",
-      dashStatusStopped: "• Остановлена",
+      dashStatusIdle: "Не запущена",
+      dashStatusRunning: "Идёт рассылка",
+      dashStatusStopped: "Остановлена",
 
       accountsTitle: "Аккаунты",
       accountsSub: "Управление аккаунтами",
-      accountsEmpty: "Добавляйте аккаунты чтобы бот мог отправлять сообщения от вашего имени.",
+      accountsEmpty: "Добавьте аккаунты, чтобы бот мог отправлять сообщения от вашего имени.",
       accountsAdd: "Добавить аккаунт",
-      accountsNext: "Дальше →",
-      statusNotAdded: "× Не добавлен",
-      statusAdded: "✓ Добавлен",
+      accountsNext: "Дальше ->",
+      statusNotAdded: "Не добавлен",
+      statusAdded: "Добавлен",
 
       messageTitle: "Сообщение",
       messageSub: "Создание шаблона сообщение",
-      messagePlaceholder: "Введите текст вашего сообщения...",
+      messagePlaceholder: "Введите текст сообщения...",
       messageMarkdown: "Поддержка Markdown",
       messageSave: "Сохранить",
-      messagePreviewTitle: "Рассылаемое сообщение",
+      messagePreviewTitle: "Отправляемое сообщение",
       messageEdit: "Редактировать сообщение",
-      messageNext: "Дальше →",
+      messageNext: "Дальше ->",
 
       groupsTitle: "Группы",
       groupsSub: "Добавьте чаты для рассылки",
       groupsRefresh: "Обновить",
-      groupsNext: "Дальше →",
+      groupsNext: "Дальше ->",
 
       intervalTitle: "Интервал",
-      intervalSub: "Настройте периодичности",
+      intervalSub: "Настройте периодичность",
       intervalFreqTitle: "Частота отправки сообщений:",
-      intervalFreqSub: "• как часто отправлять сообщения.",
+      intervalFreqSub: "- как часто отправлять сообщения.",
       intervalFreqNone: "# Не выбран",
       intervalFreqValue: (h) => `# Каждые ${h} час`,
       intervalEvery1h: "Каждый 1 час",
       intervalEvery3h: "Каждые 3 часа",
       intervalFreqCustom: "Свой вариант (в часах)",
       intervalDurTitle: "Продолжительность рассылки:",
-      intervalDurSub: "• в течение какого времени отправлять сообщения.",
+      intervalDurSub: "- в течение какого времени отправлять сообщения.",
       intervalDurNone: "# Не указан",
       intervalDurValue: (d) => `# ${d} дней`,
       intervalDur1d: "1 день",
       intervalDur3d: "3 дня",
       intervalDurCustom: "Свой вариант (в днях)",
       intervalLaunch: "Запустить рассылку",
-      intervalStatusNone: "× Не настроен",
-      intervalStatusOk: "✓ Настроен",
+      intervalStatusNone: "Не настроен",
+      intervalStatusOk: "Настроен",
 
       tagActive: "Активен",
-      tagPaused: "На паузе",
+      tagPaused: "Пауза",
       tagLoginError: "Ошибка входа",
 
       unitGroups: "групп",
       folderChats: "Папка с чатами",
+      dateNotSet: "Не начато",
     },
+
 
     uz: {
       langLabel: "UZ",
@@ -186,83 +188,83 @@
       navInterval: "Interval",
       menuTitle: "Menyu",
       menuLogout: "Sozlamalarni tozalash",
-      menuInstall: "Ilovani o‘rnatish",
-      installTitle: "Ilovani o‘rnatish",
-      installTelegramHint: "Telegram ichida install chiqmasligi mumkin. Brauzerda ochib o‘rnating.",
-      installIosHint: "iPhone/iPad: Share → Add to Home Screen.",
-      installAndroidHint: "Android: Chrome menyu ⋮ → Install app.",
+      menuInstall: "Ilovani o'rnatish",
+      installTitle: "Ilovani o'rnatish",
+      installTelegramHint: "Telegram ichida install chiqmasligi mumkin. Brauzerda ochib o'rnating.",
+      installIosHint: "iPhone/iPad: Share -> Add to Home Screen.",
+      installAndroidHint: "Android: Chrome menyu ... -> Install app.",
       installOpenBrowser: "Brauzerda ochish",
-      installOpenChrome: "Chrome’da ochish",
-      logoutTitle: "Sozlamalarni o‘chirasizmi?",
-      logoutText: "Qurilmadagi barcha lokal sozlamalar o‘chadi.",
+      installOpenChrome: "Chrome'da ochish",
+      logoutTitle: "Sozlamalarni o'chirasizmi?",
+      logoutText: "Qurilmadagi barcha lokal sozlamalar o'chadi.",
       cancel: "Bekor qilish",
       save: "Saqlash",
       confirm: "Tasdiqlash",
       back: "Orqaga",
       langPickerTitle: "Tilni tanlang",
-      langUz: "O‘zbek (Lotin)",
-      langUzCyrl: "Ўзбекча (Кирилл)",
+      langUz: "O'zbek (Lotin)",
+      langUzCyrl: "O'zbekcha (Kiril)",
       langRu: "Русский",
-      toastLangChanged: "Til o‘zgartirildi",
+      toastLangChanged: "Til o'zgartirildi",
       toastSupportSoon: "Yordam: tez kunda",
       toastLoggedOut: "Sozlamalar tozalandi",
       toastCopied: "Nusxa olindi",
-      toastCopyFail: "Nusxalab bo‘lmadi",
+      toastCopyFail: "Nusxalab bo'lmadi",
       toastSaved: "Saqlandi",
       toastUpdated: "Yangilandi",
-      toastDeleted: "O‘chirildi",
+      toastDeleted: "O'chirildi",
       toastStatsUpdated: "Statistika yangilandi",
-      toastNoActiveDispatch: "Faol jo'natma yo‘q",
-      toastStopped: "To‘xtatildi",
+      toastNoActiveDispatch: "Faol jo'natma yo'q",
+      toastStopped: "To'xtatildi",
       toastDispatchStarted: "Sozlamalar yakunlandi. Jo'natma boshlandi.",
       toastNeedText: "Matn kiriting",
       toastNeedInterval: "Avval intervalni sozlang",
-      toastNeedAccount: "Avval akkaunt qo‘shing",
-      toastNeedMessage: "Avval xabar qo‘shing",
+      toastNeedAccount: "Avval akkaunt qo'shing",
+      toastNeedMessage: "Avval xabar qo'shing",
       toastNeedGroups: "Guruhlarni tanlang",
-      toastAlreadyInstalled: "Allaqachon o‘rnatilgan",
-      confirmDeleteAccountTitle: "Akkauntni o‘chirish?",
-      confirmDeleteAccountText: "Rostan ham akkauntni o‘chirasizmi?",
+      toastAlreadyInstalled: "Allaqachon o'rnatilgan",
+      confirmDeleteAccountTitle: "Akkauntni o'chirish?",
+      confirmDeleteAccountText: "Rostan ham akkauntni o'chirasizmi?",
       btnYes: "Ha",
-      btnNo: "Yo‘q",
-      toastMediaDeleted: "Media o‘chirildi",
-      toastMediaDeleteFail: "Media o‘chmadi",
-      toastVideoOnlyOne: "Video: faqat 1 ta bo‘ladi (birinchisi olindi)",
+      btnNo: "Yo'q",
+      toastMediaDeleted: "Media o'chirildi",
+      toastMediaDeleteFail: "Media o'chmadi",
+      toastVideoOnlyOne: "Video: faqat 1 ta bo'ladi (birinchisi olindi)",
       toastVideoTooLarge: (mb) => `Video juda katta (maks. ${mb} MB)`,
       toastImageOnlyOne: "Media: faqat 1 ta rasm (birinchisi olindi)",
-      toastMediaVideoIgnoresImages: "Media: video tanlangan — rasmlar hisobga olinmadi",
+      toastMediaVideoIgnoresImages: "Media: video tanlandi - rasmlar hisobga olinmadi",
       toastNeedMediaFile: "Rasm yoki video tanlang",
-      toastTooManyImages: (n) => `Ko‘pi bilan ${n} ta rasm qo‘shish mumkin`,
+      toastTooManyImages: (n) => `Ko'pi bilan ${n} ta rasm qo'shish mumkin`,
       toastImageTooLarge: (mb) => `Fayl juda katta (maks. ${mb} MB)`,
-      toastImageReadFail: "Rasmni o‘qib bo‘lmadi",
+      toastImageReadFail: "Rasmni o'qib bo'lmadi",
       toastSendCodeFail: "Kod yuborilmadi",
-      toastVerifyCodeFail: "Kod noto‘g‘ri",
-      toastVerify2faFail: "2FA parol noto‘g‘ri",
-      toastStopFail: "To‘xtamadi",
+      toastVerifyCodeFail: "Kod noto'g'ri",
+      toastVerify2faFail: "2FA parol noto'g'ri",
+      toastStopFail: "To'xtamadi",
       toastStartFail: "Ishga tushmadi",
-      apiBackendOff: "Backend o‘chiq",
+      apiBackendOff: "Backend o'chiq",
       apiNeedAuth: "Avtorizatsiya kerak",
       apiNotFound: "Topilmadi",
       apiFileTooLarge: "Fayl juda katta",
-      apiTooManyRequests: "Ko‘p urinyapsiz, kuting",
+      apiTooManyRequests: "Ko'p urinyapsiz, kuting",
       apiServerError: "Serverda xato",
       apiFloodWait: (sec) => `Biroz kuting: ${sec} soniya`,
-      addAccountTitle: "Akkaunt qo‘shish",
+      addAccountTitle: "Akkaunt qo'shish",
       addAccountPhoneHint: "Telefon raqamini xalqaro formatda kiriting: +998..., +7..., +1... (davlat kodi bilan).",
       addAccountPhoneLabel: "Telefon",
       addAccountGetCode: "Kod olish",
       addAccountCodeTitle: "Tasdiqlash",
       addAccountCodeHint: (phone) => `Kod kiriting: ${phone}`,
       addAccountCodeLabel: "Kod",
-      addAccountNeed2fa: "2FA parol so‘ralsa (yoqilgan bo‘lsa)",
+      addAccountNeed2fa: "2FA parol so'ralsa (yoqilgan bo'lsa)",
       addAccount2faTitle: "2FA parol",
       addAccount2faLabel: "2FA parol",
-      addAccount2faHint: "Agar 2FA yoqilgan bo‘lsa, parolni kiriting.",
-      toastPhoneInvalid: "Telefon raqamini to‘g‘ri kiriting (xalqaro format, davlat kodi bilan)",
+      addAccount2faHint: "Agar 2FA yoqilgan bo'lsa, parolni kiriting.",
+      toastPhoneInvalid: "Telefon raqamini to'g'ri kiriting (xalqaro format, davlat kodi bilan)",
       toastCodeSent: (phone) => `Kod yuborildi: ${phone}`,
       toastEnterCode: "Kod kiriting",
       toastEnter2fa: "2FA parolni kiriting",
-      toastAccountAdded: "Akkaunt qo‘shildi",
+      toastAccountAdded: "Akkaunt qo'shildi",
       accountNamePrefix: "Akkaunt",
 
       dashTitle: "Boshqaruv",
@@ -277,51 +279,51 @@
       dashLabelInterval: "Interval",
       dashLabelStart: "Boshlanish vaqti",
       dashLabelEnd: "Tugash vaqti",
-      dashStatusIdle: "• Ishga tushmagan",
-      dashStatusRunning: "• Jo'natma ketmoqda",
-      dashStatusStopped: "• To'xtatilgan",
+      dashStatusIdle: "Ishga tushmagan",
+      dashStatusRunning: "Jo'natma ketmoqda",
+      dashStatusStopped: "To'xtatilgan",
 
       accountsTitle: "Akkauntlar",
       accountsSub: "Akkauntlarni boshqarish",
-      accountsEmpty: "Bot sizning nomingizdan xabar yuborishi uchun akkaunt qo‘shing.",
-      accountsAdd: "Akkaunt qo‘shish",
-      accountsNext: "Keyingi →",
-      statusNotAdded: "× Qo‘shilmagan",
-      statusAdded: "✓ Qo‘shilgan",
+      accountsEmpty: "Bot sizning nomingizdan xabar yuborishi uchun akkaunt qo'shing.",
+      accountsAdd: "Akkaunt qo'shish",
+      accountsNext: "Keyingi ->",
+      statusNotAdded: "Qo'shilmagan",
+      statusAdded: "Qo'shilgan",
 
       messageTitle: "Xabar",
       messageSub: "Xabar shablonini yaratish",
       messagePlaceholder: "Xabar matnini kiriting...",
-      messageMarkdown: "Markdown qo‘llab-quvvatlanadi",
+      messageMarkdown: "Markdown qo'llab-quvvatlanadi",
       messageSave: "Saqlash",
       messagePreviewTitle: "Yuboriladigan xabar",
       messageEdit: "Xabarni tahrirlash",
-      messageNext: "Keyingi →",
+      messageNext: "Keyingi ->",
 
       groupsTitle: "Guruhlar",
-      groupsSub: "Jo'natma uchun chatlarni qo‘shing",
+      groupsSub: "Jo'natma uchun chatlarni qo'shing",
       groupsRefresh: "Yangilash",
-      groupsNext: "Keyingi →",
+      groupsNext: "Keyingi ->",
 
       intervalTitle: "Interval",
       intervalSub: "Davriylikni sozlang",
       intervalFreqTitle: "Xabar yuborish tezligi:",
-      intervalFreqSub: "• qanchalik tez yuborilsin.",
+      intervalFreqSub: "- qanchalik tez yuborilsin.",
       intervalFreqNone: "# Tanlanmagan",
       intervalFreqValue: (h) => `# Har ${h} soatda`,
       intervalEvery1h: "Har 1 soatda",
       intervalEvery3h: "Har 3 soatda",
       intervalFreqCustom: "O'zim kiritaman (soat)",
       intervalDurTitle: "Jo'natma davomiyligi:",
-      intervalDurSub: "• qancha vaqt davomida yuborilsin.",
-      intervalDurNone: "# Ko‘rsatilmagan",
+      intervalDurSub: "- qancha vaqt davomida yuborilsin.",
+      intervalDurNone: "# Korsatilmagan",
       intervalDurValue: (d) => `# ${d} kun`,
       intervalDur1d: "1 kun",
       intervalDur3d: "3 kun",
       intervalDurCustom: "O'zim kiritaman (kun)",
       intervalLaunch: "Jo'natmani ishga tushirish",
-      intervalStatusNone: "× Sozlanmagan",
-      intervalStatusOk: "✓ Sozlangan",
+      intervalStatusNone: "Sozlanmagan",
+      intervalStatusOk: "Sozlangan",
 
       tagActive: "Faol",
       tagPaused: "Pauza",
@@ -329,173 +331,169 @@
 
       unitGroups: "guruh",
       folderChats: "Chatlar papkasi",
+      dateNotSet: "Boshlanmagan",
     },
 
     uz_cyrl: {
       langLabel: "ЎZ",
-      topSupport: "Ёдам",
+      topSupport: "Ёрдам",
       topLang: "Тил",
       topMenu: "Меню",
-      navDashboard: "о саҳиа",
-      navAccounts: "Акканла",
+      navDashboard: "Бош саҳифа",
+      navAccounts: "Аккаунтлар",
       navMessage: "Хабар",
       navGroups: "Гуруҳлар",
       navInterval: "Интервал",
       menuTitle: "Меню",
-      menuLogout: "Созламани тозалаш",
+      menuLogout: "Созламаларни тозалаш",
       menuInstall: "Иловани ўрнатиш",
       installTitle: "Иловани ўрнатиш",
-      installTelegramHint: "Telegram иида install имаслиги ммкин. азеда оиб на.",
-      installIosHint: "iPhone/iPad: Share (улашиш) → Add to Home Screen.",
-      installAndroidHint: "Android: Chrome меню ⋮ → Install app.",
+      installTelegramHint: "Telegram ичида ўрнатиш чиқмаслиги мумкин. Браузерда очиб ўрнатинг.",
+      installIosHint: "iPhone/iPad: Share -> Add to Home Screen.",
+      installAndroidHint: "Android: Chrome меню ... -> Install app.",
       installOpenBrowser: "Браузерда очиш",
-      installOpenChrome: "Chrome’да очиш",
-      logoutTitle: "Созламани озалайсизми?",
-      logoutText: "илмадаги баа локал созламала ади.",
+      installOpenChrome: "Chrome'да очиш",
+      logoutTitle: "Созламаларни ўчирмоқчимисиз?",
+      logoutText: "Қурилмадаги барча локал созламалар ўчирилади.",
       cancel: "Бекор қилиш",
       save: "Сақлаш",
-      confirm: "Тасдила",
+      confirm: "Тасдиқлаш",
       back: "Орқага",
       langPickerTitle: "Тилни танланг",
-      langUz: "O‘zbek (Lotin)",
+      langUz: "O'zbek (Lotin)",
       langUzCyrl: "Ўзбекча (Кирилл)",
-      langRu: "Рсский",
+      langRu: "Русский",
       toastLangChanged: "Тил ўзгартирилди",
-      toastSupportSoon: "Ёдам: ез кнда",
+      toastSupportSoon: "Ёрдам: тез кунда",
       toastLoggedOut: "Созламалар тозаланди",
-      toastCopied: "Нсаланди",
-      toastCopyFail: "Нсалаб блмади",
+      toastCopied: "Нусха олинди",
+      toastCopyFail: "Нусхаланмади",
       toastSaved: "Сақланди",
       toastUpdated: "Янгиланди",
       toastDeleted: "Ўчирилди",
-      toastStatsUpdated: "Саисика янгиланди",
+      toastStatsUpdated: "Статистика янгиланди",
       toastNoActiveDispatch: "Фаол жўнатма йўқ",
       toastStopped: "Тўхтатилди",
-      toastDispatchStarted: "Созламала якнланди. нама боланди.",
+      toastDispatchStarted: "Созламалар якунланди. Жўнатма бошланди.",
       toastNeedText: "Матн киритинг",
-      toastNeedInterval: "Аввал иневални созланг",
-      toastNeedAccount: "Аввал аккан инг",
-      toastNeedMessage: "Аввал аба инг",
+      toastNeedInterval: "Аввал интервални созланг",
+      toastNeedAccount: "Аввал аккаунт қўшинг",
+      toastNeedMessage: "Аввал хабар қўшинг",
       toastNeedGroups: "Гуруҳларни танланг",
-      toastAlreadyInstalled: "Аллааон наилган",
-      confirmDeleteAccountTitle: "Акканни ии?",
-      confirmDeleteAccountText: "Росдан ҳам акканни иасизми?",
+      toastAlreadyInstalled: "Аллақачон ўрнатилган",
+      confirmDeleteAccountTitle: "Аккаунтни ўчириш?",
+      confirmDeleteAccountText: "Ростдан ҳам аккаунтни ўчирасизми?",
       btnYes: "Ҳа",
       btnNo: "Йўқ",
       toastMediaDeleted: "Медиа ўчирилди",
-      toastMediaDeleteFail: "Медиа ўчмади",
-      toastVideoOnlyOne: "идео: аа 1 а блади (1-аси олинди)",
-      toastVideoTooLarge: (mb) => `Ð’Ð¸Ð´ÐµÐ¾ Ð¶ÑƒÐ´Ð° ÐºÐ°Ñ‚Ñ‚Ð° (Ð¼Ð°ÐºÑ. ${mb} MB)`,
-      toastImageOnlyOne: "едиа: аа 1 а асм кеади (1-аси олинди)",
-      toastMediaVideoIgnoresImages: "едиа: видео анланган  асмла ҳисобга олинмади",
-      toastNeedMediaFile: "Расм ки видео анланг",
-      toastTooManyImages: (n) => `ÐšÑžÐ¿Ð¸ Ð±Ð¸Ð»Ð°Ð½ ${n} Ñ‚Ð° Ñ€Ð°ÑÐ¼ Ò›ÑžÑˆÐ¸Ñˆ Ð¼ÑƒÐ¼ÐºÐ¸Ð½`,
-      toastImageTooLarge: (mb) => `Ð¤Ð°Ð¹Ð» Ð¶ÑƒÐ´Ð° ÐºÐ°Ñ‚Ñ‚Ð° (Ð¼Ð°ÐºÑ. ${mb} MB)`,
-      toastImageReadFail: "Расмни иб блмади",
+      toastMediaDeleteFail: "Медиани ўчириб бўлмади",
+      toastVideoOnlyOne: "Видео: фақат 1 та бўлади (биринчиси олинди)",
+      toastVideoTooLarge: (mb) => `Видео жуда катта (макс. ${mb} MB)`,
+      toastImageOnlyOne: "Медиа: фақат 1 та расм (биринчиси олинди)",
+      toastMediaVideoIgnoresImages: "Медиа: видео танланди - расмлар ҳисобга олинмади",
+      toastNeedMediaFile: "Расм ёки видео танланг",
+      toastTooManyImages: (n) => `Кўпи билан ${n} та расм қўшиш мумкин`,
+      toastImageTooLarge: (mb) => `Файл жуда катта (макс. ${mb} MB)`,
+      toastImageReadFail: "Расмни ўқиб бўлмади",
       toastSendCodeFail: "Код юборилмади",
-      toastVerifyCodeFail: "Код хато",
-      toastVerify2faFail: "2FA хато",
+      toastVerifyCodeFail: "Код нотўғри",
+      toastVerify2faFail: "2FA парол нотўғри",
       toastStopFail: "Тўхтамади",
       toastStartFail: "Ишга тушмади",
-      apiBackendOff: "Backend o‘chiq",
-      apiNeedAuth: "Avtorizatsiya kerak",
-      apiNotFound: "Topilmadi",
-      apiFileTooLarge: "Fayl juda katta",
-      apiTooManyRequests: "Ko‘p urinyapsiz, kuting",
-      apiServerError: "Serverda xato",
-      apiFloodWait: (sec) => `Biroz kuting: ${sec} soniya`,
-      addAccountTitle: "Аккан и",
-      addAccountPhoneHint: "Телефон рақамини халқаро форматда киритинг: +998999065281, +7..., +1... (давлат коди билан).",
+      apiBackendOff: "Backend ўчиқ",
+      apiNeedAuth: "Авторизация керак",
+      apiNotFound: "Топилмади",
+      apiFileTooLarge: "Файл жуда катта",
+      apiTooManyRequests: "Жуда кўп уриниш, кутинг",
+      apiServerError: "Серверда хато",
+      apiFloodWait: (sec) => `Бир оз кутинг: ${sec} сония`,
+      addAccountTitle: "Аккаунт қўшиш",
+      addAccountPhoneHint: "Телефон рақамини халқаро форматда киритинг: +998..., +7..., +1... (давлат коди билан).",
       addAccountPhoneLabel: "Телефон",
       addAccountGetCode: "Код олиш",
-      addAccountCodeTitle: "Тасдила",
-      addAccountCodeHint: (phone) => `ÐšÐ¾Ð´ ÐºÐ¸Ñ€Ð¸Ñ‚Ð¸Ð½Ð³: ${phone}`,
+      addAccountCodeTitle: "Тасдиқлаш",
+      addAccountCodeHint: (phone) => `Код киритинг: ${phone}`,
       addAccountCodeLabel: "Код",
-      addAccountNeed2fa: "2FA паол салса (илган блса)",
+      addAccountNeed2fa: "2FA парол сўралса (ёқилган бўлса)",
       addAccount2faTitle: "2FA парол",
       addAccount2faLabel: "2FA парол",
-      addAccount2faHint: "Ага 2FA илган блса, паолни кииинг.",
+      addAccount2faHint: "Агар 2FA ёқилган бўлса, паролни киритинг.",
       toastPhoneInvalid: "Телефон рақамини тўғри киритинг (халқаро формат, давлат коди билан)",
-      toastCodeSent: (phone) => `ÐšÐ¾Ð´ ÑŽÐ±Ð¾Ñ€Ð¸Ð»Ð´Ð¸: ${phone}`,
+      toastCodeSent: (phone) => `Код юборилди: ${phone}`,
       toastEnterCode: "Код киритинг",
-      toastEnter2fa: "2FA паролни киритинг",
-      toastAccountAdded: "Аккан илди",
-      accountNamePrefix: "Аккан",
+      toastEnter2fa: "2FA парол киритинг",
+      toastAccountAdded: "Аккаунт қўшилди",
+      accountNamePrefix: "Аккаунт",
 
       dashTitle: "Бошқарув",
       dashSub: "Жўнатмалар фаоллиги",
-      dashCreate: "Аво-жнама яаи",
-      dashStop: "ТХТАТШ",
-      dashStart: "ШАШ",
-      dashRefresh: "Саисикани янгила",
+      dashCreate: "Авто-жўнатма яратиш",
+      dashStop: "ТО'ХТАТИШ",
+      dashStart: "БОШЛАШ",
+      dashRefresh: "Статистикани янгилаш",
       dashLabelSent: "Юборилган хабарлар",
       dashLabelAccounts: "Фаол аккаунтлар",
       dashLabelGroups: "Гуруҳлар",
       dashLabelInterval: "Интервал",
       dashLabelStart: "Бошланиш вақти",
       dashLabelEnd: "Тугаш вақти",
-      dashStatusIdle: " га маган",
-      dashStatusRunning: " нама кемода",
-      dashStatusStopped: " Таилган",
+      dashStatusIdle: "Ишга тушмаган",
+      dashStatusRunning: "Жўнатма кетмоқда",
+      dashStatusStopped: "Тўхтатилган",
 
-      accountsTitle: "Акканла",
-      accountsSub: "Акканлани боаи",
-      accountsEmpty: "о сизнинг номингиздан аба боии н аккан инг.",
-      accountsAdd: "Аккан и",
-      accountsNext: "Кейинги →",
-      statusNotAdded: "× Қўшилмаган",
-      statusAdded: "✓ Қўшилган",
+      accountsTitle: "Аккаунтлар",
+      accountsSub: "Аккаунтларни бошқариш",
+      accountsEmpty: "Бот сизнинг номингиздан хабар юбориши учун аккаунт қўшинг.",
+      accountsAdd: "Аккаунт қўшиш",
+      accountsNext: "Кейинги ->",
+      statusNotAdded: "Қўшилмаган",
+      statusAdded: "Қўшилган",
 
       messageTitle: "Хабар",
-      messageSub: "Хаба аблонини яаи",
+      messageSub: "Хабар шаблонини яратиш",
       messagePlaceholder: "Хабар матнини киритинг...",
       messageMarkdown: "Markdown қўллаб-қувватланади",
       messageSave: "Сақлаш",
       messagePreviewTitle: "Юбориладиган хабар",
       messageEdit: "Хабарни таҳрирлаш",
-      messageNext: "Кейинги →",
+      messageNext: "Кейинги ->",
 
       groupsTitle: "Гуруҳлар",
       groupsSub: "Жўнатма учун чатларни қўшинг",
       groupsRefresh: "Янгилаш",
-      groupsNext: "Кейинги →",
+      groupsNext: "Кейинги ->",
 
       intervalTitle: "Интервал",
-      intervalSub: "авийликни созланг",
+      intervalSub: "Даврийликни созланг",
       intervalFreqTitle: "Хабар юбориш тезлиги:",
-      intervalFreqSub: " аналик ез боилсин.",
+      intervalFreqSub: "- қандай тезликда юборилсин.",
       intervalFreqNone: "# Танланмаган",
-      intervalFreqValue: (h) => `# Ò²Ð°Ñ€ ${h} ÑÐ¾Ð°Ñ‚Ð´Ð°`,
-      intervalEvery1h: "Ҳа 1 соада",
-      intervalEvery3h: "Ҳа 3 соада",
-      intervalFreqCustom: "зим кииаман (соа)",
+      intervalFreqValue: (h) => `# Ҳар ${h} соатда`,
+      intervalEvery1h: "Ҳар 1 соатда",
+      intervalEvery3h: "Ҳар 3 соатда",
+      intervalFreqCustom: "Ўзим киритаман (соат)",
       intervalDurTitle: "Жўнатма давомийлиги:",
-      intervalDurSub: " ана ва давомида боилсин.",
-      intervalDurNone: "# саилмаган",
-      intervalDurValue: (d) => `# ${d} ÐºÑƒÐ½`,
+      intervalDurSub: "- қанча вақт давомида юборилсин.",
+      intervalDurNone: "# Кўрсатилмаган",
+      intervalDurValue: (d) => `# ${d} кун`,
       intervalDur1d: "1 кун",
       intervalDur3d: "3 кун",
       intervalDurCustom: "Ўзим киритаман (кун)",
       intervalLaunch: "Жўнатмани ишга тушириш",
-      intervalStatusNone: "× Созланмаган",
-      intervalStatusOk: "✓ Созланган",
+      intervalStatusNone: "Созланмаган",
+      intervalStatusOk: "Созланган",
 
       tagActive: "Фаол",
       tagPaused: "Пауза",
-      tagLoginError: "ии аоси",
+      tagLoginError: "Кириш хатоси",
 
       unitGroups: "гуруҳ",
-      folderChats: "Чала папкаси",
+      folderChats: "Чатлар папкаси",
+      dateNotSet: "Бошланмаган",
     },
   };
 
-  // Oddiy checksum: localStoragedagi telegramId + initData bog'lanishini tekshirish uchun.
-  const checksum = (input) => {
-    const s = String(input || "");
-    let h = 0;
-    for (let i = 0; i < s.length; i++) h = ((h * 31 + s.charCodeAt(i)) >>> 0) & 0xffffffff;
-    return h.toString(16);
-  };
+
 
   const tr = (key, ...args) => {
     const lang = state?.lang && I18N[state.lang] ? state.lang : "ru";
@@ -606,7 +604,7 @@
   };
 
   const formatDateTime = (date) => {
-    if (!date) return "Не наао";
+    if (!date) return tr("dateNotSet");
     try {
       const d = new Date(date);
       const pad = (n) => String(n).padStart(2, "0");
@@ -614,7 +612,7 @@
         d.getMinutes(),
       )}`;
     } catch {
-      return "Не наао";
+      return tr("dateNotSet");
     }
   };
 
@@ -643,10 +641,10 @@
   };
 
   const buildDefaultGroups = () => [
-    { id: "1log_1", title: "1LOG_1", folderLabel: "апка с аами", groupsCount: 67, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_1"] },
-    { id: "1log_2", title: "1LOG_2", folderLabel: "апка с аами", groupsCount: 93, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_2"] },
-    { id: "1log_3", title: "1LOG_3", folderLabel: "апка с аами", groupsCount: 96, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_3"] },
-    { id: "1log_4", title: "1LOG_4", folderLabel: "апка с аами", groupsCount: 100, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_4"] },
+    { id: "1log_1", title: "1LOG_1", folderLabel: "Chatlar papkasi", groupsCount: 67, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_1"] },
+    { id: "1log_2", title: "1LOG_2", folderLabel: "Chatlar papkasi", groupsCount: 93, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_2"] },
+    { id: "1log_3", title: "1LOG_3", folderLabel: "Chatlar papkasi", groupsCount: 96, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_3"] },
+    { id: "1log_4", title: "1LOG_4", folderLabel: "Chatlar papkasi", groupsCount: 100, selected: false, ok: true, link: GROUP_IMPORT_LINKS["1LOG_4"] },
   ];
 
   const mergeFixedGroups = (groups) => {
@@ -1223,7 +1221,7 @@
     body: () => qs("#modal-body"),
     footer: () => qs("#modal-footer"),
     open({ title, body, footer }) {
-      this.title().textContent = title || "Насойка";
+      this.title().textContent = title || "???????";
       this.body().replaceChildren(body);
       this.footer().replaceChildren(...footer);
       this.el().hidden = false;
@@ -1521,8 +1519,8 @@
     const groupsCount = groupsFromAccounts > 0 ? groupsFromAccounts : Number(state.groupsTotal || 0);
     const units = (() => {
       if (state.lang === "uz") return { h: "soat", d: "kun" };
-      if (state.lang === "uz_cyrl") return { h: "соа", d: "кун" };
-      return { h: "ас", d: "день" };
+      if (state.lang === "uz_cyrl") return { h: "соат", d: "кун" };
+      return { h: "soat", d: "kun" };
     })();
     const intervalLabel =
       state.interval.freqHours && state.interval.durationDays
@@ -1579,7 +1577,7 @@
       .split(/\s+/)
       .filter(Boolean);
     const letters = [parts[0]?.[0], parts[1]?.[0]].filter(Boolean).join("");
-    return letters ? letters.toUpperCase() : "А";
+    return letters ? letters.toUpperCase() : "?";
   };
 
   const statusTag = (status) => {
@@ -1633,14 +1631,14 @@
             </div>
           </div>
           <div class="item-card__actions">
-            <button class="action action--primary" type="button" data-action="toggle-account" data-account-id="${acc.id}" aria-label="Пауза/Старт">
+            <button class="action action--primary" type="button" data-action="toggle-account" data-account-id="${acc.id}" aria-label="?????/?????">
               ${
                 acc.status === "active"
                   ? `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>`
                   : `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>`
               }
             </button>
-            <button class="action action--danger" type="button" data-action="delete-account" data-account-id="${acc.id}" aria-label="Удалить">
+            <button class="action action--danger" type="button" data-action="delete-account" data-account-id="${acc.id}" aria-label="???????">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
             </button>
           </div>
@@ -1703,7 +1701,7 @@
           const remove = document.createElement("button");
           remove.type = "button";
           remove.className = "media-item__remove";
-          remove.textContent = "×";
+          remove.textContent = "�";
           remove.setAttribute("data-action", "remove-message-video");
           remove.setAttribute("aria-label", "Remove");
           item.append(remove);
@@ -1726,7 +1724,7 @@
             const remove = document.createElement("button");
             remove.type = "button";
             remove.className = "media-item__remove";
-            remove.textContent = "×";
+            remove.textContent = "�";
             remove.setAttribute("data-action", "remove-message-image");
             remove.setAttribute("data-image-id", String(img.id || ""));
             remove.setAttribute("aria-label", "Remove");
@@ -1796,7 +1794,7 @@
           ? g.selected
           : null;
     if (typeof v !== "boolean") return "";
-    return v ? `<span class="tag tag--ok">âœ“</span>` : `<span class="tag tag--bad">âœ•</span>`;
+    return v ? `<span class="tag tag--ok">✓</span>` : `<span class="tag tag--bad">✕</span>`;
   };
 
   const renderGroups = () => {
@@ -1825,12 +1823,12 @@
             <div class="item-card__main">
               <div class="item-card__title">${escapeHtml(g.title)} ${groupMark(g)}</div>
               <div class="item-card__meta">
-                <span>ðŸ“ ${escapeHtml(tr("folderChats"))} | ${g.groupsCount} ${escapeHtml(tr("unitGroups"))}</span>
+                <span>📁 ${escapeHtml(tr("folderChats"))} | ${g.groupsCount} ${escapeHtml(tr("unitGroups"))}</span>
               </div>
             </div>
           </div>
           <div class="item-card__actions">
-            <button class="action" type="button" data-action="copy-group" data-group-id="${g.id}" aria-label="Копировать">
+            <button class="action" type="button" data-action="copy-group" data-group-id="${g.id}" aria-label="??????????">
               <svg class="icon icon--sm"><use href="#i-copy"></use></svg>
             </button>
           </div>
@@ -2204,7 +2202,7 @@
     const save = button(tr("save"), "btn btn-primary", () => {
       const value = clampInt(input.value, min, max);
       if (!value) {
-        toast(`ведие исло ${min}-${max}`);
+        toast(`????? ???? ${min}-${max}`);
         haptic("notification", "error");
         return;
       }
@@ -3011,9 +3009,9 @@
 
         if (action === "freq-custom") {
           return openCustomNumber({
-            title: "Ð§Ð°ÑÑ‚Ð¾Ñ‚Ð° (Ð² Ñ‡Ð°ÑÐ°Ñ…)",
-            label: "ÐšÐ°Ð¶Ð´Ñ‹Ðµ N Ñ‡Ð°ÑÐ¾Ð²",
-            placeholder: "ÐÐ°Ð¿Ñ€Ð¸Ð¼ÐµÑ€: 2",
+            title: "Частота (в часах)",
+            label: "Каждые N часов",
+            placeholder: "Например: 2",
             min: 1,
             max: 24,
             initial: state.interval.freqHours,
@@ -3022,9 +3020,9 @@
         }
         if (action === "duration-custom") {
           return openCustomNumber({
-            title: "ÐŸÑ€Ð¾Ð´Ð¾Ð»Ð¶Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ÑÑ‚ÑŒ (Ð² Ð´Ð½ÑÑ…)",
-            label: "Ð¡ÐºÐ¾Ð»ÑŒÐºÐ¾ Ð´Ð½ÐµÐ¹",
-            placeholder: "ÐÐ°Ð¿Ñ€Ð¸Ð¼ÐµÑ€: 7",
+            title: "Продолжительность (в днях)",
+            label: "Сколько дней",
+            placeholder: "Например: 7",
             min: 1,
             max: 30,
             initial: state.interval.durationDays,
@@ -3103,6 +3101,16 @@
 
   // Backend state pull yo'q (home viewdan boshlaymiz).
 })();
+
+
+
+
+
+
+
+
+
+
 
 
 
