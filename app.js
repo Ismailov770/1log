@@ -2865,7 +2865,9 @@
       qsa(".nav-item").forEach((btn) => {
         if (btn._navHandler) {
           btn.removeEventListener("click", btn._navHandler);
+          btn.removeEventListener("touchstart", btn._navHandler);
           btn.removeEventListener("touchend", btn._navHandler);
+          btn.removeEventListener("pointerdown", btn._navHandler);
           btn.removeEventListener("pointerup", btn._navHandler);
         }
         const handler = (ev) => {
@@ -2877,6 +2879,14 @@
             setRoute(route);
           }
         };
+        btn._navHandler = handler;
+        btn.addEventListener("click", handler, { passive: false });
+        btn.addEventListener("touchstart", handler, { passive: false });
+        btn.addEventListener("touchend", handler, { passive: false });
+        btn.addEventListener("pointerdown", handler, { passive: false });
+        btn.addEventListener("pointerup", handler, { passive: false });
+      });
+    };
         btn._navHandler = handler;
         btn.addEventListener("click", handler, { passive: false });
         btn.addEventListener("touchend", handler, { passive: false });
@@ -3127,6 +3137,7 @@
 
   // Backend state pull yo'q (home viewdan boshlaymiz).
 })();
+
 
 
 
