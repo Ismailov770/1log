@@ -4,6 +4,18 @@
   const STORAGE_KEY = "oneLogState:v1";
   const STATE_VERSION = 2;
 
+  // Simple checksum: UTF-8 byte-sum hex
+  const checksum = (str) => {
+    try {
+      const bytes = new TextEncoder().encode(String(str));
+      let sum = 0;
+      for (const b of bytes) sum = (sum + b) >>> 0;
+      return sum.toString(16);
+    } catch {
+      return "";
+    }
+  };
+
   const ruPlural = (n, one, few, many) => {
     const v = Math.abs(Number(n) || 0);
     const mod10 = v % 10;
@@ -3130,6 +3142,7 @@
 
   // Backend state pull yo'q (home viewdan boshlaymiz).
 })();
+
 
 
 
